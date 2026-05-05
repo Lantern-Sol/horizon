@@ -224,6 +224,13 @@
               <a href="{{ block_settings.button_link4}}">{{ block_settings.button_label4 }}</a>
             {% endif %}
           {% endif %}
+          {% if block_settings.heading5 != blank %}
+            <h2>{{block_settings.heading5 }}</h2>
+            {{ block_settings.content5 }}
+            {%  if block_settings.button_label5 != blank %}
+              <a href="{{ block_settings.button_link5}}">{{ block_settings.button_label5 }}</a>
+            {% endif %}
+          {% endif %}
         </div>
       </li>  
     
