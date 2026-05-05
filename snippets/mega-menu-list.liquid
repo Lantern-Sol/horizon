@@ -193,6 +193,7 @@
   {% endfor %}
   {% if parent_link.title == block_settings.menu_name2 %}
     {%  if block_settings.heading2 != blank %}
+      <li class="best-seller-block">
         <div class="best-seller-block">
           <span>{{block_settings.caption2 }}</span>
           <h2>{{block_settings.heading2 }}</h2>
@@ -201,6 +202,7 @@
             <a href="{{ block_settings.button_link2}}">{{ block_settings.button_label2 }}</a>
           {% endif %}
         </div>
+      </li>  
     {% endif %}
   {% endif %}
 </ul>
