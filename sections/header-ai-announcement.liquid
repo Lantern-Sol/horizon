@@ -1,0 +1,329 @@
+{%- liquid
+  assign bar_bg = section.settings.bar_bg
+  assign btn_bg = section.settings.btn_bg
+  assign badge_text = section.settings.badge_text
+  assign heading_text = section.settings.heading_text
+  assign body_text = section.settings.body_text
+  assign btn_label = section.settings.btn_label
+  assign btn_link = section.settings.btn_link
+-%}
+
+<aside
+  class="ai-announcement-bar"
+  style="--ai-bar-bg: {{ bar_bg }}; --ai-btn-bg: {{ btn_bg }};"
+  role="region"
+  aria-label="{{ 'sections.header.announcement' | t | default: 'Announcement' }}"
+>
+  <div class="ai-announcement-bar__inner">
+    <div class="ai-announcement-bar__icons" aria-hidden="true">
+      {%- render 'icon-wave-sound' -%}
+      {%- render 'icon-wave-sound' -%}
+    </div>
+
+    <div class="ai-announcement-bar__content">
+      {%- if badge_text != blank -%}
+        <span class="ai-announcement-bar__badge">
+          <span class="ai-announcement-bar__badge-icon" aria-hidden="true">
+            {%- render 'icon-sparkle' -%}
+          </span>
+          <span class="ai-announcement-bar__badge-text">{{ badge_text }}</span>
+        </span>
+      {%- endif -%}
+
+      {%- if heading_text != blank -%}
+        <p class="ai-announcement-bar__heading">{{ heading_text }}</p>
+      {%- endif -%}
+
+      {%- if body_text != blank -%}
+        <p class="ai-announcement-bar__body">{{ body_text }}</p>
+      {%- endif -%}
+    </div>
+
+    {%- if btn_label != blank -%}
+      {%- if btn_link != blank -%}
+        <a href="{{ btn_link }}" class="ai-announcement-bar__cta">{{ btn_label }}</a>
+      {%- else -%}
+        <span class="ai-announcement-bar__cta">{{ btn_label }}</span>
+      {%- endif -%}
+    {%- endif -%}
+  </div>
+</aside>
+
+{% stylesheet %}
+  .ai-announcement-bar {
+    background: var(--ai-bar-bg, #39b4e7);
+    padding: 11px 12px;
+    width: 100%;
+    color: #ffffff;
+  }
+
+  .ai-announcement-bar__inner {
+    display: flex;
+    align-items: center;
+    gap: 48px;
+    width: 100%;
+    max-width: var(--page-width, 1440px);
+    margin-inline: auto;
+  }
+
+  .ai-announcement-bar__icons {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-shrink: 0;
+  }
+
+  .ai-announcement-bar__icons svg {
+    width: 24px;
+    height: 24px;
+    display: block;
+  }
+
+  .ai-announcement-bar__content {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .ai-announcement-bar__badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    flex-shrink: 0;
+  }
+
+  .ai-announcement-bar__badge-icon {
+    display: inline-flex;
+    width: 14px;
+    height: 14px;
+  }
+
+  .ai-announcement-bar__badge-icon svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .ai-announcement-bar__badge-text {
+    font-family: var(--font-subheading--family, var(--font-body--family, sans-serif));
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: #ffffff;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .ai-announcement-bar__heading {
+    font-family: var(--font-heading--family, var(--font-body--family, sans-serif));
+    font-weight: 800;
+    font-size: 14px;
+    line-height: 14px;
+    color: #ffffff;
+    margin: 0;
+    flex-shrink: 0;
+    max-width: 130px;
+  }
+
+  .ai-announcement-bar__body {
+    font-family: var(--font-body--family, sans-serif);
+    font-weight: 500;
+    font-size: 17px;
+    color: #f2f2f2;
+    margin: 0;
+    line-height: 1.2;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .ai-announcement-bar__cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--ai-btn-bg, #09274c);
+    color: #ffffff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-family: var(--font-heading--family, var(--font-body--family, sans-serif));
+    font-weight: 700;
+    font-size: 15px;
+    line-height: 22.5px;
+    text-decoration: none;
+    text-align: center;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: opacity 0.15s ease;
+  }
+
+  .ai-announcement-bar__cta:hover {
+    opacity: 0.9;
+    text-decoration: none;
+  }
+
+  @media screen and (max-width: 990px) {
+    .ai-announcement-bar__inner {
+      gap: 20px;
+    }
+
+    .ai-announcement-bar__content {
+      gap: 16px;
+    }
+
+    .ai-announcement-bar__body {
+      font-size: 14px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-announcement-bar {
+      padding: 11px 12px;
+    }
+
+    .ai-announcement-bar__inner {
+      align-items: center;
+      gap: 16px;
+      max-width: none;
+    }
+
+    .ai-announcement-bar__icons {
+      display: none;
+    }
+
+    .ai-announcement-bar__content {
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 4px;
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .ai-announcement-bar__content::before {
+      content: none;
+    }
+
+    .ai-announcement-bar__badge {
+      padding: 6px 12px;
+      gap: 4px;
+    }
+
+    .ai-announcement-bar__heading {
+      font-size: 12px;
+      line-height: 12px;
+      max-width: none;
+    }
+
+    .ai-announcement-bar__body {
+      font-size: 9px;
+      line-height: 1.2;
+      width: 100%;
+    }
+
+    .ai-announcement-bar__cta {
+      padding: 6px 8px;
+      font-size: 12px;
+      line-height: 1.25;
+      min-width: 119px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-announcement-bar__content {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      grid-template-rows: auto auto;
+      column-gap: 8px;
+      row-gap: 4px;
+      align-items: center;
+    }
+
+    .ai-announcement-bar__badge {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .ai-announcement-bar__heading {
+      grid-column: 2;
+      grid-row: 1;
+    }
+
+    .ai-announcement-bar__body {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "AI Announcement Bar",
+  "tag": "section",
+  "class": "section-ai-announcement",
+  "enabled_on": {
+    "groups": ["header"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge text",
+      "default": "NEW AI TOOL"
+    },
+    {
+      "type": "text",
+      "id": "heading_text",
+      "label": "Heading",
+      "default": "Hear noise you can't identify?"
+    },
+    {
+      "type": "text",
+      "id": "body_text",
+      "label": "Body text",
+      "default": "Record it with our new AI Noise Analyzer get instant Dynamat product recommendations!"
+    },
+    {
+      "type": "text",
+      "id": "btn_label",
+      "label": "Button label",
+      "default": "Try the AI Tool"
+    },
+    {
+      "type": "url",
+      "id": "btn_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "color",
+      "id": "bar_bg",
+      "label": "Bar background",
+      "default": "#39b4e7"
+    },
+    {
+      "type": "color",
+      "id": "btn_bg",
+      "label": "Button background",
+      "default": "#09274c"
+    }
+  ],
+  "presets": [
+    {
+      "name": "AI Announcement Bar"
+    }
+  ]
+}
+{% endschema %}
