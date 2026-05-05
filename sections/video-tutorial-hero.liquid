@@ -1,0 +1,200 @@
+{%- liquid
+  assign overlay_alpha = section.settings.overlay_opacity | divided_by: 100.0
+-%}
+
+{{ 'video-tutorial-hero.css' | asset_url | stylesheet_tag }}
+
+<div
+  id="vt-hero-{{ section.id }}"
+  class="vt-hero color-{{ section.settings.color_scheme }}"
+  data-vt-scope="{{ section.settings.scope | default: 'default' }}"
+  style="--vt-hero-overlay: {{ overlay_alpha }};"
+>
+  {%- if section.settings.background_video != blank -%}
+    <div class="vt-hero__media">
+      {{
+        section.settings.background_video
+        | video_tag:
+          autoplay: true,
+          loop: true,
+          controls: false,
+          muted: true,
+          class: 'vt-hero__media-el'
+      }}
+    </div>
+  {%- elsif section.settings.background_image != blank -%}
+    <div class="vt-hero__media">
+      {{
+        section.settings.background_image
+        | image_url: width: 3840
+        | image_tag:
+          widths: '832, 1200, 1600, 1920, 2560, 3840',
+          sizes: '100vw',
+          alt: section.settings.background_image.alt,
+          class: 'vt-hero__media-el',
+          fetchpriority: 'high'
+      }}
+    </div>
+  {%- endif -%}
+
+  <div class="vt-hero__overlay" aria-hidden="true"></div>
+
+  <div class="vt-hero__inner">
+    <h1 class="vt-hero__title">{{ section.settings.heading | escape }}</h1>
+
+    {%- if section.settings.subheading != blank -%}
+      <p class="vt-hero__subtitle">{{ section.settings.subheading | escape }}</p>
+    {%- endif -%}
+
+    <form
+      role="search"
+      class="vt-hero__search"
+      data-vt-search-form
+      onsubmit="return false;"
+    >
+      <input
+        type="search"
+        class="vt-hero__search-input"
+        data-vt-search-input
+        placeholder="{{ section.settings.search_placeholder | escape }}"
+        aria-label="{{ section.settings.search_placeholder | escape }}"
+        autocomplete="off"
+      >
+      <button type="button" class="vt-hero__search-btn" data-vt-search-clear hidden aria-label="Clear search">
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M3 3L13 13M13 3L3 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <button type="submit" class="vt-hero__search-btn" aria-label="Search">
+        <svg class="vt-hero__search-icon" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M11.5 11.5L16 16M13 7.5C13 10.5376 10.5376 13 7.5 13C4.46243 13 2 10.5376 2 7.5C2 4.46243 4.46243 2 7.5 2C10.5376 2 13 4.46243 13 7.5Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </form>
+  </div>
+</div>
+
+<script>
+  (() => {
+    const root = document.getElementById('vt-hero-{{ section.id }}');
+    if (!root) return;
+
+    const scope = root.dataset.vtScope || 'default';
+    const input = root.querySelector('[data-vt-search-input]');
+    const clearBtn = root.querySelector('[data-vt-search-clear]');
+    if (!input) return;
+
+    const broadcast = (q) => {
+      document.dispatchEvent(new CustomEvent('vt:search-change', {
+        detail: { scope: scope, query: q }
+      }));
+    };
+
+    let timer = null;
+    const onInput = () => {
+      const q = input.value.trim();
+      if (clearBtn) clearBtn.hidden = q.length === 0;
+      clearTimeout(timer);
+      timer = setTimeout(() => broadcast(q), 120);
+    };
+
+    input.addEventListener('input', onInput);
+    input.addEventListener('search', onInput);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        input.value = '';
+        onInput();
+      }
+    });
+
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        input.value = '';
+        clearBtn.hidden = true;
+        broadcast('');
+        input.focus();
+      });
+    }
+
+    document.addEventListener('vt:request-search', (e) => {
+      if (!e.detail || (e.detail.scope || 'default') !== scope) return;
+      const q = (e.detail.query || '').toString();
+      input.value = q;
+      if (clearBtn) clearBtn.hidden = q.length === 0;
+      broadcast(q.trim());
+      input.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    });
+
+    // Initial broadcast in case the grid mounts after the hero
+    requestAnimationFrame(() => broadcast(input.value.trim()));
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Video tutorial hero",
+  "class": "section-wrapper",
+  "settings": [
+    {
+      "type": "text",
+      "id": "scope",
+      "label": "Scope ID",
+      "info": "Must match the Scope ID on the grid section this search controls.",
+      "default": "default"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Installation Guides & How-To Videos"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "A variety of shared installation videos from across the web's Dynamat universe."
+    },
+    {
+      "type": "text",
+      "id": "search_placeholder",
+      "label": "Search placeholder",
+      "default": "Search videos…"
+    },
+    {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background image"
+    },
+    {
+      "type": "video",
+      "id": "background_video",
+      "label": "Background video (overrides image)"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Overlay opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-2"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Video tutorial hero"
+    }
+  ]
+}
+{% endschema %}

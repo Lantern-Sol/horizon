@@ -1,0 +1,447 @@
+{%- liquid
+  assign video_blocks = section.blocks | where: 'type', 'video'
+  assign total_count = video_blocks.size
+  assign per_page = section.settings.videos_per_page
+  if per_page < 1
+    assign per_page = total_count
+  endif
+  assign visible_count = per_page
+  if visible_count > total_count
+    assign visible_count = total_count
+  endif
+-%}
+
+{{ 'video-tutorial-grid.css' | asset_url | stylesheet_tag }}
+{{ 'video-tutorial-card.css' | asset_url | stylesheet_tag }}
+
+<section
+  id="vt-grid-{{ section.id }}"
+  class="vt-grid color-{{ section.settings.color_scheme }}"
+  data-vt-grid
+  data-vt-scope="{{ section.settings.scope | default: 'default' }}"
+  data-per-page="{{ per_page }}"
+>
+  <div class="vt-grid__inner">
+    {%- if section.settings.category_heading != blank or section.settings.category_subheading != blank -%}
+      <header class="vt-grid__heading">
+        {%- if section.settings.category_heading != blank -%}
+          <h2 class="vt-grid__title">{{ section.settings.category_heading }}</h2>
+        {%- endif -%}
+        {%- if section.settings.category_subheading != blank -%}
+          <p class="vt-grid__subtitle">{{ section.settings.category_subheading }}</p>
+        {%- endif -%}
+      </header>
+    {%- endif -%}
+
+    <div class="vt-grid__items" data-vt-items>
+      {%- for block in video_blocks -%}
+        {%- assign duration_str = block.settings.duration | default: '0:00' -%}
+        {%- assign duration_parts = duration_str | split: ':' -%}
+        {%- assign duration_min = duration_parts[0] | times: 1 -%}
+        {%- assign duration_sec = duration_parts[1] | times: 1 -%}
+        {%- assign duration_total = duration_min | times: 60 | plus: duration_sec -%}
+        {%- capture search_text -%}
+          {{ block.settings.title }} {{ block.settings.tag_1 }} {{ block.settings.tag_2 }}
+        {%- endcapture -%}
+        <div
+          class="vt-grid__item"
+          data-vt-item
+          data-vt-index="{{ forloop.index }}"
+          data-vt-duration="{{ duration_total }}"
+          data-vt-search="{{ search_text | strip | downcase | escape }}"
+          data-application="{{ block.settings.application | downcase | escape }}"
+          data-install-area="{{ block.settings.install_area | downcase | escape }}"
+          data-complexity="{{ block.settings.complexity | downcase | escape }}"
+        >
+          {%- render 'video-tutorial-card', block: block -%}
+        </div>
+      {%- endfor -%}
+    </div>
+
+    {%- if section.settings.show_load_more and total_count > 0 -%}
+      <div class="vt-grid__pagination">
+        <p class="vt-grid__progress-label">
+          {{ section.settings.showing_label }}
+          <span data-vt-visible>{{ visible_count }}</span>
+          {{ section.settings.of_label }}
+          <span data-vt-total>{{ total_count }}</span>
+          {{ section.settings.videos_label }}
+        </p>
+
+        <div class="vt-grid__progress" aria-hidden="true">
+          <div class="vt-grid__progress-bar" data-vt-progress style="width: {% if total_count > 0 %}{{ visible_count | times: 100 | divided_by: total_count }}{% else %}0{% endif %}%;"></div>
+        </div>
+
+        <button type="button" class="vt-grid__load-more" data-vt-load-more {% if visible_count >= total_count %}hidden{% endif %}>
+          {{ section.settings.load_more_label }}
+        </button>
+      </div>
+    {%- endif -%}
+  </div>
+
+  <dialog class="vt-modal" data-vt-modal aria-label="Video player">
+    <div class="vt-modal__inner">
+      <button type="button" class="vt-modal__close" data-vt-modal-close aria-label="Close">
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M2 2L14 14M14 2L2 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <div class="vt-modal__frame" data-vt-modal-frame></div>
+    </div>
+  </dialog>
+</section>
+
+<script>
+  (() => {
+    const root = document.getElementById('vt-grid-{{ section.id }}');
+    if (!root) return;
+
+    const scope = root.dataset.vtScope || 'default';
+    const itemsEl = root.querySelector('[data-vt-items]');
+    let items = Array.from(root.querySelectorAll('[data-vt-item]'));
+    const perPage = parseInt(root.dataset.perPage, 10) || items.length;
+    const loadMoreBtn = root.querySelector('[data-vt-load-more]');
+    const visibleEl = root.querySelector('[data-vt-visible]');
+    const totalEl = root.querySelector('[data-vt-total]');
+    const progressEl = root.querySelector('[data-vt-progress]');
+
+    let activeFilters = { application: null, install_area: null, complexity: null };
+    let visible = perPage;
+    let currentSort = 'featured';
+    let searchQuery = '';
+
+    const matches = (item) => {
+      if (activeFilters.application && item.dataset.application !== activeFilters.application) return false;
+      if (activeFilters.install_area && item.dataset.installArea !== activeFilters.install_area) return false;
+      if (activeFilters.complexity && item.dataset.complexity !== activeFilters.complexity) return false;
+      if (searchQuery && !(item.dataset.vtSearch || '').includes(searchQuery)) return false;
+      return true;
+    };
+
+    const sortItems = (sort) => {
+      const sorted = [...items];
+      const idx = (el) => parseInt(el.dataset.vtIndex, 10) || 0;
+      const dur = (el) => parseInt(el.dataset.vtDuration, 10) || 0;
+      switch (sort) {
+        case 'newest': sorted.sort((a, b) => idx(b) - idx(a)); break;
+        case 'oldest': sorted.sort((a, b) => idx(a) - idx(b)); break;
+        case 'duration-asc': sorted.sort((a, b) => dur(a) - dur(b)); break;
+        case 'duration-desc': sorted.sort((a, b) => dur(b) - dur(a)); break;
+        case 'featured':
+        default: sorted.sort((a, b) => idx(a) - idx(b)); break;
+      }
+      // Reorder DOM
+      sorted.forEach((el) => itemsEl.appendChild(el));
+      items = sorted;
+    };
+
+    const update = () => {
+      const filtered = items.filter(matches);
+      const total = filtered.length;
+      let shown = 0;
+
+      items.forEach((item) => { item.hidden = true; });
+      filtered.slice(0, visible).forEach((item) => {
+        item.hidden = false;
+        shown++;
+      });
+
+      if (visibleEl) visibleEl.textContent = shown;
+      if (totalEl) totalEl.textContent = total;
+      if (progressEl) {
+        progressEl.style.width = total ? Math.min(100, (shown / total) * 100) + '%' : '0%';
+      }
+      if (loadMoreBtn) {
+        loadMoreBtn.hidden = shown >= total;
+      }
+
+      document.dispatchEvent(new CustomEvent('vt:count-change', {
+        detail: { scope: scope, count: total }
+      }));
+    };
+
+    document.addEventListener('vt:filter-change', (e) => {
+      if (!e.detail || (e.detail.scope || 'default') !== scope) return;
+      activeFilters = e.detail.filters || activeFilters;
+      visible = perPage;
+      update();
+    });
+
+    document.addEventListener('vt:sort-change', (e) => {
+      if (!e.detail || (e.detail.scope || 'default') !== scope) return;
+      currentSort = e.detail.sort || 'featured';
+      sortItems(currentSort);
+      visible = perPage;
+      update();
+    });
+
+    document.addEventListener('vt:search-change', (e) => {
+      if (!e.detail || (e.detail.scope || 'default') !== scope) return;
+      searchQuery = (e.detail.query || '').toLowerCase();
+      visible = perPage;
+      update();
+    });
+
+    if (loadMoreBtn) {
+      loadMoreBtn.addEventListener('click', () => {
+        visible += perPage;
+        update();
+      });
+    }
+
+    // Tag clicks within cards delegate to the filter section
+    root.addEventListener('click', (e) => {
+      const tag = e.target.closest('[data-vt-tag]');
+      if (!tag || !root.contains(tag)) return;
+      e.stopPropagation();
+      const value = (tag.dataset.vtTag || '').trim();
+      if (!value) return;
+      document.dispatchEvent(new CustomEvent('vt:request-filter', {
+        detail: { scope: scope, value: value }
+      }));
+    });
+
+    // YouTube popup
+    const modal = root.querySelector('[data-vt-modal]');
+    const modalFrame = root.querySelector('[data-vt-modal-frame]');
+    const modalClose = root.querySelector('[data-vt-modal-close]');
+
+    const extractYouTubeId = (url) => {
+      if (!url) return null;
+      try {
+        const u = new URL(url, window.location.origin);
+        if (u.hostname.includes('youtu.be')) return u.pathname.slice(1).split('/')[0] || null;
+        if (u.hostname.includes('youtube.com')) {
+          if (u.pathname === '/watch') return u.searchParams.get('v');
+          const parts = u.pathname.split('/').filter(Boolean);
+          if (parts[0] === 'embed' || parts[0] === 'shorts' || parts[0] === 'v') return parts[1] || null;
+        }
+        return null;
+      } catch (_) {
+        const m = url.match(/[?&]v=([^&]+)/) || url.match(/youtu\.be\/([^?&/]+)/);
+        return m ? m[1] : null;
+      }
+    };
+
+    const openModal = (youtubeUrl) => {
+      if (!modal || !modalFrame) return;
+      const id = extractYouTubeId(youtubeUrl);
+      if (!id) {
+        if (youtubeUrl) window.open(youtubeUrl, '_blank', 'noopener');
+        return;
+      }
+      modalFrame.innerHTML = '<iframe src="https://www.youtube.com/embed/' + encodeURIComponent(id) + '?autoplay=1&rel=0" title="YouTube video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>';
+      if (typeof modal.showModal === 'function') modal.showModal();
+      else modal.setAttribute('open', '');
+      document.body.style.overflow = 'hidden';
+    };
+
+    const closeModal = () => {
+      if (!modal) return;
+      if (typeof modal.close === 'function') modal.close();
+      else modal.removeAttribute('open');
+      if (modalFrame) modalFrame.innerHTML = '';
+      document.body.style.overflow = '';
+    };
+
+    root.querySelectorAll('[data-vt-play]').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        openModal(btn.dataset.youtube);
+      });
+    });
+
+    if (modalClose) modalClose.addEventListener('click', closeModal);
+    if (modal) {
+      modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+      modal.addEventListener('cancel', (e) => { e.preventDefault(); closeModal(); });
+    }
+
+    // Initial render
+    update();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Video tutorial grid",
+  "class": "section-wrapper",
+  "settings": [
+    {
+      "type": "text",
+      "id": "scope",
+      "label": "Scope ID",
+      "info": "Must match the Scope ID on the filter section that controls this grid.",
+      "default": "default"
+    },
+    {
+      "type": "header",
+      "content": "Category"
+    },
+    {
+      "type": "text",
+      "id": "category_heading",
+      "label": "Category heading",
+      "default": "Automotive"
+    },
+    {
+      "type": "text",
+      "id": "category_subheading",
+      "label": "Category subheading",
+      "default": "Applications and solutions on a variety of vehicles"
+    },
+    {
+      "type": "header",
+      "content": "Pagination"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_load_more",
+      "label": "Show load more button",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "videos_per_page",
+      "label": "Videos per page",
+      "min": 3,
+      "max": 24,
+      "step": 3,
+      "default": 9
+    },
+    {
+      "type": "text",
+      "id": "showing_label",
+      "label": "\"Showing\" word",
+      "default": "Showing"
+    },
+    {
+      "type": "text",
+      "id": "of_label",
+      "label": "\"of\" word",
+      "default": "of"
+    },
+    {
+      "type": "text",
+      "id": "videos_label",
+      "label": "Videos word",
+      "default": "Videos"
+    },
+    {
+      "type": "text",
+      "id": "load_more_label",
+      "label": "Load more button label",
+      "default": "Load More Videos"
+    },
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "video",
+      "name": "Video",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "thumbnail",
+          "label": "Thumbnail"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Total Floor Coverage"
+        },
+        {
+          "type": "text",
+          "id": "duration",
+          "label": "Duration (mm:ss)",
+          "default": "6:15"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "YouTube URL",
+          "info": "Supports youtube.com/watch?v=…, youtu.be/…, youtube.com/embed/… or /shorts/…"
+        },
+        {
+          "type": "text",
+          "id": "tag_1",
+          "label": "Tag 1",
+          "default": "floor"
+        },
+        {
+          "type": "text",
+          "id": "tag_2",
+          "label": "Tag 2",
+          "default": "DYNALINER"
+        },
+        {
+          "type": "header",
+          "content": "Filter values (used by filter bar)"
+        },
+        {
+          "type": "select",
+          "id": "application",
+          "label": "Application",
+          "options": [
+            { "value": "Automotive", "label": "Automotive" },
+            { "value": "Home", "label": "Home" },
+            { "value": "Marine", "label": "Marine" }
+          ],
+          "default": "Automotive"
+        },
+        {
+          "type": "select",
+          "id": "install_area",
+          "label": "Install area",
+          "options": [
+            { "value": "Doors", "label": "Doors" },
+            { "value": "Floor", "label": "Floor" },
+            { "value": "Roof", "label": "Roof" },
+            { "value": "Trunk", "label": "Trunk" },
+            { "value": "Hood", "label": "Hood" }
+          ],
+          "default": "Floor"
+        },
+        {
+          "type": "select",
+          "id": "complexity",
+          "label": "Complexity",
+          "options": [
+            { "value": "Beginner", "label": "Beginner" },
+            { "value": "Intermediate", "label": "Intermediate" },
+            { "value": "Pro", "label": "Pro" }
+          ],
+          "default": "Beginner"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Video tutorial grid",
+      "blocks": [
+        { "type": "video" },
+        { "type": "video" },
+        { "type": "video" },
+        { "type": "video" },
+        { "type": "video" },
+        { "type": "video" },
+        { "type": "video" },
+        { "type": "video" },
+        { "type": "video" }
+      ]
+    }
+  ]
+}
+{% endschema %}

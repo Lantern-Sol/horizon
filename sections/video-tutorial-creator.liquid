@@ -1,0 +1,214 @@
+{%- liquid
+  assign creator_videos = section.blocks | where: 'type', 'creator_video'
+-%}
+
+{{ 'video-tutorial-creator.css' | asset_url | stylesheet_tag }}
+
+<section class="vt-creator color-{{ section.settings.color_scheme }}">
+  <div class="vt-creator__inner">
+    <div class="vt-creator__card">
+      <div class="vt-creator__profile">
+        <div class="vt-creator__intro">
+          <p class="vt-creator__eyebrow">{{ section.settings.eyebrow }}</p>
+          {%- if section.settings.partner_badge != blank -%}
+            <span class="vt-creator__badge">{{ section.settings.partner_badge }}</span>
+          {%- endif -%}
+        </div>
+
+        <div class="vt-creator__about">
+          {%- if section.settings.avatar != blank -%}
+            <div class="vt-creator__avatar">
+              {{
+                section.settings.avatar
+                | image_url: width: 200
+                | image_tag:
+                  widths: '80, 160, 200',
+                  sizes: '80px',
+                  alt: section.settings.creator_handle,
+                  loading: 'lazy'
+              }}
+            </div>
+          {%- endif -%}
+
+          <p class="vt-creator__handle">{{ section.settings.creator_handle }}</p>
+          <p class="vt-creator__meta">{{ section.settings.creator_meta }}</p>
+
+          {%- if section.settings.creator_bio != blank -%}
+            <p class="vt-creator__bio">{{ section.settings.creator_bio }}</p>
+          {%- endif -%}
+
+          {%- if section.settings.channel_link != blank -%}
+            <a href="{{ section.settings.channel_link }}" class="vt-creator__cta">
+              {{ section.settings.channel_label }}
+            </a>
+          {%- endif -%}
+        </div>
+      </div>
+
+      <div class="vt-creator__divider" aria-hidden="true"></div>
+
+      <div class="vt-creator__videos">
+        {%- for block in creator_videos -%}
+          <a
+            href="{{ block.settings.link | default: '#' }}"
+            class="vt-creator-vid"
+            {{ block.shopify_attributes }}
+          >
+            <div class="vt-creator-vid__media">
+              {%- if block.settings.thumbnail != blank -%}
+                {{
+                  block.settings.thumbnail
+                  | image_url: width: 480
+                  | image_tag:
+                    widths: '240, 360, 480',
+                    sizes: '236px',
+                    alt: block.settings.title,
+                    loading: 'lazy',
+                    class: 'vt-creator-vid__img'
+                }}
+              {%- endif -%}
+
+              <span class="vt-creator-vid__play" aria-hidden="true">
+                <svg viewBox="0 0 11 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M0 0V14L11 7L0 0Z" fill="currentColor"/>
+                </svg>
+              </span>
+
+              {%- if block.settings.duration != blank -%}
+                <span class="vt-creator-vid__duration">{{ block.settings.duration }}</span>
+              {%- endif -%}
+            </div>
+            <p class="vt-creator-vid__title">{{ block.settings.title }}</p>
+            {%- if block.settings.views != blank -%}
+              <p class="vt-creator-vid__views">{{ block.settings.views }}</p>
+            {%- endif -%}
+          </a>
+        {%- endfor -%}
+
+        {%- if section.settings.see_all_link != blank -%}
+          <a href="{{ section.settings.see_all_link }}" class="vt-creator__see-all">
+            {{ section.settings.see_all_label }}
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Video tutorial creator",
+  "class": "section-wrapper",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "FEATURED YOUTUBE PARTNER"
+    },
+    {
+      "type": "text",
+      "id": "partner_badge",
+      "label": "Partner badge",
+      "default": "✦ Official Partner"
+    },
+    {
+      "type": "image_picker",
+      "id": "avatar",
+      "label": "Creator avatar"
+    },
+    {
+      "type": "text",
+      "id": "creator_handle",
+      "label": "Creator handle",
+      "default": "@kindigitdesignofficial"
+    },
+    {
+      "type": "text",
+      "id": "creator_meta",
+      "label": "Creator meta line",
+      "default": "1.2M Subscribers  •  Custom Car Builds"
+    },
+    {
+      "type": "textarea",
+      "id": "creator_bio",
+      "label": "Creator bio",
+      "default": "Kindig-it Design builds world-renowned custom cars — using Dynamat on every build for a quieter, premium ride."
+    },
+    {
+      "type": "url",
+      "id": "channel_link",
+      "label": "Channel link"
+    },
+    {
+      "type": "text",
+      "id": "channel_label",
+      "label": "Channel CTA label",
+      "default": "Visit Channel →"
+    },
+    {
+      "type": "text",
+      "id": "see_all_label",
+      "label": "See all label",
+      "default": "See All Videos on YouTube →"
+    },
+    {
+      "type": "url",
+      "id": "see_all_link",
+      "label": "See all link"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "creator_video",
+      "name": "Creator video",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "thumbnail",
+          "label": "Thumbnail"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "1967 Camaro Full Deadening Install"
+        },
+        {
+          "type": "text",
+          "id": "duration",
+          "label": "Duration",
+          "default": "12:45"
+        },
+        {
+          "type": "text",
+          "id": "views",
+          "label": "Views label",
+          "default": "284K views"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Video link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Video tutorial creator",
+      "blocks": [
+        { "type": "creator_video", "settings": { "title": "1967 Camaro Full Deadening Install", "duration": "12:45", "views": "284K views" } },
+        { "type": "creator_video", "settings": { "title": "Dynapad on Custom Truck Build", "duration": "8:22", "views": "156K views" } },
+        { "type": "creator_video", "settings": { "title": "Kindig x Dynamat: The Full Build", "duration": "22:10", "views": "501K views" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

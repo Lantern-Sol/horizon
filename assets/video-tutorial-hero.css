@@ -1,0 +1,147 @@
+.vt-hero {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 113px 80px;
+  min-height: 490px;
+  overflow: hidden;
+  background-color: #1a2a49;
+  color: #fff;
+}
+
+.vt-hero__media {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+}
+
+.vt-hero__media-el {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.vt-hero__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-color: rgb(26 42 73 / var(--vt-hero-overlay, 0.5));
+}
+
+.vt-hero__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  width: 100%;
+  max-width: 794px;
+  text-align: center;
+}
+
+.vt-hero__title {
+  margin: 0;
+  font-weight: 800;
+  font-size: 64px;
+  line-height: 54px;
+  letter-spacing: -3px;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.vt-hero__subtitle {
+  margin: 0;
+  font-size: 14px;
+  line-height: 24px;
+  letter-spacing: 0.28px;
+  color: #fff;
+  max-width: 672px;
+}
+
+.vt-hero__search {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border: 0.8px solid #edf2f7;
+  border-radius: 6px;
+  background-color: rgb(255 255 255 / 0.02);
+  backdrop-filter: blur(17px);
+  -webkit-backdrop-filter: blur(17px);
+}
+
+.vt-hero__search-input {
+  flex: 1;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #fff;
+  font-size: 14px;
+  line-height: 21px;
+  padding: 0 8px;
+  height: 36px;
+}
+
+.vt-hero__search-input::placeholder {
+  color: rgb(255 255 255 / 0.7);
+}
+
+/* Strip native search clear/cancel UI */
+.vt-hero__search-input::-webkit-search-cancel-button,
+.vt-hero__search-input::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.vt-hero__search-btn {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 4px;
+  background-color: transparent;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.vt-hero__search-btn:hover {
+  background-color: rgb(255 255 255 / 0.08);
+}
+
+.vt-hero__search-btn[hidden] {
+  display: none;
+}
+
+.vt-hero__search-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+@media (max-width: 749px) {
+  .vt-hero {
+    padding: 64px 24px;
+    min-height: 360px;
+  }
+
+  .vt-hero__title {
+    font-size: 36px;
+    line-height: 36px;
+    letter-spacing: -1.5px;
+  }
+
+  .vt-hero__subtitle {
+    font-size: 13px;
+    line-height: 20px;
+  }
+
+  .vt-hero__search-btn {
+    width: 44px;
+    height: 44px;
+  }
+}

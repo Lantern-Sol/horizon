@@ -1,0 +1,151 @@
+{
+  "sections": {
+    "hero": {
+      "type": "video-tutorial-hero",
+      "settings": {
+        "heading": "Installation Guides & How-To Videos",
+        "subheading": "A variety of shared installation videos from across the web's Dynamat universe.",
+        "search_placeholder": "Search videos…",
+        "overlay_opacity": 50,
+        "color_scheme": "scheme-2"
+      }
+    },
+    "filters": {
+      "type": "video-tutorial-filters",
+      "blocks": {
+        "filter_app_all": { "type": "filter_application", "settings": { "label": "All", "value": "All" } },
+        "filter_app_auto": { "type": "filter_application", "settings": { "label": "Automotive", "value": "Automotive" } },
+        "filter_app_home": { "type": "filter_application", "settings": { "label": "Home", "value": "Home" } },
+        "filter_app_marine": { "type": "filter_application", "settings": { "label": "Marine", "value": "Marine" } },
+        "filter_area_all": { "type": "filter_install_area", "settings": { "label": "All", "value": "All" } },
+        "filter_area_doors": { "type": "filter_install_area", "settings": { "label": "Doors", "value": "Doors" } },
+        "filter_area_floor": { "type": "filter_install_area", "settings": { "label": "Floor", "value": "Floor" } },
+        "filter_area_roof": { "type": "filter_install_area", "settings": { "label": "Roof", "value": "Roof" } },
+        "filter_area_trunk": { "type": "filter_install_area", "settings": { "label": "Trunk", "value": "Trunk" } },
+        "filter_area_hood": { "type": "filter_install_area", "settings": { "label": "Hood", "value": "Hood" } },
+        "filter_complex_all": { "type": "filter_complexity", "settings": { "label": "All", "value": "All" } },
+        "filter_complex_beg": { "type": "filter_complexity", "settings": { "label": "Beginner", "value": "Beginner" } },
+        "filter_complex_int": { "type": "filter_complexity", "settings": { "label": "Intermediate", "value": "Intermediate" } },
+        "filter_complex_pro": { "type": "filter_complexity", "settings": { "label": "Pro", "value": "Pro" } }
+      },
+      "block_order": [
+        "filter_app_all",
+        "filter_app_auto",
+        "filter_app_home",
+        "filter_app_marine",
+        "filter_area_all",
+        "filter_area_doors",
+        "filter_area_floor",
+        "filter_area_roof",
+        "filter_area_trunk",
+        "filter_area_hood",
+        "filter_complex_all",
+        "filter_complex_beg",
+        "filter_complex_int",
+        "filter_complex_pro"
+      ],
+      "settings": {
+        "scope": "default",
+        "count_label": "Products",
+        "application_label": "APPLICATION",
+        "install_area_label": "INSTALL AREA",
+        "complexity_label": "COMPLEXITY",
+        "show_sort": true,
+        "sort_label": "Sort:",
+        "sort_featured": "Featured",
+        "sort_newest": "Newest",
+        "sort_oldest": "Oldest",
+        "sort_duration_asc": "Shortest",
+        "sort_duration_desc": "Longest",
+        "color_scheme": "scheme-1"
+      }
+    },
+    "grid": {
+      "type": "video-tutorial-grid",
+      "blocks": {
+        "video_1": { "type": "video", "settings": { "title": "Total Floor Coverage", "duration": "6:15", "tag_1": "floor", "tag_2": "DYNALINER", "application": "Automotive", "install_area": "Floor", "complexity": "Beginner" } },
+        "video_2": { "type": "video", "settings": { "title": "Total Floor Coverage", "duration": "6:15", "tag_1": "floor", "tag_2": "DYNALINER", "application": "Automotive", "install_area": "Floor", "complexity": "Beginner" } },
+        "video_3": { "type": "video", "settings": { "title": "Total Floor Coverage", "duration": "6:15", "tag_1": "floor", "tag_2": "DYNALINER", "application": "Automotive", "install_area": "Floor", "complexity": "Beginner" } },
+        "video_4": { "type": "video", "settings": { "title": "Total Floor Coverage", "duration": "6:15", "tag_1": "floor", "tag_2": "DYNALINER", "application": "Automotive", "install_area": "Floor", "complexity": "Beginner" } },
+        "video_5": { "type": "video", "settings": { "title": "Total Floor Coverage", "duration": "6:15", "tag_1": "floor", "tag_2": "DYNALINER", "application": "Automotive", "install_area": "Floor", "complexity": "Beginner" } },
+        "video_6": { "type": "video", "settings": { "title": "Total Floor Coverage", "duration": "6:15", "tag_1": "floor", "tag_2": "DYNALINER", "application": "Automotive", "install_area": "Floor", "complexity": "Beginner" } },
+        "video_7": { "type": "video", "settings": { "title": "Total Floor Coverage", "duration": "6:15", "tag_1": "floor", "tag_2": "DYNALINER", "application": "Automotive", "install_area": "Floor", "complexity": "Beginner" } },
+        "video_8": { "type": "video", "settings": { "title": "Total Floor Coverage", "duration": "6:15", "tag_1": "floor", "tag_2": "DYNALINER", "application": "Automotive", "install_area": "Floor", "complexity": "Beginner" } },
+        "video_9": { "type": "video", "settings": { "title": "Total Floor Coverage", "duration": "6:15", "tag_1": "floor", "tag_2": "DYNALINER", "application": "Automotive", "install_area": "Floor", "complexity": "Beginner" } }
+      },
+      "block_order": ["video_1", "video_2", "video_3", "video_4", "video_5", "video_6", "video_7", "video_8", "video_9"],
+      "settings": {
+        "scope": "default",
+        "category_heading": "Automotive",
+        "category_subheading": "Applications and solutions on a variety of vehicles",
+        "show_load_more": true,
+        "videos_per_page": 9,
+        "showing_label": "Showing",
+        "of_label": "of",
+        "videos_label": "Videos",
+        "load_more_label": "Load More Videos",
+        "color_scheme": "scheme-1"
+      }
+    },
+    "creator": {
+      "type": "video-tutorial-creator",
+      "blocks": {
+        "creator_video_1": { "type": "creator_video", "settings": { "title": "1967 Camaro Full Deadening Install", "duration": "12:45", "views": "284K views" } },
+        "creator_video_2": { "type": "creator_video", "settings": { "title": "Dynapad on Custom Truck Build", "duration": "8:22", "views": "156K views" } },
+        "creator_video_3": { "type": "creator_video", "settings": { "title": "Kindig x Dynamat: The Full Build", "duration": "22:10", "views": "501K views" } }
+      },
+      "block_order": ["creator_video_1", "creator_video_2", "creator_video_3"],
+      "settings": {
+        "eyebrow": "FEATURED YOUTUBE PARTNER",
+        "partner_badge": "✦ Official Partner",
+        "creator_handle": "@kindigitdesignofficial",
+        "creator_meta": "1.2M Subscribers  •  Custom Car Builds",
+        "creator_bio": "Kindig-it Design builds world-renowned custom cars — using Dynamat on every build for a quieter, premium ride.",
+        "channel_label": "Visit Channel →",
+        "see_all_label": "See All Videos on YouTube →",
+        "color_scheme": "scheme-1"
+      }
+    },
+    "cta": {
+      "type": "video-tutorial-cta",
+      "settings": {
+        "heading": "Can't find a video for your vehicle?",
+        "text": "Every car is different. Tell us your vehicle and install area, we'll build your custom kit with exact quantities.",
+        "button_label": "Build My Kit",
+        "color_scheme": "scheme-1"
+      }
+    },
+    "main": {
+      "type": "main-page",
+      "blocks": {
+        "heading": {
+          "type": "text",
+          "name": "Title",
+          "settings": {
+            "text": "<h1>{{ closest.page.title }}</h1>",
+            "width": "100%",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "h2",
+            "font": "var(--font-primary--family)",
+            "color": ""
+          }
+        },
+        "page-content": {
+          "type": "page-content",
+          "settings": {}
+        }
+      },
+      "block_order": ["heading", "page-content"],
+      "disabled": true,
+      "settings": {
+        "content_direction": "column",
+        "gap": 32,
+        "color_scheme": "",
+        "padding-block-start": 40,
+        "padding-block-end": 80
+      }
+    }
+  },
+  "order": ["hero", "filters", "grid", "creator", "cta", "main"]
+}

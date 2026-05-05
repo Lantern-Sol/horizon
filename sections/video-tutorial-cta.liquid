@@ -1,0 +1,94 @@
+{%- liquid
+  assign image = section.settings.image
+-%}
+
+{{ 'video-tutorial-cta.css' | asset_url | stylesheet_tag }}
+
+<section class="vt-cta color-{{ section.settings.color_scheme }}">
+  <div class="vt-cta__inner">
+    <div class="vt-cta__card">
+      <div class="vt-cta__content">
+        <div class="vt-cta__copy">
+          {%- if section.settings.heading != blank -%}
+            <h2 class="vt-cta__heading">{{ section.settings.heading | escape }}</h2>
+          {%- endif -%}
+          {%- if section.settings.text != blank -%}
+            <p class="vt-cta__text">{{ section.settings.text | escape }}</p>
+          {%- endif -%}
+        </div>
+
+        {%- if section.settings.button_label != blank -%}
+          <a href="{{ section.settings.button_link | default: '#' }}" class="vt-cta__button">
+            <span>{{ section.settings.button_label }}</span>
+            <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M4 10H16M16 10L11 5M16 10L11 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+        {%- endif -%}
+      </div>
+
+      {%- if image != blank -%}
+        <div class="vt-cta__media">
+          {{
+            image
+            | image_url: width: 1200
+            | image_tag:
+              widths: '600, 900, 1200',
+              sizes: '(min-width: 1100px) 596px, 90vw',
+              alt: image.alt,
+              loading: 'lazy',
+              class: 'vt-cta__image'
+          }}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Video tutorial CTA",
+  "class": "section-wrapper",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Can't find a video for your vehicle?"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Body text",
+      "default": "Every car is different. Tell us your vehicle and install area, we'll build your custom kit with exact quantities."
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Build My Kit"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Video tutorial CTA"
+    }
+  ]
+}
+{% endschema %}

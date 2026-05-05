@@ -1,0 +1,581 @@
+{%- liquid
+  assign application_filters = section.blocks | where: 'type', 'filter_application'
+  assign install_area_filters = section.blocks | where: 'type', 'filter_install_area'
+  assign complexity_filters = section.blocks | where: 'type', 'filter_complexity'
+-%}
+
+{{ 'video-tutorial-filters.css' | asset_url | stylesheet_tag }}
+
+<section
+  id="vt-filters-{{ section.id }}"
+  class="vt-filter-bar color-{{ section.settings.color_scheme }}"
+  data-vt-filters
+  data-vt-scope="{{ section.settings.scope | default: 'default' }}"
+>
+  {%- comment -%} Mobile-only header bar {%- endcomment -%}
+  <div class="vt-filter-bar__mobile">
+    <p class="vt-filter-bar__count" data-vt-count>
+      <span data-vt-count-num>0</span> {{ section.settings.count_label }}
+    </p>
+    <div class="vt-filter-bar__mobile-actions">
+      {%- if section.settings.show_sort -%}
+        <button type="button" class="vt-mobile-trigger" data-vt-open="sort">
+          <span>{{ section.settings.mobile_sort_label }}</span>
+          <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      {%- endif -%}
+      <button type="button" class="vt-mobile-trigger" data-vt-open="filters">
+        <span>{{ section.settings.mobile_filter_label }}</span>
+        <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M1 3H11M3 6H9M5 9H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  {%- comment -%} Desktop bar (also serves as the mobile drawer body) {%- endcomment -%}
+  <div class="vt-filter-bar__inner" data-vt-bar-inner>
+    <p class="vt-filter-bar__count vt-filter-bar__count--desktop" data-vt-count>
+      <span data-vt-count-num>0</span> {{ section.settings.count_label }}
+    </p>
+
+    {%- if application_filters.size > 0 -%}
+      <div class="vt-filter-group">
+        <p class="vt-filter-group__label">{{ section.settings.application_label }}</p>
+        <div class="vt-chips" role="group" aria-label="{{ section.settings.application_label }}">
+          {%- for block in application_filters -%}
+            <button
+              type="button"
+              class="vt-chip"
+              data-vt-filter="application"
+              data-vt-value="{{ block.settings.value | escape }}"
+              {{ block.shopify_attributes }}
+            >
+              {{ block.settings.label }}
+            </button>
+          {%- endfor -%}
+        </div>
+      </div>
+      <div class="vt-filter-divider" aria-hidden="true"></div>
+    {%- endif -%}
+
+    {%- if install_area_filters.size > 0 -%}
+      <div class="vt-filter-group">
+        <p class="vt-filter-group__label">{{ section.settings.install_area_label }}</p>
+        <div class="vt-chips" role="group" aria-label="{{ section.settings.install_area_label }}">
+          {%- for block in install_area_filters -%}
+            <button
+              type="button"
+              class="vt-chip"
+              data-vt-filter="install_area"
+              data-vt-value="{{ block.settings.value | escape }}"
+              {{ block.shopify_attributes }}
+            >
+              {{ block.settings.label }}
+            </button>
+          {%- endfor -%}
+        </div>
+      </div>
+      <div class="vt-filter-divider" aria-hidden="true"></div>
+    {%- endif -%}
+
+    {%- if complexity_filters.size > 0 -%}
+      <div class="vt-filter-group">
+        <p class="vt-filter-group__label">{{ section.settings.complexity_label }}</p>
+        <div class="vt-chips" role="group" aria-label="{{ section.settings.complexity_label }}">
+          {%- for block in complexity_filters -%}
+            <button
+              type="button"
+              class="vt-chip"
+              data-vt-filter="complexity"
+              data-vt-value="{{ block.settings.value | escape }}"
+              {{ block.shopify_attributes }}
+            >
+              {{ block.settings.label }}
+            </button>
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.show_sort -%}
+      <div class="vt-sort">
+        <label class="vt-sort__label" for="vt-sort-{{ section.id }}">{{ section.settings.sort_label }}</label>
+        <div class="vt-sort__pill">
+          <select id="vt-sort-{{ section.id }}" class="vt-sort__select" data-vt-sort>
+            <option value="featured">{{ section.settings.sort_featured }}</option>
+            <option value="newest">{{ section.settings.sort_newest }}</option>
+            <option value="oldest">{{ section.settings.sort_oldest }}</option>
+            <option value="duration-asc">{{ section.settings.sort_duration_asc }}</option>
+            <option value="duration-desc">{{ section.settings.sort_duration_desc }}</option>
+          </select>
+          <svg class="vt-sort__caret" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+    {%- endif -%}
+  </div>
+
+  {%- comment -%} Mobile filters drawer {%- endcomment -%}
+  <dialog class="vt-drawer" data-vt-drawer="filters" aria-label="{{ section.settings.mobile_filter_label }}">
+    <div class="vt-drawer__panel">
+      <header class="vt-drawer__header">
+        <h2 class="vt-drawer__title">{{ section.settings.mobile_filter_label }}</h2>
+        <button type="button" class="vt-drawer__close" data-vt-drawer-close aria-label="Close">
+          <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M2 2L14 14M14 2L2 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </header>
+      <div class="vt-drawer__body">
+        {%- if application_filters.size > 0 -%}
+          <div class="vt-filter-group">
+            <p class="vt-filter-group__label">{{ section.settings.application_label }}</p>
+            <div class="vt-chips">
+              {%- for block in application_filters -%}
+                <button
+                  type="button"
+                  class="vt-chip"
+                  data-vt-filter="application"
+                  data-vt-value="{{ block.settings.value | escape }}"
+                >
+                  {{ block.settings.label }}
+                </button>
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- endif -%}
+        {%- if install_area_filters.size > 0 -%}
+          <div class="vt-filter-group">
+            <p class="vt-filter-group__label">{{ section.settings.install_area_label }}</p>
+            <div class="vt-chips">
+              {%- for block in install_area_filters -%}
+                <button
+                  type="button"
+                  class="vt-chip"
+                  data-vt-filter="install_area"
+                  data-vt-value="{{ block.settings.value | escape }}"
+                >
+                  {{ block.settings.label }}
+                </button>
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- endif -%}
+        {%- if complexity_filters.size > 0 -%}
+          <div class="vt-filter-group">
+            <p class="vt-filter-group__label">{{ section.settings.complexity_label }}</p>
+            <div class="vt-chips">
+              {%- for block in complexity_filters -%}
+                <button
+                  type="button"
+                  class="vt-chip"
+                  data-vt-filter="complexity"
+                  data-vt-value="{{ block.settings.value | escape }}"
+                >
+                  {{ block.settings.label }}
+                </button>
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- endif -%}
+      </div>
+      <footer class="vt-drawer__footer">
+        <button type="button" class="vt-drawer__apply" data-vt-drawer-close>{{ section.settings.mobile_apply_label }}</button>
+      </footer>
+    </div>
+  </dialog>
+
+  {%- comment -%} Mobile sort drawer {%- endcomment -%}
+  {%- if section.settings.show_sort -%}
+    <dialog class="vt-drawer" data-vt-drawer="sort" aria-label="{{ section.settings.mobile_sort_label }}">
+      <div class="vt-drawer__panel">
+        <header class="vt-drawer__header">
+          <h2 class="vt-drawer__title">{{ section.settings.mobile_sort_label }}</h2>
+          <button type="button" class="vt-drawer__close" data-vt-drawer-close aria-label="Close">
+            <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M2 2L14 14M14 2L2 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </header>
+        <div class="vt-drawer__body">
+          <ul class="vt-sort-list" role="radiogroup" data-vt-sort-list>
+            <li><button type="button" class="vt-sort-list__item" data-vt-sort-mobile="featured">{{ section.settings.sort_featured }}</button></li>
+            <li><button type="button" class="vt-sort-list__item" data-vt-sort-mobile="newest">{{ section.settings.sort_newest }}</button></li>
+            <li><button type="button" class="vt-sort-list__item" data-vt-sort-mobile="oldest">{{ section.settings.sort_oldest }}</button></li>
+            <li><button type="button" class="vt-sort-list__item" data-vt-sort-mobile="duration-asc">{{ section.settings.sort_duration_asc }}</button></li>
+            <li><button type="button" class="vt-sort-list__item" data-vt-sort-mobile="duration-desc">{{ section.settings.sort_duration_desc }}</button></li>
+          </ul>
+        </div>
+      </div>
+    </dialog>
+  {%- endif -%}
+</section>
+
+<script>
+  (() => {
+    const root = document.getElementById('vt-filters-{{ section.id }}');
+    if (!root) return;
+
+    const scope = root.dataset.vtScope || 'default';
+    const filters = { application: null, install_area: null, complexity: null };
+    const sortSelect = root.querySelector('[data-vt-sort]');
+    let currentSort = sortSelect ? sortSelect.value : 'featured';
+
+    const broadcast = () => {
+      document.dispatchEvent(new CustomEvent('vt:filter-change', {
+        detail: { scope: scope, filters: { ...filters } }
+      }));
+    };
+
+    const broadcastSort = (sort) => {
+      currentSort = sort;
+      document.dispatchEvent(new CustomEvent('vt:sort-change', {
+        detail: { scope: scope, sort: sort }
+      }));
+    };
+
+    const updateChipStates = () => {
+      ['application', 'install_area', 'complexity'].forEach((group) => {
+        root.querySelectorAll('[data-vt-filter="' + group + '"]').forEach((chip) => {
+          const v = (chip.dataset.vtValue || '').toLowerCase();
+          const active = (filters[group] === null && v === 'all') || filters[group] === v;
+          chip.classList.toggle('vt-chip--active', active);
+        });
+      });
+    };
+
+    const updateSortStates = () => {
+      root.querySelectorAll('[data-vt-sort-mobile]').forEach((btn) => {
+        btn.classList.toggle('vt-sort-list__item--active', btn.dataset.vtSortMobile === currentSort);
+      });
+      if (sortSelect && sortSelect.value !== currentSort) sortSelect.value = currentSort;
+    };
+
+    const setFilter = (group, value) => {
+      const lower = (value || '').toLowerCase();
+      filters[group] = lower === 'all' || lower === '' ? null : lower;
+      updateChipStates();
+      broadcast();
+    };
+
+    updateChipStates();
+    updateSortStates();
+
+    root.addEventListener('click', (e) => {
+      const chip = e.target.closest('[data-vt-filter]');
+      if (chip && root.contains(chip)) {
+        const group = chip.dataset.vtFilter;
+        const value = (chip.dataset.vtValue || '').toLowerCase();
+        if (value === 'all') {
+          setFilter(group, 'all');
+        } else if (filters[group] === value) {
+          setFilter(group, 'all');
+        } else {
+          setFilter(group, value);
+        }
+        return;
+      }
+      const sortBtn = e.target.closest('[data-vt-sort-mobile]');
+      if (sortBtn && root.contains(sortBtn)) {
+        broadcastSort(sortBtn.dataset.vtSortMobile);
+        updateSortStates();
+        closeDrawer('sort');
+      }
+    });
+
+    if (sortSelect) {
+      sortSelect.addEventListener('change', () => {
+        broadcastSort(sortSelect.value);
+        updateSortStates();
+      });
+    }
+
+    // Mobile drawers
+    const openDrawer = (name) => {
+      const dlg = root.querySelector('[data-vt-drawer="' + name + '"]');
+      if (!dlg) return;
+      if (typeof dlg.showModal === 'function') dlg.showModal();
+      else dlg.setAttribute('open', '');
+      document.body.style.overflow = 'hidden';
+    };
+
+    const closeDrawer = (name) => {
+      const dlg = name
+        ? root.querySelector('[data-vt-drawer="' + name + '"]')
+        : root.querySelector('dialog[open]');
+      if (!dlg) return;
+      if (typeof dlg.close === 'function') dlg.close();
+      else dlg.removeAttribute('open');
+      document.body.style.overflow = '';
+    };
+
+    root.querySelectorAll('[data-vt-open]').forEach((btn) => {
+      btn.addEventListener('click', () => openDrawer(btn.dataset.vtOpen));
+    });
+
+    root.querySelectorAll('[data-vt-drawer]').forEach((dlg) => {
+      dlg.addEventListener('click', (e) => {
+        if (e.target === dlg) closeDrawer(dlg.dataset.vtDrawer);
+      });
+      dlg.addEventListener('cancel', (e) => {
+        e.preventDefault();
+        closeDrawer(dlg.dataset.vtDrawer);
+      });
+      dlg.querySelectorAll('[data-vt-drawer-close]').forEach((b) => {
+        b.addEventListener('click', () => closeDrawer(dlg.dataset.vtDrawer));
+      });
+    });
+
+    document.addEventListener('vt:request-filter', (e) => {
+      if (!e.detail || (e.detail.scope || 'default') !== scope) return;
+      const raw = (e.detail.value || '').trim();
+      const value = raw.toLowerCase();
+      if (!value) return;
+      // Find chip in the visible (desktop) bar first, fallback to drawer
+      const chips = root.querySelectorAll('[data-vt-filter]');
+      for (const chip of chips) {
+        if ((chip.dataset.vtValue || '').toLowerCase() === value) {
+          chip.click();
+          chip.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+          return;
+        }
+      }
+      // No matching chip → fall back to search
+      document.dispatchEvent(new CustomEvent('vt:request-search', {
+        detail: { scope: scope, query: raw }
+      }));
+    });
+
+    document.addEventListener('vt:count-change', (e) => {
+      if (!e.detail || (e.detail.scope || 'default') !== scope) return;
+      root.querySelectorAll('[data-vt-count-num]').forEach((el) => {
+        el.textContent = e.detail.count;
+      });
+    });
+
+    requestAnimationFrame(() => {
+      broadcast();
+      if (sortSelect) broadcastSort(sortSelect.value);
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Video tutorial filters",
+  "class": "section-wrapper",
+  "settings": [
+    {
+      "type": "text",
+      "id": "scope",
+      "label": "Scope ID",
+      "info": "Must match the Scope ID on the grid section that this filter controls.",
+      "default": "default"
+    },
+    {
+      "type": "text",
+      "id": "count_label",
+      "label": "Count label (after number)",
+      "default": "Products"
+    },
+    {
+      "type": "text",
+      "id": "application_label",
+      "label": "Application label",
+      "default": "APPLICATION"
+    },
+    {
+      "type": "text",
+      "id": "install_area_label",
+      "label": "Install area label",
+      "default": "INSTALL AREA"
+    },
+    {
+      "type": "text",
+      "id": "complexity_label",
+      "label": "Complexity label",
+      "default": "COMPLEXITY"
+    },
+    {
+      "type": "header",
+      "content": "Mobile"
+    },
+    {
+      "type": "text",
+      "id": "mobile_filter_label",
+      "label": "Mobile filter button label",
+      "default": "Filter By:"
+    },
+    {
+      "type": "text",
+      "id": "mobile_sort_label",
+      "label": "Mobile sort button label",
+      "default": "Sort By:"
+    },
+    {
+      "type": "text",
+      "id": "mobile_apply_label",
+      "label": "Mobile apply button label",
+      "default": "Show results"
+    },
+    {
+      "type": "header",
+      "content": "Sort"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sort",
+      "label": "Show sort dropdown",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "sort_label",
+      "label": "Sort label",
+      "default": "Sort:"
+    },
+    {
+      "type": "text",
+      "id": "sort_featured",
+      "label": "Featured option label",
+      "default": "Featured"
+    },
+    {
+      "type": "text",
+      "id": "sort_newest",
+      "label": "Newest option label",
+      "default": "Newest"
+    },
+    {
+      "type": "text",
+      "id": "sort_oldest",
+      "label": "Oldest option label",
+      "default": "Oldest"
+    },
+    {
+      "type": "text",
+      "id": "sort_duration_asc",
+      "label": "Shortest duration label",
+      "default": "Shortest"
+    },
+    {
+      "type": "text",
+      "id": "sort_duration_desc",
+      "label": "Longest duration label",
+      "default": "Longest"
+    },
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "filter_application",
+      "name": "Application filter chip",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Chip label",
+          "default": "All"
+        },
+        {
+          "type": "select",
+          "id": "value",
+          "label": "Filter value",
+          "info": "\"All\" shows every video. Other values must match a video's Application setting.",
+          "options": [
+            { "value": "All", "label": "All (show every video)" },
+            { "value": "Automotive", "label": "Automotive" },
+            { "value": "Home", "label": "Home" },
+            { "value": "Marine", "label": "Marine" }
+          ],
+          "default": "All"
+        }
+      ]
+    },
+    {
+      "type": "filter_install_area",
+      "name": "Install area filter chip",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Chip label",
+          "default": "All"
+        },
+        {
+          "type": "select",
+          "id": "value",
+          "label": "Filter value",
+          "options": [
+            { "value": "All", "label": "All (show every video)" },
+            { "value": "Doors", "label": "Doors" },
+            { "value": "Floor", "label": "Floor" },
+            { "value": "Roof", "label": "Roof" },
+            { "value": "Trunk", "label": "Trunk" },
+            { "value": "Hood", "label": "Hood" }
+          ],
+          "default": "All"
+        }
+      ]
+    },
+    {
+      "type": "filter_complexity",
+      "name": "Complexity filter chip",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Chip label",
+          "default": "All"
+        },
+        {
+          "type": "select",
+          "id": "value",
+          "label": "Filter value",
+          "options": [
+            { "value": "All", "label": "All (show every video)" },
+            { "value": "Beginner", "label": "Beginner" },
+            { "value": "Intermediate", "label": "Intermediate" },
+            { "value": "Pro", "label": "Pro" }
+          ],
+          "default": "All"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Video tutorial filters",
+      "blocks": [
+        { "type": "filter_application", "settings": { "label": "All", "value": "All" } },
+        { "type": "filter_application", "settings": { "label": "Automotive", "value": "Automotive" } },
+        { "type": "filter_application", "settings": { "label": "Home", "value": "Home" } },
+        { "type": "filter_application", "settings": { "label": "Marine", "value": "Marine" } },
+        { "type": "filter_install_area", "settings": { "label": "All", "value": "All" } },
+        { "type": "filter_install_area", "settings": { "label": "Doors", "value": "Doors" } },
+        { "type": "filter_install_area", "settings": { "label": "Floor", "value": "Floor" } },
+        { "type": "filter_install_area", "settings": { "label": "Roof", "value": "Roof" } },
+        { "type": "filter_install_area", "settings": { "label": "Trunk", "value": "Trunk" } },
+        { "type": "filter_install_area", "settings": { "label": "Hood", "value": "Hood" } },
+        { "type": "filter_complexity", "settings": { "label": "All", "value": "All" } },
+        { "type": "filter_complexity", "settings": { "label": "Beginner", "value": "Beginner" } },
+        { "type": "filter_complexity", "settings": { "label": "Intermediate", "value": "Intermediate" } },
+        { "type": "filter_complexity", "settings": { "label": "Pro", "value": "Pro" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
