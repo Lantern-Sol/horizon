@@ -12,42 +12,18 @@
   "name": "Header",
   "sections": {
     "header_announcements_9jGBFp": {
-      "type": "header-announcements",
-      "blocks": {
-        "announcement_BxgCk9": {
-          "type": "_announcement",
-          "settings": {
-            "image": "shopify://shop_images/wave-icn.svg",
-            "caption": "Hear noise you can't identify?",
-            "heading": "",
-            "text": "Record it with our new Al Noise Analyzer get instant Dynamat product recommendations!",
-            "button_label": "Try the AI Tool",
-            "link": "",
-            "font": "var(--font-subheading--family)",
-            "font_size": "1rem",
-            "line_height": "normal",
-            "custom_line_height": 1.5,
-            "weight": "600",
-            "letter_spacing": "normal",
-            "case": "none",
-            "use_mobile_settings": false,
-            "mobile_font_size": "1rem",
-            "mobile_custom_line_height": 1.5
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "announcement_BxgCk9"
-      ],
-      "name": "t:names.announcement_bar",
+      "type": "header-ai-announcement",
+      "blocks": {},
+      "block_order": [],
+      "name": "AI Announcement Bar",
       "settings": {
-        "speed": 5,
-        "section_width": "page-width",
-        "color_scheme": "scheme-1",
-        "divider_width": 1,
-        "padding-block-start": 15,
-        "padding-block-end": 15
+        "badge_text": "NEW AI TOOL",
+        "heading_text": "Hear noise you can't identify?",
+        "body_text": "Record it with our new AI Noise Analyzer get instant Dynamat product recommendations!",
+        "btn_label": "Try the AI Tool",
+        "btn_link": "",
+        "bar_bg": "#39b4e7",
+        "btn_bg": "#09274c"
       }
     },
     "header_section": {
