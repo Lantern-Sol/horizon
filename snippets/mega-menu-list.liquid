@@ -159,7 +159,8 @@
           {% endfor %}
         </ul>
       {% endif %}
-      {% if link.title== block_settings.menu_name %}
+      {{ parent_link.title }}
+      {% if parent_link.title == block_settings.menu_name %}
         <div class="best-seller-block">
           <span>{{block_settings.caption }}</span>
           <h2>{{block_settings.heading }}</h2>
