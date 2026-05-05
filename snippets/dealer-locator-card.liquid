@@ -1,0 +1,68 @@
+{%- doc -%}
+  Renders a single dealer card matching the Figma "Dealer Card Active" component.
+
+  @param {object} block - The dealer block
+
+  @example
+  {% render 'dealer-locator-card', block: block %}
+{%- enddoc -%}
+
+{%- liquid
+  assign dealer_name = block.settings.name
+  assign distance = block.settings.distance
+  assign category = block.settings.category
+  assign address = block.settings.address
+  assign directions_url = block.settings.directions_url
+  assign website_url = block.settings.website_url
+  assign category_value = block.settings.category | downcase | strip
+-%}
+
+<article
+  class="dl-card"
+  data-dl-card
+  data-category="{{ category_value | escape }}"
+  data-name="{{ dealer_name | downcase | escape }}"
+  data-address="{{ address | downcase | escape }}"
+  {% if block.settings.lat != blank and block.settings.lng != blank %}
+    data-lat="{{ block.settings.lat | escape }}"
+    data-lng="{{ block.settings.lng | escape }}"
+  {% endif %}
+  {{ block.shopify_attributes }}
+>
+  <header class="dl-card__header">
+    <h3 class="dl-card__name">{{ dealer_name }}</h3>
+    {%- if distance != blank -%}
+      <span class="dl-card__distance">{{ distance }}</span>
+    {%- endif -%}
+  </header>
+
+  <div class="dl-card__body">
+    {%- if category != blank -%}
+      <p class="dl-card__category">{{ category }}</p>
+    {%- endif -%}
+    {%- if address != blank -%}
+      <p class="dl-card__address">{{ address }}</p>
+    {%- endif -%}
+  </div>
+
+  <footer class="dl-card__footer">
+    {%- if directions_url != blank -%}
+      <a href="{{ directions_url }}" class="dl-card__link dl-card__link--primary" target="_blank" rel="noopener noreferrer">
+        <span>{{ 'sections.dealer_locator.get_directions' | t: default: 'Get Directions' }}</span>
+        <svg viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M2 8L8 2M8 2H3M8 2V7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    {%- endif -%}
+
+    {%- if directions_url != blank and website_url != blank -%}
+      <span class="dl-card__separator" aria-hidden="true">|</span>
+    {%- endif -%}
+
+    {%- if website_url != blank -%}
+      <a href="{{ website_url }}" class="dl-card__link" target="_blank" rel="noopener noreferrer">
+        {{ 'sections.dealer_locator.visit_website' | t: default: 'Visit Website' }}
+      </a>
+    {%- endif -%}
+  </footer>
+</article>
