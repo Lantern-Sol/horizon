@@ -205,6 +205,20 @@
       </li>  
     {% endif %}
   {% endif %}
+  {% if parent_link.title == block_settings.menu_name2 %}
+    {%  if block_settings.heading2 != blank %}
+      <li class="mega-menu__column mega-menu__column--span-1">
+        <div class="best-seller-block">
+          <span>{{block_settings.caption2 }}</span>
+          <h2>{{block_settings.heading2 }}</h2>
+          {{ block_settings.content2 }}
+          {%  if block_settings.button_label2 != blank %}
+            <a href="{{ block_settings.button_link2}}">{{ block_settings.button_label2 }}</a>
+          {% endif %}
+        </div>
+      </li>  
+    {% endif %}
+  {% endif %}
 </ul>
 
 {% liquid
