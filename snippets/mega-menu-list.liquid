@@ -205,19 +205,21 @@
       </li>  
     {% endif %}
   {% endif %}
-  {% if parent_link.title == block_settings.menu_name2 %}
-    {%  if block_settings.heading2 != blank %}
+  {% if parent_link.title == block_settings.menu_name3 %}
+    
       <li class="mega-menu__column mega-menu__column--span-1">
         <div class="best-seller-block">
-          <span>{{block_settings.caption2 }}</span>
-          <h2>{{block_settings.heading2 }}</h2>
-          {{ block_settings.content2 }}
-          {%  if block_settings.button_label2 != blank %}
-            <a href="{{ block_settings.button_link2}}">{{ block_settings.button_label2 }}</a>
+          <span>{{block_settings.caption3 }}</span>
+          {% if block_settings.heading3 != blank %}
+            <h2>{{block_settings.heading3 }}</h2>
+            {{ block_settings.content3 }}
+            {%  if block_settings.button_label3 != blank %}
+              <a href="{{ block_settings.button_link3}}">{{ block_settings.button_label3 }}</a>
+            {% endif %}
           {% endif %}
         </div>
       </li>  
-    {% endif %}
+    
   {% endif %}
 </ul>
 
