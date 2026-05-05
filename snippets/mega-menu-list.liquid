@@ -192,12 +192,17 @@
     %}
   {% endfor %}
   {% if parent_link.title == block_settings.menu_name %}
+    {%  if block_settings.heading != blank %}
         <div class="best-seller-block">
           <span>{{block_settings.caption }}</span>
           <h2>{{block_settings.heading }}</h2>
           {{ block_settings.content }}
+          {%  if block_settings.button_label != blank %}
+            <a href="{{ block_settings.button_link}}">{{ block_settings.button_label }}</a>
+          {% endif %}
         </div>
-      {% endif %}
+    {% endif %}
+  {% endif %}
 </ul>
 
 {% liquid
