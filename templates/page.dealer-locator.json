@@ -1,0 +1,88 @@
+{
+  "sections": {
+    "hero": {
+      "type": "dealer-locator-hero",
+      "blocks": {
+        "cat_audio": { "type": "category", "settings": { "label": "CAR AUDIO", "value": "Car Audio" } },
+        "cat_auto": { "type": "category", "settings": { "label": "AUTOMOTIVE RESTORATION", "value": "Automotive Restoration" } },
+        "cat_home": { "type": "category", "settings": { "label": "HOME/ARCHITECTURAL", "value": "Home/Architectural" } },
+        "cat_intl": { "type": "category", "settings": { "label": "INTERNATIONAL", "value": "International" } }
+      },
+      "block_order": ["cat_audio", "cat_auto", "cat_home", "cat_intl"],
+      "settings": {
+        "scope": "default",
+        "heading_line_1": "Find a Dynamat",
+        "heading_line_2": "Dealer Near You",
+        "subtitle": "3,000+ locations across the US and 30+ countries worldwide. Professional installation for ultimate acoustic performance.",
+        "zip_placeholder": "Enter Zip or City",
+        "application_label": "Application",
+        "radius_options": "All Applications,Car Audio,Automotive Restoration,Home/Architectural,International",
+        "submit_label": "Find Dealership",
+        "categories_label": "Dealer categories",
+        "color_scheme": "scheme-2"
+      }
+    },
+    "results": {
+      "type": "dealer-locator-results",
+      "blocks": {
+        "dealer_1": { "type": "dealer", "settings": { "name": "HD MEDIA SYSTEMS", "category": "Home/Architectural", "address": "1606 N Kings Highway Cape Girardeau, MO 63701 USA", "distance": "28.1 MI", "lat": "37.3059", "lng": "-89.5181" } },
+        "dealer_2": { "type": "dealer", "settings": { "name": "ACOUSTIC GARAGE", "category": "Home/Architectural", "address": "5440 N Cumberland Ave, Chicago, IL 60656 USA", "distance": "28.1 MI", "lat": "41.9836", "lng": "-87.7993" } },
+        "dealer_3": { "type": "dealer", "settings": { "name": "SOUND DEADENING PROS", "category": "Home/Architectural", "address": "120 W 4th St, Cincinnati, OH 45202 USA", "distance": "28.1 MI", "lat": "39.1014", "lng": "-84.5125" } },
+        "dealer_4": { "type": "dealer", "settings": { "name": "TRI-STATE CAR AUDIO", "category": "Car Audio", "address": "8200 Reading Rd, Cincinnati, OH 45237 USA", "distance": "32.5 MI", "lat": "39.1953", "lng": "-84.4569" } },
+        "dealer_5": { "type": "dealer", "settings": { "name": "RETRO RIDES RESTORATION", "category": "Automotive Restoration", "address": "404 Vine St, Hamilton, OH 45011 USA", "distance": "41.0 MI", "lat": "39.3995", "lng": "-84.5614" } },
+        "dealer_6": { "type": "dealer", "settings": { "name": "DYNAMAT EUROPE", "category": "International", "address": "1 High St, Birmingham B4 7SL, United Kingdom", "distance": "55.7 MI", "lat": "52.4814", "lng": "-1.8998" } }
+      },
+      "block_order": ["dealer_1", "dealer_2", "dealer_3", "dealer_4", "dealer_5", "dealer_6"],
+      "settings": {
+        "scope": "default",
+        "found_label": "Dealers Found",
+        "location_label": "Results near Hamilton, OH",
+        "location_prefix": "Results near",
+        "empty_label": "No dealers found. Try a different ZIP or category.",
+        "show_load_more": true,
+        "dealers_per_page": 3,
+        "load_more_label": "Load more stores",
+        "show_less_label": "Show less",
+        "map_title": "Dealer locations map",
+        "default_lat": "39.4067",
+        "default_lng": "-84.5613",
+        "default_zoom": 6,
+        "tile_url": "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        "tile_attribution": "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a>",
+        "color_scheme": "scheme-1"
+      }
+    },
+    "main": {
+      "type": "main-page",
+      "blocks": {
+        "heading": {
+          "type": "text",
+          "name": "Title",
+          "settings": {
+            "text": "<h1>{{ closest.page.title }}</h1>",
+            "width": "100%",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "h2",
+            "font": "var(--font-primary--family)",
+            "color": ""
+          }
+        },
+        "page-content": {
+          "type": "page-content",
+          "settings": {}
+        }
+      },
+      "block_order": ["heading", "page-content"],
+      "disabled": true,
+      "settings": {
+        "content_direction": "column",
+        "gap": 32,
+        "color_scheme": "",
+        "padding-block-start": 40,
+        "padding-block-end": 80
+      }
+    }
+  },
+  "order": ["hero", "results", "main"]
+}
