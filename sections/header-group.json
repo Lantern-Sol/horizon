@@ -13,8 +13,6 @@
   "sections": {
     "header_announcements_9jGBFp": {
       "type": "header-ai-announcement",
-      "blocks": {},
-      "block_order": [],
       "name": "AI Announcement Bar",
       "settings": {
         "badge_text": "NEW AI TOOL",
@@ -55,6 +53,10 @@
             "featured_products_aspect_ratio": "4 / 5",
             "featured_collections_aspect_ratio": "16 / 9",
             "image_border_radius": 0,
+            "menu_name": "Shop",
+            "heading": "BEST SELLER",
+            "content": "100% butyl. Original formula. $129.99",
+            "product": "12ft-black-dynadeck",
             "navigation_bar": false,
             "color_scheme_navigation_bar": "",
             "drawer_accordion": false,
