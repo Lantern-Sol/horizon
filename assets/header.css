@@ -36,6 +36,14 @@ header .mega-menu ul.mega-menu__list {
     border-radius: 8px;
     margin-top: 20px;
 }
+.best-seller-block span {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--sky-color);
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+	font-family:
+}
 .best-seller-block h2 {
     font-size: 12px;
     font-weight: 700;
