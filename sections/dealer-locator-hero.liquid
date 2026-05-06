@@ -172,6 +172,19 @@
       }));
     };
 
+    // Pre-fill from URL params (used by the "Find dealer locator" CTA banner
+    // elsewhere on the site to deep-link into a search).
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const initialQuery = (urlParams.get('dl_query') || '').trim();
+      const initialApp = (urlParams.get('dl_app') || '').trim();
+      if (initialQuery && zip) zip.value = initialQuery;
+      if (initialApp && sel) {
+        const match = Array.from(sel.options).find((o) => o.value.toLowerCase() === initialApp.toLowerCase());
+        if (match) sel.value = match.value;
+      }
+    } catch (e) { /* URLSearchParams unavailable */ }
+
     let lastBroadcastQuery = (zip && zip.value || '').trim();
     let inputTimer = null;
 
@@ -180,6 +193,11 @@
       lastBroadcastQuery = (zip && zip.value || '').trim();
       broadcast();
     };
+
+    // If we landed with prefilled values, kick off filtering once the page is ready.
+    if (lastBroadcastQuery !== '' || (sel && sel.value && sel.value !== 'All Applications')) {
+      requestAnimationFrame(() => broadcastNow());
+    }
 
     // Live filter as the user types — debounced so we don't spam geocoding.
     // Skips inputs likely to produce junk results (partial ZIPs, single

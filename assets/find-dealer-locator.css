@@ -1,0 +1,264 @@
+.find-dealer-wrapper {
+  --fd-cyan: #39b4e7;
+  --fd-dark: #0a325b;
+  --fd-tint: rgba(57, 180, 231, 0.12);
+  --fd-border: #f7fcff;
+}
+
+.find-dealer {
+  position: relative;
+  isolation: isolate;
+  background: var(--fd-cyan, #39b4e7);
+  color: #fff;
+  overflow: hidden;
+}
+
+.find-dealer__bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.18) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.18) 1px, transparent 1px);
+  background-size: 36px 36px;
+  background-position: 0 0;
+  -webkit-mask-image: linear-gradient(to right, transparent 5%, black 55%, black 100%);
+          mask-image: linear-gradient(to right, transparent 5%, black 55%, black 100%);
+  opacity: 0.7;
+}
+
+.find-dealer__inner {
+  position: relative;
+  z-index: 1;
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 32px;
+  align-items: center;
+  padding: 56px 80px;
+}
+
+.find-dealer__copy {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  min-width: 0;
+}
+
+.find-dealer__icon {
+  flex-shrink: 0;
+  width: 75px;
+  height: 75px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.find-dealer__icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.find-dealer__heading {
+  margin: 0;
+  font-family: var(--font-heading--family, 'Bw Modelica', sans-serif);
+  font-weight: 800;
+  font-size: clamp(28px, 3.4vw, 48px);
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.find-dealer__heading-line {
+  display: block;
+}
+
+.find-dealer__heading-line + .find-dealer__heading-line {
+  margin-top: 4px;
+}
+
+.find-dealer__form {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.find-dealer__field {
+  position: relative;
+  flex: 0 0 auto;
+  width: 200px;
+  height: 53px;
+  background: var(--fd-tint, rgba(57, 180, 231, 0.12));
+  border: 1px solid var(--fd-border, #f7fcff);
+  border-radius: 4px;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+}
+
+.find-dealer__field--select {
+  padding-right: 36px;
+}
+
+.find-dealer .find-dealer__input,
+.find-dealer .find-dealer__select {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  outline: none;
+  background: transparent;
+  background-color: transparent;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 21px;
+  color: var(--fd-dark, #0a325b);
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  box-shadow: none;
+}
+
+.find-dealer .find-dealer__input::placeholder {
+  color: var(--fd-dark, #0a325b);
+  opacity: 0.85;
+  font-weight: 500;
+}
+
+.find-dealer .find-dealer__input:-webkit-autofill,
+.find-dealer .find-dealer__input:-webkit-autofill:hover,
+.find-dealer .find-dealer__input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--fd-dark, #0a325b);
+  -webkit-box-shadow: 0 0 0 1000px rgba(57, 180, 231, 0.12) inset;
+  caret-color: var(--fd-dark, #0a325b);
+}
+
+.find-dealer__caret {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 6px;
+  pointer-events: none;
+  color: var(--fd-dark, #0a325b);
+}
+
+.find-dealer__caret svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.find-dealer__submit {
+  flex: 0 0 auto;
+  height: 53px;
+  padding: 0 24px;
+  background: var(--fd-dark, #0a325b);
+  color: #fff;
+  border: 0;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: filter 0.18s ease, transform 0.18s ease, background-color 0.18s ease;
+}
+
+.find-dealer__submit:hover {
+  filter: brightness(1.12);
+}
+
+.find-dealer__submit:active {
+  transform: translateY(1px);
+}
+
+.find-dealer__submit-arrow {
+  width: 19px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+.find-dealer__submit:focus-visible,
+.find-dealer .find-dealer__input:focus,
+.find-dealer .find-dealer__select:focus {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+@media (max-width: 1099px) {
+  .find-dealer__inner {
+    padding: 40px 32px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    text-align: center;
+  }
+
+  .find-dealer__copy {
+    justify-content: center;
+  }
+
+  .find-dealer__icon {
+    width: 56px;
+    height: 56px;
+  }
+
+  .find-dealer__form {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .find-dealer__field {
+    flex: 1 1 220px;
+    min-width: 180px;
+    max-width: 280px;
+  }
+}
+
+@media (max-width: 749px) {
+  .find-dealer__inner {
+    padding: 32px 20px;
+    gap: 20px;
+  }
+
+  .find-dealer__copy {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .find-dealer__icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .find-dealer__form {
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+  }
+
+  .find-dealer__field,
+  .find-dealer__submit {
+    width: 100%;
+    max-width: none;
+    flex: 0 0 auto;
+  }
+
+  .find-dealer__submit {
+    justify-content: center;
+  }
+
+  .find-dealer__bg {
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 60%);
+            mask-image: linear-gradient(to bottom, transparent 0%, black 60%);
+  }
+}
