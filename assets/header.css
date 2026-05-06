@@ -42,15 +42,12 @@ header .mega-menu ul.mega-menu__list {
     color: var(--sky-color);
     text-transform: uppercase;
     letter-spacing: 1.2px;
-	font-family:
 }
 .best-seller-block h2 {
     font-size: 20px;
     font-weight: 800;
     color:#fff;
     text-transform: uppercase;
-    letter-spacing: 1.2px;
-	font-family:
 }
 .best-seller-block p {
     font-weight: 600;
