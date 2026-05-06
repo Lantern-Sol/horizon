@@ -46,11 +46,17 @@ header .mega-menu ul.mega-menu__list {
 .best-seller-block h2 {
     font-size: 20px;
     font-weight: 800;
-    color:#fff;
+    color: #fff;
     text-transform: uppercase;
+    max-width: 150px;
+    margin: 10px 0;
+    display: block;
+    width: 100%;
+    white-space: normal;
 }
 .best-seller-block p {
     font-weight: 600;
+    margin:0;
     font-size: 13px;
     color: rgba(255,255,255,0.7);
 }
