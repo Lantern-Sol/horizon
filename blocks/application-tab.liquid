@@ -1,20 +1,20 @@
 <div class="app-card app-card--{{ block.settings.size }}">
-            <div class="card-bg" style="background-image:url({{ block.settings.image | image_url }})">
-              <div class="overlay"></div>
+    <div class="card-bg" style="background-image:url({{ block.settings.image | image_url }})">
+        <div class="overlay"></div>
 
-              <div class="tags">
-                {% if block.settings.tag1 != blank %}<span>{{ block.settings.tag1 }}</span>{% endif %}
-                {% if block.settings.tag2 != blank %}<span>{{ block.settings.tag2 }}</span>{% endif %}
-                {% if block.settings.tag3 != blank %}<span>{{ block.settings.tag3 }}</span>{% endif %}
-              </div>
+        <div class="tags">
+        {% if block.settings.tag1 != blank %}<span>{{ block.settings.tag1 }}</span>{% endif %}
+        {% if block.settings.tag2 != blank %}<span>{{ block.settings.tag2 }}</span>{% endif %}
+        {% if block.settings.tag3 != blank %}<span>{{ block.settings.tag3 }}</span>{% endif %}
+        </div>
 
-              <div class="content">
-                <h3>{{ block.settings.title }}</h3>
-                <p>{{ block.settings.desc }}</p>
-                <a href="{{ block.settings.link }}">Shop Now</a>
-              </div>
-            </div>
-          </div>
+        <div class="content">
+        <h3>{{ block.settings.title }}</h3>
+        <p>{{ block.settings.desc }}</p>
+        <a href="{{ block.settings.link }}">Shop Now</a>
+        </div>
+    </div>
+</div>
 {% schema %}
 {
   "name": "Application Tab",
