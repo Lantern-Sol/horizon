@@ -255,7 +255,7 @@
           "type": "text",
           "name": "t:names.heading",
           "settings": {
-            "text": "<h1>THIS ISN'T A MINOR TWEAK.IT'S THE DIFFERENCE.</h1>",
+            "text": "<h1>THIS ISN'T A MINOR TWEAK.IT'S THE <em>DIFFERENCE.</em></h1>",
             "mobile_text": "",
             "width": "fit-content",
             "max_width": "normal",
