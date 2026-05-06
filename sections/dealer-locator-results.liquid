@@ -4,6 +4,12 @@
   assign total = dealers.size
   assign tile_url = section.settings.tile_url | default: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
   assign tile_attribution = section.settings.tile_attribution | default: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  assign pin_logo = section.settings.pin_logo
+  assign pin_logo_url = ''
+  if pin_logo != blank
+    assign pin_logo_url = pin_logo | image_url: width: 160
+  endif
+  assign pin_label = section.settings.pin_label | default: 'Dynamat'
 -%}
 
 {{ 'dealer-locator-results.css' | asset_url | stylesheet_tag }}
@@ -25,6 +31,8 @@
   data-dl-default-location="{{ section.settings.default_location | escape }}"
   data-dl-location-prefix="{{ section.settings.location_prefix | escape }}"
   data-dl-empty-label="{{ section.settings.empty_label | escape }}"
+  data-dl-pin-url="{{ pin_logo_url | escape }}"
+  data-dl-pin-label="{{ pin_label | escape }}"
 >
   <span id="dl-results-anchor" class="dl-results__anchor" aria-hidden="true"></span>
 
@@ -129,6 +137,8 @@
     const emptyLabel = root.dataset.dlEmptyLabel || 'No dealers found.';
     const locationPrefix = root.dataset.dlLocationPrefix || 'Results near';
     const defaultLocation = root.dataset.dlDefaultLocation || '';
+    const pinUrl = (root.dataset.dlPinUrl || '').trim();
+    const pinLabel = (root.dataset.dlPinLabel || 'Dynamat').trim();
 
     const dealers = (() => {
       try {
@@ -209,6 +219,18 @@
       `;
     };
 
+    const normalizeZip = (z) => {
+      if (z == null) return '';
+      const s = String(z).trim();
+      const m = s.match(/^(\d{5})/);
+      return m ? m[1] : s;
+    };
+
+    const addDistance = (list) => list
+      .filter((d) => isFinite(d.lat) && isFinite(d.lng))
+      .map((d) => ({ ...d, _distance: distanceMiles(userPoint, { lat: d.lat, lng: d.lng }) }))
+      .sort((a, b) => a._distance - b._distance);
+
     const applyFilters = () => {
       // Step 1: filter by application (always applies)
       let result = dealers.filter((d) => {
@@ -219,30 +241,31 @@
       });
 
       // Step 2: handle search query
-      if (filterQuery) {
-        if (userPoint) {
-          // ZIP/city geocoded: keep all (filtered by application), sort by distance
-          result = result
-            .filter((d) => isFinite(d.lat) && isFinite(d.lng))
-            .map((d) => ({ ...d, _distance: distanceMiles(userPoint, { lat: d.lat, lng: d.lng }) }))
-            .sort((a, b) => a._distance - b._distance);
-        } else {
-          // Geocoding failed: fall back to plain text match against address fields
-          const q = filterQuery.toLowerCase();
-          result = result
-            .filter((d) => {
-              const hay = [d.name, d.address, d.address2, d.city, d.state, d.zipCode, d.country, d.applicationType]
-                .filter(Boolean).join(' ').toLowerCase();
-              return hay.includes(q);
-            })
-            .map((d) => ({ ...d, _distance: null }));
-        }
-      } else {
-        // No query: show all (or all matching application), no distance
-        result = result.map((d) => ({ ...d, _distance: null }));
+      if (!filterQuery) {
+        return result.map((d) => ({ ...d, _distance: null }));
       }
 
-      return result;
+      if (isUsZip(filterQuery)) {
+        // Strict ZIP match: dealers must have this exact ZIP (first 5 digits compared)
+        const targetZip = normalizeZip(filterQuery);
+        result = result.filter((d) => normalizeZip(d.zipCode) === targetZip);
+        return userPoint ? addDistance(result) : result.map((d) => ({ ...d, _distance: null }));
+      }
+
+      if (userPoint) {
+        // City / free-text that geocoded: sort all matches by distance
+        return addDistance(result);
+      }
+
+      // Geocoding failed: plain text match against address fields
+      const q = filterQuery.toLowerCase();
+      return result
+        .filter((d) => {
+          const hay = [d.name, d.address, d.address2, d.city, d.state, d.zipCode, d.country, d.applicationType]
+            .filter(Boolean).join(' ').toLowerCase();
+          return hay.includes(q);
+        })
+        .map((d) => ({ ...d, _distance: null }));
     };
 
     const render = () => {
@@ -386,12 +409,19 @@
       const points = [];
       filtered.forEach((d) => {
         if (!isFinite(d.lat) || !isFinite(d.lng)) return;
-        const icon = L.divIcon({
-          className: 'dl-pin',
-          html: '<span class="dl-pin__inner">Dynamat</span>',
-          iconSize: [76, 28],
-          iconAnchor: [38, 28]
-        });
+        const icon = pinUrl
+          ? L.divIcon({
+              className: 'dl-pin dl-pin--logo',
+              html: `<span class="dl-pin__logo" style="background-image:url('${escapeHtml(pinUrl)}')"></span>`,
+              iconSize: [44, 52],
+              iconAnchor: [22, 52]
+            })
+          : L.divIcon({
+              className: 'dl-pin',
+              html: `<span class="dl-pin__inner">${escapeHtml(pinLabel)}</span>`,
+              iconSize: [76, 28],
+              iconAnchor: [38, 28]
+            });
         const marker = L.marker([d.lat, d.lng], { icon, riseOnHover: true });
         marker.bindTooltip(tipHTML(d), { direction: 'top', offset: [0, -8], opacity: 1, className: 'dl-tip-wrap' });
         marker.bindPopup(tipHTML(d), { className: 'dl-tip-wrap', offset: [0, -4] });
@@ -447,7 +477,10 @@
     { "type": "text", "id": "default_lng", "label": "Default longitude", "default": "-84.5613" },
     { "type": "range", "id": "default_zoom", "label": "Default zoom", "min": 1, "max": 18, "step": 1, "default": 5 },
     { "type": "text", "id": "tile_url", "label": "Tile URL", "default": "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" },
-    { "type": "text", "id": "tile_attribution", "label": "Tile attribution" }
+    { "type": "text", "id": "tile_attribution", "label": "Tile attribution" },
+    { "type": "header", "content": "Map pin" },
+    { "type": "image_picker", "id": "pin_logo", "label": "Pin logo", "info": "Used as the icon for dealer markers. Square PNG with transparent background works best (≥160×160). Leave empty to use the text pin." },
+    { "type": "text", "id": "pin_label", "label": "Text pin label", "default": "Dynamat", "info": "Used when no logo is uploaded." }
   ],
   "presets": [{ "name": "Dealer locator results" }]
 }

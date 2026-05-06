@@ -172,10 +172,65 @@
       }));
     };
 
-    if (submit) submit.addEventListener('click', broadcast);
-    if (form) form.addEventListener('submit', broadcast);
-    if (zip) zip.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); broadcast(); } });
-    if (sel) sel.addEventListener('change', broadcast);
+    let lastBroadcastQuery = (zip && zip.value || '').trim();
+    let inputTimer = null;
+
+    const broadcastNow = () => {
+      clearTimeout(inputTimer);
+      lastBroadcastQuery = (zip && zip.value || '').trim();
+      broadcast();
+    };
+
+    // Live filter as the user types — debounced so we don't spam geocoding.
+    // Skips inputs likely to produce junk results (partial ZIPs, single
+    // letters) so the result list only changes when the input is meaningful.
+    const handleInput = () => {
+      const value = (zip && zip.value || '').trim();
+
+      // Empty -> reset immediately, no debounce.
+      if (value === '') {
+        clearTimeout(inputTimer);
+        if (lastBroadcastQuery !== '') {
+          lastBroadcastQuery = '';
+          broadcast();
+        }
+        return;
+      }
+
+      // Partial US ZIP (1-4 digits) -> wait until they finish typing it.
+      if (/^\d{1,4}$/.test(value)) {
+        clearTimeout(inputTimer);
+        return;
+      }
+
+      // Free-text shorter than 3 chars -> too short to be useful.
+      if (value.length < 3) {
+        clearTimeout(inputTimer);
+        return;
+      }
+
+      // Debounced broadcast.
+      clearTimeout(inputTimer);
+      inputTimer = setTimeout(() => {
+        if (value !== lastBroadcastQuery) {
+          lastBroadcastQuery = value;
+          broadcast();
+        }
+      }, 400);
+    };
+
+    if (submit) submit.addEventListener('click', broadcastNow);
+    if (form) form.addEventListener('submit', (e) => { e.preventDefault(); broadcastNow(); });
+    if (sel) sel.addEventListener('change', broadcastNow);
+
+    if (zip) {
+      zip.addEventListener('input', handleInput);
+      zip.addEventListener('search', handleInput);
+      zip.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); broadcastNow(); }
+        if (e.key === 'Escape') { zip.value = ''; handleInput(); }
+      });
+    }
 
     root.querySelectorAll('[data-dl-category]').forEach((btn) => {
       btn.addEventListener('click', () => {
