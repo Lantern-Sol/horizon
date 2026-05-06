@@ -155,6 +155,10 @@
       if (zoomInBtn) zoomInBtn.addEventListener('click', () => map.zoomIn());
       if (zoomOutBtn) zoomOutBtn.addEventListener('click', () => map.zoomOut());
       updateMap(cards.filter(matchesFilter));
+      // Recalculate after layout settles (sticky/grid sizing)
+      requestAnimationFrame(() => map.invalidateSize());
+      setTimeout(() => map.invalidateSize(), 250);
+      window.addEventListener('resize', () => map.invalidateSize());
     };
 
     const updateMap = (visibleCards) => {
