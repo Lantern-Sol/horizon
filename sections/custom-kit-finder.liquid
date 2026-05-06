@@ -1,0 +1,137 @@
+{%- liquid
+  assign vehicles = section.blocks | where: 'type', 'vehicle'
+  assign show_carousel_on_mobile = section.settings.mobile_carousel
+-%}
+
+{{ 'custom-kit-finder.css' | asset_url | stylesheet_tag }}
+
+<section
+  id="kit-finder-{{ section.id }}"
+  class="kit-finder{% if show_carousel_on_mobile %} kit-finder--mobile-carousel{% endif %}"
+  data-kit-finder
+>
+  <div class="kit-finder__inner">
+    <div class="kit-finder__top">
+      <div class="kit-finder__icon" aria-hidden="true">
+        {%- if section.settings.icon != blank -%}
+          {{ section.settings.icon | image_url: width: 80 | image_tag: alt: '', loading: 'lazy', widths: '40, 80' }}
+        {%- else -%}
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="6" cy="6" r="3" stroke="#39b4e7" stroke-width="1.7"/>
+            <circle cx="6" cy="18" r="3" stroke="#39b4e7" stroke-width="1.7"/>
+            <line x1="20" y1="4" x2="8.12" y2="15.88" stroke="#39b4e7" stroke-width="1.7" stroke-linecap="round"/>
+            <line x1="14.47" y1="14.48" x2="20" y2="20" stroke="#39b4e7" stroke-width="1.7" stroke-linecap="round"/>
+            <line x1="8.12" y1="8.12" x2="12" y2="12" stroke="#39b4e7" stroke-width="1.7" stroke-linecap="round"/>
+          </svg>
+        {%- endif -%}
+      </div>
+
+      {%- if section.settings.tag_label != blank -%}
+        <span class="kit-finder__tag">{{ section.settings.tag_label }}</span>
+      {%- endif -%}
+
+      {%- if section.settings.heading != blank -%}
+        <h2 class="kit-finder__heading">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+
+      {%- if section.settings.subtitle != blank -%}
+        <p class="kit-finder__subtitle">{{ section.settings.subtitle }}</p>
+      {%- endif -%}
+    </div>
+
+    {%- if vehicles.size > 0 -%}
+      <div class="kit-finder__cards">
+        {%- for block in vehicles -%}
+          {%- liquid
+            assign card_url = block.settings.url
+            assign card_tag = 'a'
+            if card_url == blank
+              assign card_tag = 'div'
+            endif
+          -%}
+          <{{ card_tag }}
+            class="kit-finder__card"
+            {% if card_tag == 'a' %}href="{{ card_url }}"{% endif %}
+            {{ block.shopify_attributes }}
+          >
+            {%- if block.settings.image != blank -%}
+              <div class="kit-finder__card-media" aria-hidden="true">
+                {{
+                  block.settings.image
+                  | image_url: width: 480
+                  | image_tag:
+                    widths: '240, 360, 480, 600, 720',
+                    sizes: '(max-width: 749px) 70vw, 220px',
+                    loading: 'lazy',
+                    alt: ''
+                }}
+                <div class="kit-finder__card-overlay"></div>
+              </div>
+            {%- endif -%}
+            <div class="kit-finder__card-body">
+              <h3 class="kit-finder__card-title">{{ block.settings.title }}</h3>
+              {%- if block.settings.subtitle != blank -%}
+                <p class="kit-finder__card-subtitle">{{ block.settings.subtitle }}</p>
+              {%- endif -%}
+            </div>
+          </{{ card_tag }}>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.button_label != blank -%}
+      <a
+        class="kit-finder__cta"
+        href="{{ section.settings.button_url | default: '#' }}"
+      >
+        <span>{{ section.settings.button_label }}</span>
+        <svg class="kit-finder__cta-arrow" viewBox="0 0 20 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M0 6h17.5m0 0L13 1.5M17.5 6L13 10.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Custom kit finder",
+  "class": "section-wrapper kit-finder-wrapper",
+  "settings": [
+    { "type": "image_picker", "id": "icon", "label": "Icon", "info": "Optional. Falls back to a built-in scissors icon if empty." },
+    { "type": "text", "id": "tag_label", "label": "Tag label", "default": "Custom Cut Kits" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Find the perfect kit for your vehicle." },
+    { "type": "textarea", "id": "subtitle", "label": "Subtitle", "default": "200+ vehicle-specific kits. Pre-cut to fit your exact make and model, no measuring, no cutting, no guesswork. Just peel, stick, and roll." },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Find My Custom Cut Kit" },
+    { "type": "url", "id": "button_url", "label": "Button URL" },
+    { "type": "header", "content": "Layout" },
+    { "type": "checkbox", "id": "mobile_carousel", "label": "Horizontal scroll cards on mobile", "default": true }
+  ],
+  "blocks": [
+    {
+      "type": "vehicle",
+      "name": "Vehicle",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Vehicle image" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Ford Mustang" },
+        { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "All Generations" },
+        { "type": "url", "id": "url", "label": "Link URL" }
+      ]
+    }
+  ],
+  "max_blocks": 12,
+  "presets": [
+    {
+      "name": "Custom kit finder",
+      "blocks": [
+        { "type": "vehicle", "settings": { "title": "Ford Mustang", "subtitle": "All Generations" } },
+        { "type": "vehicle", "settings": { "title": "GM Corvette", "subtitle": "C1 - C8" } },
+        { "type": "vehicle", "settings": { "title": "Tesla", "subtitle": "Model Y & 3" } },
+        { "type": "vehicle", "settings": { "title": "Jeep Wrangler", "subtitle": "JL, JLU, JK, TJ" } },
+        { "type": "vehicle", "settings": { "title": "Dodge", "subtitle": "Challenger & Charger" } },
+        { "type": "vehicle", "settings": { "title": "GM Camaro", "subtitle": "1967 - 2002" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
