@@ -38,5 +38,6 @@ header .mega-menu ul.mega-menu__list {
 .best-seller-block h2 {
     font-size: 12px;
     font-weight: 700;
+	color:var(--sky-color);
 	text-transform:uppercase;
 }
