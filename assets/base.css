@@ -5242,7 +5242,7 @@ product-recommendations:has([data-has-recommendations='false']) {
   --grey-text:#B0B8C3;
   --sky-color:#39B4E7;
 }
-body ,p , h1,h2,h3,h4,h5,h6{ font-family:var(--main-font);}
+body ,p , h1,h2,h3,h4,h5,h6, span, div{ font-family:var(--main-font);}
 
 header .menu-list li  span.menu-list__link-title{font-family:var(--main-font);font-weight:600;color:#fff;} 
 body .button{font-family:var(--main-font);  }
