@@ -173,7 +173,7 @@
       "name": "t:names.hero",
       "settings": {
         "media_type_1": "image",
-        "image_1": "shopify://shop_images/99759a6c605df365071102b0d181f54035a1a922.webp",
+        "image_1": "shopify://shop_images/banner-bg.webp",
         "parallax_effect": true,
         "hide_media_on_mobile": true,
         "media_type_2": "image",
