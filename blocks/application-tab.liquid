@@ -1,0 +1,55 @@
+<div class="app-card app-card--{{ block.settings.size }}">
+            <div class="card-bg" style="background-image:url({{ block.settings.image | image_url }})">
+              <div class="overlay"></div>
+
+              <div class="tags">
+                {% if block.settings.tag1 != blank %}<span>{{ block.settings.tag1 }}</span>{% endif %}
+                {% if block.settings.tag2 != blank %}<span>{{ block.settings.tag2 }}</span>{% endif %}
+                {% if block.settings.tag3 != blank %}<span>{{ block.settings.tag3 }}</span>{% endif %}
+              </div>
+
+              <div class="content">
+                <h3>{{ block.settings.title }}</h3>
+                <p>{{ block.settings.desc }}</p>
+                <a href="{{ block.settings.link }}">Shop Now</a>
+              </div>
+            </div>
+          </div>
+{% schema %}
+{
+  "name": "Application Tab",
+  "settings": [
+     { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "text", "id": "title", "label": "Title" },
+    { "type": "textarea", "id": "desc", "label": "Description" },
+    { "type": "url", "id": "link", "label": "Link" },
+
+    { "type": "text", "id": "tag1", "label": "Tag 1" },
+    { "type": "color", "id": "tag1_bg", "label": "Tag 1 Background", "default": "#00bcd4" },
+    { "type": "color", "id": "tag1_text", "label": "Tag 1 Text Color", "default": "#ffffff" },
+
+    { "type": "text", "id": "tag2", "label": "Tag 2" },
+    { "type": "color", "id": "tag2_bg", "label": "Tag 2 Background", "default": "#4caf50" },
+    { "type": "color", "id": "tag2_text", "label": "Tag 2 Text Color", "default": "#ffffff" },
+
+    { "type": "text", "id": "tag3", "label": "Tag 3" },
+    { "type": "color", "id": "tag3_bg", "label": "Tag 3 Background", "default": "#f44336" },
+    { "type": "color", "id": "tag3_text", "label": "Tag 3 Text Color", "default": "#ffffff" },
+
+    {
+      "type": "select",
+      "id": "size",
+      "label": "Card Size",
+      "options": [
+        { "value": "large", "label": "Large" },
+        { "value": "small", "label": "Small" }
+      ]
+    }
+   ],
+  "presets": [
+    {
+      "name": "Application Tab"
+    }
+  ]
+}
+{% endschema %}
