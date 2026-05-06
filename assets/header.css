@@ -7,6 +7,7 @@ header .menu-list__submenu-inner{
 }
 header .mega-menu__list .mega-menu__link span {
 	color: var(--grey-text);
+    font-family:var(--menu-child-font-family);
 }
 header .mega-menu__list .mega-menu__link.mega-menu__link--parent {
 	background: #39B4E71F;
