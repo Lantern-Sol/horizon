@@ -5,9 +5,13 @@
   if bg_desktop != blank or bg_mobile != blank
     assign has_bg_image = true
   endif
+  assign bg_color_alpha = section.settings.background_color_opacity | default: 100 | divided_by: 100.0
 -%}
 
-<div class="section-background footer__bg-wrap color-{{ section.settings.color_scheme }}">
+<div
+  class="section-background footer__bg-wrap color-{{ section.settings.color_scheme }}{% if has_bg_image %} footer__bg-wrap--has-image{% endif %}"
+  {% if has_bg_image %}style="--footer-bg-color-alpha: {{ bg_color_alpha }};"{% endif %}
+>
   {%- if has_bg_image -%}
     <picture class="footer__bg" aria-hidden="true">
       {%- if bg_mobile != blank -%}
@@ -30,6 +34,9 @@
         height="{{ primary_image.height }}"
       >
     </picture>
+    {%- if bg_color_alpha > 0 -%}
+      <div class="footer__bg-color" aria-hidden="true"></div>
+    {%- endif -%}
   {%- endif -%}
 </div>
 <div
@@ -82,6 +89,13 @@
     overflow: hidden;
   }
 
+  /* When a bg image is set, hide the color-scheme background-color on the
+     wrapper so the image is visible. The color is rendered separately as
+     .footer__bg-color whose opacity is controlled by the slider. */
+  .section-background.footer__bg-wrap--has-image {
+    background-color: transparent;
+  }
+
   .footer__bg {
     position: absolute;
     inset: 0;
@@ -95,6 +109,21 @@
     object-fit: cover;
     object-position: center;
     display: block;
+  }
+
+  .footer__bg-color {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-color: rgb(from var(--color-background) r g b / var(--footer-bg-color-alpha, 1));
+  }
+
+  /* Fallback for browsers without the relative-color rgb() syntax. */
+  @supports not (background-color: rgb(from red r g b / 1)) {
+    .footer__bg-color {
+      background-color: var(--color-background);
+      opacity: var(--footer-bg-color-alpha, 1);
+    }
   }
 
   .footer-content {
@@ -234,6 +263,17 @@
       "id": "background_image_mobile",
       "label": "Mobile background image",
       "info": "Falls back to the desktop image if left empty."
+    },
+    {
+      "type": "range",
+      "id": "background_color_opacity",
+      "label": "Background color opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100,
+      "info": "Fades the color-scheme background. 0% = image only, 100% = solid color."
     },
     {
       "type": "header",
