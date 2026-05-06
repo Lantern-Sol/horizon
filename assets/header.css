@@ -61,9 +61,15 @@ header .mega-menu ul.mega-menu__list {
     color: rgba(255,255,255,0.7);
 }
 .best-seller-block a {
-    background:var(--sky-color);
+    max-width: 150px;
+    background: var(--sky-color);
     border-radius: 4px;
     min-height: 56px;
     font-size: 15px;
     font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    margin-top: 10px;
 }
