@@ -1,4 +1,44 @@
-<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+{%- liquid
+  assign bg_desktop = section.settings.background_image
+  assign bg_mobile = section.settings.background_image_mobile
+  assign has_bg_image = false
+  if bg_desktop != blank or bg_mobile != blank
+    assign has_bg_image = true
+  endif
+  assign bg_color_alpha = section.settings.background_color_opacity | default: 100 | divided_by: 100.0
+-%}
+
+<div
+  class="section-background footer__bg-wrap color-{{ section.settings.color_scheme }}{% if has_bg_image %} footer__bg-wrap--has-image{% endif %}"
+  {% if has_bg_image %}style="--footer-bg-color-alpha: {{ bg_color_alpha }};"{% endif %}
+>
+  {%- if has_bg_image -%}
+    <picture class="footer__bg" aria-hidden="true">
+      {%- if bg_mobile != blank -%}
+        <source
+          media="(max-width: 749px)"
+          srcset="{{ bg_mobile | image_url: width: 414 }} 414w, {{ bg_mobile | image_url: width: 750 }} 750w, {{ bg_mobile | image_url: width: 1100 }} 1100w, {{ bg_mobile | image_url: width: 1500 }} 1500w"
+          sizes="100vw"
+        >
+      {%- endif -%}
+      {%- assign primary_image = bg_desktop | default: bg_mobile -%}
+      <img
+        class="footer__bg-image"
+        src="{{ primary_image | image_url: width: 1980 }}"
+        srcset="{{ primary_image | image_url: width: 750 }} 750w, {{ primary_image | image_url: width: 1100 }} 1100w, {{ primary_image | image_url: width: 1500 }} 1500w, {{ primary_image | image_url: width: 1980 }} 1980w, {{ primary_image | image_url: width: 2400 }} 2400w"
+        sizes="100vw"
+        alt=""
+        loading="lazy"
+        decoding="async"
+        width="{{ primary_image.width }}"
+        height="{{ primary_image.height }}"
+      >
+    </picture>
+    {%- if bg_color_alpha > 0 -%}
+      <div class="footer__bg-color" aria-hidden="true"></div>
+    {%- endif -%}
+  {%- endif -%}
+</div>
 <div
   class="section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }}"
 >
@@ -45,6 +85,47 @@
 </div>
 
 {% stylesheet %}
+  .footer__bg-wrap {
+    overflow: hidden;
+  }
+
+  /* When a bg image is set, hide the color-scheme background-color on the
+     wrapper so the image is visible. The color is rendered separately as
+     .footer__bg-color whose opacity is controlled by the slider. */
+  .section-background.footer__bg-wrap--has-image {
+    background-color: transparent;
+  }
+
+  .footer__bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    display: block;
+  }
+
+  .footer__bg-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
+  .footer__bg-color {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-color: rgb(from var(--color-background) r g b / var(--footer-bg-color-alpha, 1));
+  }
+
+  /* Fallback for browsers without the relative-color rgb() syntax. */
+  @supports not (background-color: rgb(from red r g b / 1)) {
+    .footer__bg-color {
+      background-color: var(--color-background);
+      opacity: var(--footer-bg-color-alpha, 1);
+    }
+  }
+
   .footer-content {
     contain: content;
     content-visibility: auto;
@@ -167,6 +248,32 @@
       "id": "color_scheme",
       "label": "t:settings.color_scheme",
       "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Background image"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Desktop background image"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image_mobile",
+      "label": "Mobile background image",
+      "info": "Falls back to the desktop image if left empty."
+    },
+    {
+      "type": "range",
+      "id": "background_color_opacity",
+      "label": "Background color opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100,
+      "info": "Fades the color-scheme background. 0% = image only, 100% = solid color."
     },
     {
       "type": "header",
