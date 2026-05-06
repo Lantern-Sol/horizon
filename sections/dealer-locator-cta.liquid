@@ -1,0 +1,46 @@
+{{ 'dealer-locator-cta.css' | asset_url | stylesheet_tag }}
+
+<section class="dl-cta" data-dl-cta>
+  <div class="dl-cta__inner">
+    <div class="dl-cta__copy">
+      <h2 class="dl-cta__title">{{ section.settings.heading }}</h2>
+      {%- if section.settings.subtitle != blank -%}
+        <p class="dl-cta__subtitle">{{ section.settings.subtitle }}</p>
+      {%- endif -%}
+    </div>
+
+    {%- form 'customer', class: 'dl-cta__form' -%}
+      <input type="hidden" name="contact[tags]" value="newsletter">
+      <div class="dl-cta__field">
+        <input
+          type="email"
+          class="dl-cta__input"
+          name="contact[email]"
+          required
+          placeholder="{{ section.settings.email_placeholder | escape }}"
+          aria-label="{{ section.settings.email_placeholder | escape }}"
+        >
+      </div>
+      <button type="submit" class="dl-cta__submit">{{ section.settings.submit_label }}</button>
+      {%- if form.posted_successfully? -%}
+        <p class="dl-cta__msg dl-cta__msg--ok">Thanks for subscribing!</p>
+      {%- elsif form.errors -%}
+        <p class="dl-cta__msg dl-cta__msg--err">{{ form.errors | default_errors }}</p>
+      {%- endif -%}
+    {%- endform -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Dealer locator CTA",
+  "class": "section-wrapper dealer-locator-cta-wrapper",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "GET DEALS & DEADENING TIPS" },
+    { "type": "textarea", "id": "subtitle", "label": "Subtitle", "default": "Install guides, new products, and exclusive offers direct to your inbox." },
+    { "type": "text", "id": "email_placeholder", "label": "Email placeholder", "default": "Enter your email" },
+    { "type": "text", "id": "submit_label", "label": "Submit label", "default": "Subscribe" }
+  ],
+  "presets": [{ "name": "Dealer locator CTA" }]
+}
+{% endschema %}
