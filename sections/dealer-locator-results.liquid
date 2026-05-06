@@ -210,25 +210,35 @@
     };
 
     const applyFilters = () => {
+      // Step 1: filter by application (always applies)
       let result = dealers.filter((d) => {
         if (filterApplication && filterApplication !== 'All Applications') {
           if ((d.applicationType || '').trim().toLowerCase() !== filterApplication.toLowerCase()) return false;
         }
-        if (filterQuery) {
-          const q = filterQuery.toLowerCase();
-          const hay = [d.name, d.address, d.address2, d.city, d.state, d.zipCode, d.country, d.applicationType]
-            .filter(Boolean).join(' ').toLowerCase();
-          if (!hay.includes(q) && !userPoint) return false;
-        }
         return true;
       });
 
-      if (userPoint) {
-        result = result
-          .filter((d) => isFinite(d.lat) && isFinite(d.lng))
-          .map((d) => ({ ...d, _distance: distanceMiles(userPoint, { lat: d.lat, lng: d.lng }) }))
-          .sort((a, b) => a._distance - b._distance);
+      // Step 2: handle search query
+      if (filterQuery) {
+        if (userPoint) {
+          // ZIP/city geocoded: keep all (filtered by application), sort by distance
+          result = result
+            .filter((d) => isFinite(d.lat) && isFinite(d.lng))
+            .map((d) => ({ ...d, _distance: distanceMiles(userPoint, { lat: d.lat, lng: d.lng }) }))
+            .sort((a, b) => a._distance - b._distance);
+        } else {
+          // Geocoding failed: fall back to plain text match against address fields
+          const q = filterQuery.toLowerCase();
+          result = result
+            .filter((d) => {
+              const hay = [d.name, d.address, d.address2, d.city, d.state, d.zipCode, d.country, d.applicationType]
+                .filter(Boolean).join(' ').toLowerCase();
+              return hay.includes(q);
+            })
+            .map((d) => ({ ...d, _distance: null }));
+        }
       } else {
+        // No query: show all (or all matching application), no distance
         result = result.map((d) => ({ ...d, _distance: null }));
       }
 
@@ -262,22 +272,36 @@
 
     // Geocoding via Nominatim (OpenStreetMap). Free; subject to fair-use rate limits.
     const geocodeCache = {};
+    const isUsZip = (q) => /^\d{5}(-\d{4})?$/.test(q.trim());
+    const isUkPostcode = (q) => /^[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}$/i.test(q.trim());
+
+    const buildGeocodeUrl = (q) => {
+      const base = 'https://nominatim.openstreetmap.org/search?format=json&addressdetails=0&limit=1';
+      if (isUsZip(q)) return `${base}&postalcode=${encodeURIComponent(q.trim())}&country=us`;
+      if (isUkPostcode(q)) return `${base}&postalcode=${encodeURIComponent(q.trim())}&country=gb`;
+      return `${base}&q=${encodeURIComponent(q)}`;
+    };
+
     const geocode = async (q) => {
       const key = q.trim().toLowerCase();
       if (!key) return null;
       if (geocodeCache[key]) return geocodeCache[key];
       try {
-        const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(q)}`;
-        const r = await fetch(url, { headers: { Accept: 'application/json' } });
-        if (!r.ok) return null;
+        const r = await fetch(buildGeocodeUrl(q), { headers: { Accept: 'application/json' } });
+        if (!r.ok) {
+          console.warn('[dealer locator] geocode HTTP', r.status, 'for', q);
+          return null;
+        }
         const data = await r.json();
         if (data && data.length) {
           const point = { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon), label: data[0].display_name };
           geocodeCache[key] = point;
+          console.log('[dealer locator] geocoded', q, '→', point.label, `(${point.lat.toFixed(4)}, ${point.lng.toFixed(4)})`);
           return point;
         }
+        console.warn('[dealer locator] no geocode result for', q);
       } catch (e) {
-        console.warn('Geocode failed:', e);
+        console.warn('[dealer locator] geocode failed:', e);
       }
       return null;
     };
