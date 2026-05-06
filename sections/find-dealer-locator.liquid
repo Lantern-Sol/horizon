@@ -1,0 +1,112 @@
+{%- liquid
+  assign target_url = section.settings.target_url | default: '/pages/dealer-locator'
+  assign app_options = section.settings.application_options | default: 'All Applications,Car Audio,Automotive Restoration,Home/Architectural,International'
+  assign options_list = app_options | split: ','
+-%}
+
+{{ 'find-dealer-locator.css' | asset_url | stylesheet_tag }}
+
+<section
+  id="find-dealer-{{ section.id }}"
+  class="find-dealer"
+  data-find-dealer
+>
+  <div class="find-dealer__bg" aria-hidden="true"></div>
+
+  <div class="find-dealer__inner">
+    <div class="find-dealer__copy">
+      <span class="find-dealer__icon" aria-hidden="true">
+        <svg viewBox="0 0 75 75" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M37.5 0C20.93 0 7.5 13.43 7.5 30c0 22.5 30 45 30 45s30-22.5 30-45C67.5 13.43 54.07 0 37.5 0zm0 41.25c-6.21 0-11.25-5.04-11.25-11.25S31.29 18.75 37.5 18.75 48.75 23.79 48.75 30 43.71 41.25 37.5 41.25z"
+            fill="#ffffff"
+          />
+        </svg>
+      </span>
+      <h2 class="find-dealer__heading">
+        <span class="find-dealer__heading-line">{{ section.settings.heading_line_1 }}</span>
+        <span class="find-dealer__heading-line">{{ section.settings.heading_line_2 }}</span>
+      </h2>
+    </div>
+
+    <form
+      class="find-dealer__form"
+      action="{{ target_url }}"
+      method="get"
+      role="search"
+      data-find-dealer-form
+    >
+      <div class="find-dealer__field">
+        <input
+          type="text"
+          name="dl_query"
+          class="find-dealer__input"
+          placeholder="{{ section.settings.zip_placeholder | escape }}"
+          aria-label="{{ section.settings.zip_placeholder | escape }}"
+          autocomplete="postal-code"
+        >
+      </div>
+
+      <div class="find-dealer__field find-dealer__field--select">
+        <select
+          name="dl_app"
+          class="find-dealer__select"
+          aria-label="{{ section.settings.application_placeholder | escape }}"
+        >
+          {%- for opt in options_list -%}
+            {%- assign trimmed = opt | strip -%}
+            <option value="{{ trimmed | escape }}">{{ trimmed }}</option>
+          {%- endfor -%}
+        </select>
+        <span class="find-dealer__caret" aria-hidden="true">
+          <svg viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M1 1l4 4 4-4"
+              stroke="#0a325b"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </span>
+      </div>
+
+      <button type="submit" class="find-dealer__submit">
+        <span class="find-dealer__submit-label">{{ section.settings.button_label }}</span>
+        <svg
+          class="find-dealer__submit-arrow"
+          viewBox="0 0 20 12"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+        >
+          <path
+            d="M0 6h17.5m0 0L13 1.5M17.5 6L13 10.5"
+            stroke="#ffffff"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </button>
+    </form>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Find dealer locator",
+  "class": "section-wrapper find-dealer-wrapper",
+  "settings": [
+    { "type": "paragraph", "content": "Banner CTA that submits ZIP + application to the dealer locator page. The destination's hero auto-fills from these query params." },
+    { "type": "text", "id": "heading_line_1", "label": "Heading line 1", "default": "Find a Dealer" },
+    { "type": "text", "id": "heading_line_2", "label": "Heading line 2", "default": "Located Near You!" },
+    { "type": "text", "id": "zip_placeholder", "label": "Zip placeholder", "default": "Zip Code" },
+    { "type": "text", "id": "application_placeholder", "label": "Application placeholder", "default": "Application Type" },
+    { "type": "text", "id": "application_options", "label": "Application options (comma-separated)", "default": "All Applications,Car Audio,Automotive Restoration,Home/Architectural,International" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Find Dealer" },
+    { "type": "url", "id": "target_url", "label": "Dealer locator page URL", "info": "Where the form submits. Defaults to /pages/dealer-locator." }
+  ],
+  "presets": [{ "name": "Find dealer locator" }]
+}
+{% endschema %}
