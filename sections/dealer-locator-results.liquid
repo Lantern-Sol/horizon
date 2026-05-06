@@ -32,21 +32,21 @@
     {%- for dealer in dealers -%}
       {%- unless forloop.first %},{% endunless -%}
       {
-        "id": {{ dealer.system.handle | default: forloop.index | json }},
-        "name": {{ dealer.name | json }},
-        "address": {{ dealer.address | json }},
-        "address2": {{ dealer['address-2'] | json }},
-        "city": {{ dealer.city | json }},
-        "state": {{ dealer.state | json }},
-        "zipCode": {{ dealer['zip-code'] | json }},
-        "country": {{ dealer.country | json }},
+        "id": {{ dealer.system.handle | default: forloop.index | append: '' | json }},
+        "name": {{ dealer.name | append: '' | json }},
+        "address": {{ dealer.address | append: '' | json }},
+        "address2": {{ dealer.address_2 | append: '' | json }},
+        "city": {{ dealer.city | append: '' | json }},
+        "state": {{ dealer.state | append: '' | json }},
+        "zipCode": {{ dealer.zip_code | append: '' | json }},
+        "country": {{ dealer.country | append: '' | json }},
         "lat": {% if dealer.lat != blank %}{{ dealer.lat }}{% else %}null{% endif %},
         "lng": {% if dealer.long != blank %}{{ dealer.long }}{% else %}null{% endif %},
-        "phone": {{ dealer.phone | json }},
-        "email": {{ dealer.email | json }},
-        "website": {{ dealer.website | json }},
-        "description": {{ dealer.description | json }},
-        "applicationType": {{ dealer['application-type'] | json }}
+        "phone": {{ dealer.phone | append: '' | json }},
+        "email": {{ dealer.email | append: '' | json }},
+        "website": {{ dealer.website | append: '' | json }},
+        "description": {{ dealer.description | append: '' | json }},
+        "applicationType": {{ dealer.application_type | append: '' | json }}
       }
     {%- endfor -%}
   ]</script>
