@@ -1,8 +1,18 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "hero": {
       "type": "video-tutorial-hero",
       "settings": {
+        "scope": "default",
         "heading": "Installation Guides & How-To Videos",
         "subheading": "A variety of shared installation videos from across the web's Dynamat universe.",
         "search_placeholder": "Search videos…",
@@ -13,20 +23,104 @@
     "filters": {
       "type": "video-tutorial-filters",
       "blocks": {
-        "filter_app_all": { "type": "filter_application", "settings": { "label": "All", "value": "All" } },
-        "filter_app_auto": { "type": "filter_application", "settings": { "label": "Automotive", "value": "Automotive" } },
-        "filter_app_home": { "type": "filter_application", "settings": { "label": "Home", "value": "Home" } },
-        "filter_app_marine": { "type": "filter_application", "settings": { "label": "Marine", "value": "Marine" } },
-        "filter_area_all": { "type": "filter_install_area", "settings": { "label": "All", "value": "All" } },
-        "filter_area_doors": { "type": "filter_install_area", "settings": { "label": "Doors", "value": "Doors" } },
-        "filter_area_floor": { "type": "filter_install_area", "settings": { "label": "Floor", "value": "Floor" } },
-        "filter_area_roof": { "type": "filter_install_area", "settings": { "label": "Roof", "value": "Roof" } },
-        "filter_area_trunk": { "type": "filter_install_area", "settings": { "label": "Trunk", "value": "Trunk" } },
-        "filter_area_hood": { "type": "filter_install_area", "settings": { "label": "Hood", "value": "Hood" } },
-        "filter_complex_all": { "type": "filter_complexity", "settings": { "label": "All", "value": "All" } },
-        "filter_complex_beg": { "type": "filter_complexity", "settings": { "label": "Beginner", "value": "Beginner" } },
-        "filter_complex_int": { "type": "filter_complexity", "settings": { "label": "Intermediate", "value": "Intermediate" } },
-        "filter_complex_pro": { "type": "filter_complexity", "settings": { "label": "Pro", "value": "Pro" } }
+        "filter_app_all": {
+          "type": "filter_application",
+          "settings": {
+            "label": "All",
+            "value": "All"
+          }
+        },
+        "filter_app_auto": {
+          "type": "filter_application",
+          "settings": {
+            "label": "Automotive",
+            "value": "Automotive"
+          }
+        },
+        "filter_app_home": {
+          "type": "filter_application",
+          "settings": {
+            "label": "Home",
+            "value": "Home"
+          }
+        },
+        "filter_app_marine": {
+          "type": "filter_application",
+          "settings": {
+            "label": "Marine",
+            "value": "Marine"
+          }
+        },
+        "filter_area_all": {
+          "type": "filter_install_area",
+          "settings": {
+            "label": "All",
+            "value": "All"
+          }
+        },
+        "filter_area_doors": {
+          "type": "filter_install_area",
+          "settings": {
+            "label": "Doors",
+            "value": "Doors"
+          }
+        },
+        "filter_area_floor": {
+          "type": "filter_install_area",
+          "settings": {
+            "label": "Floor",
+            "value": "Floor"
+          }
+        },
+        "filter_area_roof": {
+          "type": "filter_install_area",
+          "settings": {
+            "label": "Roof",
+            "value": "Roof"
+          }
+        },
+        "filter_area_trunk": {
+          "type": "filter_install_area",
+          "settings": {
+            "label": "Trunk",
+            "value": "Trunk"
+          }
+        },
+        "filter_area_hood": {
+          "type": "filter_install_area",
+          "settings": {
+            "label": "Hood",
+            "value": "Hood"
+          }
+        },
+        "filter_complex_all": {
+          "type": "filter_complexity",
+          "settings": {
+            "label": "All",
+            "value": "All"
+          }
+        },
+        "filter_complex_beg": {
+          "type": "filter_complexity",
+          "settings": {
+            "label": "Beginner",
+            "value": "Beginner"
+          }
+        },
+        "filter_complex_int": {
+          "type": "filter_complexity",
+          "settings": {
+            "label": "Intermediate",
+            "value": "Intermediate"
+          }
+        },
+        "filter_complex_pro": {
+          "type": "filter_complexity",
+          "settings": {
+            "label": "Pro",
+            "value": "Pro"
+          }
+        }
       },
       "block_order": [
         "filter_app_all",
@@ -50,6 +144,9 @@
         "application_label": "APPLICATION",
         "install_area_label": "INSTALL AREA",
         "complexity_label": "COMPLEXITY",
+        "mobile_filter_label": "Filter By:",
+        "mobile_sort_label": "Sort By:",
+        "mobile_apply_label": "Show results",
         "show_sort": true,
         "sort_label": "Sort:",
         "sort_featured": "Featured",
@@ -63,17 +160,99 @@
     "grid": {
       "type": "video-tutorial-grid",
       "blocks": {
-        "video_1": { "type": "video", "settings": { "title": "Total Floor Coverage", "duration": "6:15", "tag_1": "floor", "tag_2": "DYNALINER", "application": "Automotive", "install_area": "Floor", "complexity": "Beginner" } },
-        "video_2": { "type": "video", "settings": { "title": "Total Floor Coverage", "duration": "6:15", "tag_1": "floor", "tag_2": "DYNALINER", "application": "Automotive", "install_area": "Floor", "complexity": "Beginner" } },
-        "video_3": { "type": "video", "settings": { "title": "Total Floor Coverage", "duration": "6:15", "tag_1": "floor", "tag_2": "DYNALINER", "application": "Automotive", "install_area": "Floor", "complexity": "Beginner" } },
-        "video_4": { "type": "video", "settings": { "title": "Total Floor Coverage", "duration": "6:15", "tag_1": "floor", "tag_2": "DYNALINER", "application": "Automotive", "install_area": "Floor", "complexity": "Beginner" } },
-        "video_5": { "type": "video", "settings": { "title": "Total Floor Coverage", "duration": "6:15", "tag_1": "floor", "tag_2": "DYNALINER", "application": "Automotive", "install_area": "Floor", "complexity": "Beginner" } },
-        "video_6": { "type": "video", "settings": { "title": "Total Floor Coverage", "duration": "6:15", "tag_1": "floor", "tag_2": "DYNALINER", "application": "Automotive", "install_area": "Floor", "complexity": "Beginner" } },
-        "video_7": { "type": "video", "settings": { "title": "Total Floor Coverage", "duration": "6:15", "tag_1": "floor", "tag_2": "DYNALINER", "application": "Automotive", "install_area": "Floor", "complexity": "Beginner" } },
-        "video_8": { "type": "video", "settings": { "title": "Total Floor Coverage", "duration": "6:15", "tag_1": "floor", "tag_2": "DYNALINER", "application": "Automotive", "install_area": "Floor", "complexity": "Beginner" } },
-        "video_9": { "type": "video", "settings": { "title": "Total Floor Coverage", "duration": "6:15", "tag_1": "floor", "tag_2": "DYNALINER", "application": "Automotive", "install_area": "Floor", "complexity": "Beginner" } }
+        "video_1": {
+          "type": "video",
+          "settings": {
+            "thumbnail": "shopify://shop_images/9d5fada746552c15ca97556a0e86e51f32bb352f.png",
+            "title": "Total Floor Coverage",
+            "duration": "6:15",
+            "link": "",
+            "tag_1": "Floor",
+            "tag_2": "Dynaliner",
+            "application": "Home",
+            "install_area": "Floor",
+            "complexity": "Beginner"
+          }
+        },
+        "video_VKTpPP": {
+          "type": "video",
+          "settings": {
+            "thumbnail": "shopify://shop_images/9d5fada746552c15ca97556a0e86e51f32bb352f.png",
+            "title": "Total Floor Coverage",
+            "duration": "6:15",
+            "link": "",
+            "tag_1": "floor",
+            "tag_2": "DYNALINER",
+            "application": "Home",
+            "install_area": "Floor",
+            "complexity": "Beginner"
+          }
+        },
+        "video_ggBLFJ": {
+          "type": "video",
+          "settings": {
+            "thumbnail": "shopify://shop_images/9d5fada746552c15ca97556a0e86e51f32bb352f.png",
+            "title": "Total Floor Coverage",
+            "duration": "6:15",
+            "link": "",
+            "tag_1": "floor",
+            "tag_2": "DYNALINER",
+            "application": "Home",
+            "install_area": "Floor",
+            "complexity": "Beginner"
+          }
+        },
+        "video_yFPgtA": {
+          "type": "video",
+          "settings": {
+            "thumbnail": "shopify://shop_images/9d5fada746552c15ca97556a0e86e51f32bb352f.png",
+            "title": "Total Floor Coverage",
+            "duration": "6:15",
+            "link": "",
+            "tag_1": "floor",
+            "tag_2": "DYNALINER",
+            "application": "Home",
+            "install_area": "Floor",
+            "complexity": "Beginner"
+          }
+        },
+        "video_rTHqTw": {
+          "type": "video",
+          "settings": {
+            "thumbnail": "shopify://shop_images/9d5fada746552c15ca97556a0e86e51f32bb352f.png",
+            "title": "Total Floor Coverage",
+            "duration": "6:15",
+            "link": "",
+            "tag_1": "floor",
+            "tag_2": "DYNALINER",
+            "application": "Home",
+            "install_area": "Floor",
+            "complexity": "Beginner"
+          }
+        },
+        "video_Bi9wYW": {
+          "type": "video",
+          "settings": {
+            "thumbnail": "shopify://shop_images/9d5fada746552c15ca97556a0e86e51f32bb352f.png",
+            "title": "Total Floor Coverage",
+            "duration": "6:15",
+            "link": "",
+            "tag_1": "floor",
+            "tag_2": "DYNALINER",
+            "application": "Home",
+            "install_area": "Floor",
+            "complexity": "Beginner"
+          }
+        }
       },
-      "block_order": ["video_1", "video_2", "video_3", "video_4", "video_5", "video_6", "video_7", "video_8", "video_9"],
+      "block_order": [
+        "video_1",
+        "video_VKTpPP",
+        "video_ggBLFJ",
+        "video_yFPgtA",
+        "video_rTHqTw",
+        "video_Bi9wYW"
+      ],
       "settings": {
         "scope": "default",
         "category_heading": "Automotive",
@@ -90,19 +269,49 @@
     "creator": {
       "type": "video-tutorial-creator",
       "blocks": {
-        "creator_video_1": { "type": "creator_video", "settings": { "title": "1967 Camaro Full Deadening Install", "duration": "12:45", "views": "284K views" } },
-        "creator_video_2": { "type": "creator_video", "settings": { "title": "Dynapad on Custom Truck Build", "duration": "8:22", "views": "156K views" } },
-        "creator_video_3": { "type": "creator_video", "settings": { "title": "Kindig x Dynamat: The Full Build", "duration": "22:10", "views": "501K views" } }
+        "creator_video_1": {
+          "type": "creator_video",
+          "settings": {
+            "title": "1967 Camaro Full Deadening Install",
+            "duration": "12:45",
+            "views": "284K views",
+            "link": ""
+          }
+        },
+        "creator_video_2": {
+          "type": "creator_video",
+          "settings": {
+            "title": "Dynapad on Custom Truck Build",
+            "duration": "8:22",
+            "views": "156K views",
+            "link": ""
+          }
+        },
+        "creator_video_3": {
+          "type": "creator_video",
+          "settings": {
+            "title": "Kindig x Dynamat: The Full Build",
+            "duration": "22:10",
+            "views": "501K views",
+            "link": ""
+          }
+        }
       },
-      "block_order": ["creator_video_1", "creator_video_2", "creator_video_3"],
+      "block_order": [
+        "creator_video_1",
+        "creator_video_2",
+        "creator_video_3"
+      ],
       "settings": {
         "eyebrow": "FEATURED YOUTUBE PARTNER",
         "partner_badge": "✦ Official Partner",
         "creator_handle": "@kindigitdesignofficial",
         "creator_meta": "1.2M Subscribers  •  Custom Car Builds",
         "creator_bio": "Kindig-it Design builds world-renowned custom cars — using Dynamat on every build for a quieter, premium ride.",
+        "channel_link": "",
         "channel_label": "Visit Channel →",
         "see_all_label": "See All Videos on YouTube →",
+        "see_all_link": "",
         "color_scheme": "scheme-1"
       }
     },
@@ -112,6 +321,7 @@
         "heading": "Can't find a video for your vehicle?",
         "text": "Every car is different. Tell us your vehicle and install area, we'll build your custom kit with exact quantities.",
         "button_label": "Build My Kit",
+        "button_link": "",
         "color_scheme": "scheme-1"
       }
     },
@@ -123,20 +333,49 @@
           "name": "Title",
           "settings": {
             "text": "<h1>{{ closest.page.title }}</h1>",
+            "mobile_text": "",
             "width": "100%",
             "max_width": "normal",
             "alignment": "left",
             "type_preset": "h2",
             "font": "var(--font-primary--family)",
-            "color": ""
-          }
+            "enable_custom_font_weight": false,
+            "weight": "400",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "custom_line_height": 1.5,
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "",
+            "use_mobile_settings": false,
+            "mobile_font_size": "1rem",
+            "mobile_custom_line_height": 1.5,
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0,
+            "use_mobile_padding": false,
+            "padding-block-start-mobile": 0,
+            "padding-block-end-mobile": 0,
+            "padding-inline-start-mobile": 0,
+            "padding-inline-end-mobile": 0
+          },
+          "blocks": {}
         },
         "page-content": {
           "type": "page-content",
-          "settings": {}
+          "settings": {},
+          "blocks": {}
         }
       },
-      "block_order": ["heading", "page-content"],
+      "block_order": [
+        "heading",
+        "page-content"
+      ],
       "disabled": true,
       "settings": {
         "content_direction": "column",
@@ -147,5 +386,12 @@
       }
     }
   },
-  "order": ["hero", "filters", "grid", "creator", "cta", "main"]
+  "order": [
+    "hero",
+    "filters",
+    "grid",
+    "creator",
+    "cta",
+    "main"
+  ]
 }
