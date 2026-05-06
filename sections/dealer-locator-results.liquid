@@ -1,522 +1,228 @@
 {%- liquid
-  assign dealer_blocks = section.blocks | where: 'type', 'dealer'
-  assign total_count = dealer_blocks.size
-  assign per_page = section.settings.dealers_per_page
-  if per_page < 1
-    assign per_page = total_count
-  endif
-  assign visible_count = per_page
-  if visible_count > total_count
-    assign visible_count = total_count
-  endif
+  assign dealers = section.blocks | where: 'type', 'dealer'
+  assign per_page = section.settings.dealers_per_page | default: 3
+  assign tile_url = section.settings.tile_url | default: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+  assign tile_attribution = section.settings.tile_attribution | default: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 -%}
 
 {{ 'dealer-locator-results.css' | asset_url | stylesheet_tag }}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 
 <section
   id="dl-results-{{ section.id }}"
-  class="dl-results color-{{ section.settings.color_scheme }}"
+  class="dl-results"
   data-dl-results
   data-dl-scope="{{ section.settings.scope | default: 'default' }}"
-  data-per-page="{{ per_page }}"
+  data-dl-per-page="{{ per_page }}"
+  data-dl-default-lat="{{ section.settings.default_lat }}"
+  data-dl-default-lng="{{ section.settings.default_lng }}"
+  data-dl-default-zoom="{{ section.settings.default_zoom }}"
+  data-dl-tile-url="{{ tile_url | escape }}"
+  data-dl-tile-attribution="{{ tile_attribution | escape }}"
 >
+  <span id="dl-results-anchor" class="dl-results__anchor" aria-hidden="true"></span>
   <div class="dl-results__inner">
-    <div class="dl-results__list-panel">
-      <header class="dl-results__list-header">
-        <h2 class="dl-results__count">
-          <span class="dl-results__count-num" data-dl-count>{{ total_count }}</span>
-          {{ section.settings.found_label }}
-        </h2>
-        {%- if section.settings.location_label != blank -%}
-          <p class="dl-results__location" data-dl-location>{{ section.settings.location_label }}</p>
-        {%- endif -%}
-      </header>
+    <header class="dl-results__head">
+      <h2 class="dl-results__title">
+        <span class="dl-results__count" data-dl-count>{{ dealers.size }}</span>
+        {{ section.settings.found_label }}
+      </h2>
+      <p class="dl-results__location" data-dl-location>
+        {{ section.settings.location_prefix }} {{ section.settings.default_location }}
+      </p>
+    </header>
 
+    <div class="dl-results__grid">
       <div class="dl-results__list" data-dl-list>
-        {%- for block in dealer_blocks -%}
-          <div
-            class="dl-results__item"
-            data-dl-item
-            data-dl-index="{{ forloop.index }}"
-            {% if forloop.index > visible_count %}hidden{% endif %}
-          >
-            {%- render 'dealer-locator-card', block: block -%}
+        {%- if dealers.size > 0 -%}
+          {%- for block in dealers -%}
+            {%- render 'dealer-locator-card', card_block: block -%}
+          {%- endfor -%}
+        {%- else -%}
+          <p class="dl-results__empty">{{ section.settings.empty_label }}</p>
+        {%- endif -%}
+
+        <p class="dl-results__empty dl-results__empty--js" data-dl-empty hidden>{{ section.settings.empty_label }}</p>
+
+        {%- if section.settings.show_load_more and dealers.size > per_page -%}
+          <div class="dl-results__pagination">
+            <button
+              type="button"
+              class="dl-results__more"
+              data-dl-more
+              data-dl-more-label="{{ section.settings.load_more_label | escape }}"
+              data-dl-less-label="{{ section.settings.show_less_label | escape }}"
+            >
+              {{ section.settings.load_more_label }}
+            </button>
           </div>
-        {%- endfor -%}
-        <p class="dl-results__empty" data-dl-empty hidden>{{ section.settings.empty_label }}</p>
+        {%- endif -%}
       </div>
 
-      {%- if section.settings.show_load_more -%}
-        <div class="dl-results__pagination">
-          <button
-            type="button"
-            class="dl-results__load-more"
-            data-dl-load-more
-            data-label-more="{{ section.settings.load_more_label | escape }}"
-            data-label-less="{{ section.settings.show_less_label | escape }}"
-            aria-expanded="false"
-            {% if visible_count >= total_count %}hidden{% endif %}
-          >
-            {{ section.settings.load_more_label }}
+      <div class="dl-results__map-wrap">
+        <div
+          class="dl-results__map"
+          data-dl-map
+          role="region"
+          aria-label="Dealer locations map"
+        ></div>
+        <div class="dl-results__map-controls" aria-hidden="true">
+          <button type="button" class="dl-results__map-btn" data-dl-zoom-in aria-label="Zoom in">
+            <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M7 1V13M1 7H13" stroke="#09274C" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <button type="button" class="dl-results__map-btn" data-dl-zoom-out aria-label="Zoom out">
+            <svg viewBox="0 0 14 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 1H13" stroke="#09274C" stroke-width="2" stroke-linecap="round"/>
+            </svg>
           </button>
         </div>
-      {%- endif -%}
-    </div>
-
-    <div class="dl-results__map-panel">
-      <div
-        id="dl-map-{{ section.id }}"
-        class="dl-results__map"
-        data-dl-map
-        data-default-lat="{{ section.settings.default_lat | default: 39.4067 }}"
-        data-default-lng="{{ section.settings.default_lng | default: -84.5613 }}"
-        data-default-zoom="{{ section.settings.default_zoom | default: 7 }}"
-        data-tile-url="{{ section.settings.tile_url | default: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' | escape }}"
-        data-tile-attribution="{{ section.settings.tile_attribution | default: '&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a>' | escape }}"
-        role="application"
-        aria-label="{{ section.settings.map_title | escape }}"
-      ></div>
-
-      <div class="dl-results__map-controls">
-        <button type="button" class="dl-results__map-control" data-dl-zoom="in" aria-label="Zoom in">
-          <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path d="M7 1V13M1 7H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <button type="button" class="dl-results__map-control" data-dl-zoom="out" aria-label="Zoom out">
-          <svg viewBox="0 0 14 2" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path d="M1 1H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-        </button>
       </div>
     </div>
   </div>
 </section>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="" defer></script>
 <script>
   (() => {
     const root = document.getElementById('dl-results-{{ section.id }}');
     if (!root) return;
 
     const scope = root.dataset.dlScope || 'default';
-    const items = Array.from(root.querySelectorAll('[data-dl-item]'));
-    const perPage = parseInt(root.dataset.perPage, 10) || items.length;
-    const loadMoreBtn = root.querySelector('[data-dl-load-more]');
+    const perPage = parseInt(root.dataset.dlPerPage || '3', 10);
+    const list = root.querySelector('[data-dl-list]');
+    const cards = Array.from(root.querySelectorAll('[data-dl-card]'));
+    const moreBtn = root.querySelector('[data-dl-more]');
     const countEl = root.querySelector('[data-dl-count]');
     const emptyEl = root.querySelector('[data-dl-empty]');
-    const locationEl = root.querySelector('[data-dl-location]');
-
-    const filters = { category: null, application: null, query: '' };
-    let visible = perPage;
-    let expanded = false;
-
-    const matches = (item) => {
-      const card = item.querySelector('[data-dl-card]');
-      if (!card) return true;
-      if (filters.category) {
-        if ((card.dataset.category || '').toLowerCase() !== filters.category) return false;
-      }
-      if (filters.query) {
-        const haystack = (card.dataset.name || '') + ' ' + (card.dataset.address || '') + ' ' + (card.dataset.category || '');
-        if (!haystack.includes(filters.query)) return false;
-      }
-      return true;
-    };
-
-    const update = () => {
-      const filtered = items.filter(matches);
-      const total = filtered.length;
-      const cap = expanded ? total : Math.min(visible, total);
-      let shown = 0;
-
-      items.forEach((item) => { item.hidden = true; });
-      filtered.slice(0, cap).forEach((item) => {
-        item.hidden = false;
-        shown++;
-      });
-
-      if (countEl) countEl.textContent = total;
-      if (emptyEl) emptyEl.hidden = total > 0;
-      if (loadMoreBtn) {
-        loadMoreBtn.hidden = total <= perPage;
-        loadMoreBtn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-        const labelMore = loadMoreBtn.dataset.labelMore || 'Load more stores';
-        const labelLess = loadMoreBtn.dataset.labelLess || 'Show less';
-        loadMoreBtn.textContent = expanded ? labelLess : labelMore;
-      }
-    };
-
-    document.addEventListener('dl:filter-change', (e) => {
-      if (!e.detail || (e.detail.scope || 'default') !== scope) return;
-      filters.category = e.detail.category ? e.detail.category.toLowerCase() : null;
-      filters.application = e.detail.application || null;
-      filters.query = (e.detail.zip || '').trim().toLowerCase();
-      // Filter by application too (treats it as category-like)
-      if (!filters.category && filters.application && !/^all\s/i.test(filters.application)) {
-        filters.category = filters.application.toLowerCase();
-      }
-      visible = perPage;
-      expanded = false;
-      if (locationEl && filters.query) {
-        locationEl.textContent = '{{ section.settings.location_prefix }}' + ' ' + e.detail.zip;
-      }
-      update();
-    });
-
-    if (loadMoreBtn) {
-      loadMoreBtn.addEventListener('click', () => {
-        expanded = !expanded;
-        if (!expanded) {
-          visible = perPage;
-          loadMoreBtn.scrollIntoView({ block: 'center', behavior: 'smooth' });
-        }
-        update();
-      });
-    }
-
-    // Highlight card on hover
-    items.forEach((item) => {
-      const card = item.querySelector('[data-dl-card]');
-      if (!card) return;
-      card.addEventListener('mouseenter', () => card.classList.add('dl-card--active'));
-      card.addEventListener('mouseleave', () => card.classList.remove('dl-card--active'));
-    });
-
-    // Leaflet map
     const mapEl = root.querySelector('[data-dl-map]');
+    const zoomInBtn = root.querySelector('[data-dl-zoom-in]');
+    const zoomOutBtn = root.querySelector('[data-dl-zoom-out]');
+
+    let expanded = false;
+    let filterApplication = 'All Applications';
+    let filterQuery = '';
+
+    const matchesFilter = (card) => {
+      const cat = (card.dataset.dlCategory || '').trim();
+      const name = (card.dataset.dlName || '').toLowerCase();
+      const addr = (card.dataset.dlAddress || '').toLowerCase();
+      const okApp = filterApplication === 'All Applications' || cat === filterApplication;
+      const q = filterQuery.toLowerCase().trim();
+      const okQ = !q || name.includes(q) || addr.includes(q);
+      return okApp && okQ;
+    };
+
+    const render = () => {
+      const visible = cards.filter(matchesFilter);
+      cards.forEach(c => { c.hidden = true; c.classList.remove('is-visible'); });
+      const limit = expanded ? visible.length : Math.min(perPage, visible.length);
+      visible.slice(0, limit).forEach(c => { c.hidden = false; c.classList.add('is-visible'); });
+
+      if (countEl) countEl.textContent = visible.length;
+      if (emptyEl) emptyEl.hidden = visible.length !== 0;
+      if (moreBtn) {
+        moreBtn.hidden = visible.length <= perPage;
+        moreBtn.textContent = expanded
+          ? (moreBtn.dataset.dlLessLabel || 'Show less')
+          : (moreBtn.dataset.dlMoreLabel || 'Load more stores');
+      }
+      updateMap(visible);
+    };
+
+    if (moreBtn) moreBtn.addEventListener('click', () => { expanded = !expanded; render(); });
+
+    document.addEventListener('dl:search-change', (e) => {
+      if (!e.detail || (e.detail.scope || 'default') !== scope) return;
+      filterApplication = e.detail.application || 'All Applications';
+      filterQuery = e.detail.query || '';
+      expanded = false;
+      render();
+    });
+
     let map = null;
-    const markers = new Map();
+    let markersLayer = null;
 
     const initMap = () => {
       if (!mapEl || !window.L || map) return;
-      const defaultLat = parseFloat(mapEl.dataset.defaultLat) || 39.4067;
-      const defaultLng = parseFloat(mapEl.dataset.defaultLng) || -84.5613;
-      const defaultZoom = parseInt(mapEl.dataset.defaultZoom, 10) || 7;
-      const tileUrl = mapEl.dataset.tileUrl || 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-      const attribution = mapEl.dataset.tileAttribution || '';
-
-      map = L.map(mapEl, { zoomControl: false, scrollWheelZoom: false }).setView([defaultLat, defaultLng], defaultZoom);
-      L.tileLayer(tileUrl, { attribution: attribution, maxZoom: 19 }).addTo(map);
-
-      map.on('click', () => map.scrollWheelZoom.enable());
-
-      const bounds = [];
-      items.forEach((item) => {
-        const card = item.querySelector('[data-dl-card]');
-        if (!card) return;
-        const lat = parseFloat(card.dataset.lat);
-        const lng = parseFloat(card.dataset.lng);
-        if (Number.isNaN(lat) || Number.isNaN(lng)) return;
-
-        const marker = L.marker([lat, lng]).addTo(map);
-        const nameEl = card.querySelector('.dl-card__name');
-        const addrEl = card.querySelector('.dl-card__address');
-        const name = nameEl ? nameEl.textContent.trim() : '';
-        const address = addrEl ? addrEl.textContent.trim() : '';
-        marker.bindPopup('<strong>' + name + '</strong>' + (address ? '<br>' + address : ''));
-
-        marker.on('click', () => {
-          card.classList.add('dl-card--active');
-          card.scrollIntoView({ block: 'center', behavior: 'smooth' });
-          setTimeout(() => card.classList.remove('dl-card--active'), 1500);
-        });
-
-        card.addEventListener('mouseenter', () => marker.openPopup());
-        card.addEventListener('mouseleave', () => marker.closePopup());
-        card.addEventListener('click', (e) => {
-          if (e.target.closest('a')) return;
-          map.flyTo([lat, lng], Math.max(map.getZoom(), 12), { duration: 0.6 });
-          marker.openPopup();
-        });
-
-        markers.set(card, marker);
-        bounds.push([lat, lng]);
-      });
-
-      if (bounds.length > 1) {
-        map.fitBounds(bounds, { padding: [40, 40], maxZoom: 12 });
-      } else if (bounds.length === 1) {
-        map.setView(bounds[0], 12);
-      }
-
-      root.querySelectorAll('[data-dl-zoom]').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          if (btn.dataset.dlZoom === 'in') map.zoomIn();
-          else map.zoomOut();
-        });
-      });
-
-      // Force tile recalc — Leaflet often renders blank when initialized before the
-      // container has its final size (sticky/grid/lazy layouts). Repeat across a few
-      // animation frames to cover any late layout changes.
-      const refresh = () => map && map.invalidateSize();
-      requestAnimationFrame(refresh);
-      setTimeout(refresh, 100);
-      setTimeout(refresh, 500);
-
-      window.addEventListener('resize', refresh);
-      if (window.ResizeObserver) {
-        new ResizeObserver(refresh).observe(mapEl);
-      }
+      const lat = parseFloat(root.dataset.dlDefaultLat || '39.4');
+      const lng = parseFloat(root.dataset.dlDefaultLng || '-84.5');
+      const zoom = parseInt(root.dataset.dlDefaultZoom || '6', 10);
+      map = L.map(mapEl, { zoomControl: false, scrollWheelZoom: false }).setView([lat, lng], zoom);
+      L.tileLayer(root.dataset.dlTileUrl, { attribution: root.dataset.dlTileAttribution, maxZoom: 19 }).addTo(map);
+      markersLayer = L.layerGroup().addTo(map);
+      if (zoomInBtn) zoomInBtn.addEventListener('click', () => map.zoomIn());
+      if (zoomOutBtn) zoomOutBtn.addEventListener('click', () => map.zoomOut());
+      updateMap(cards.filter(matchesFilter));
     };
 
-    const LEAFLET_CSS = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-    const LEAFLET_JS = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-
-    const ensureLeaflet = () => new Promise((resolve, reject) => {
-      if (window.L) return resolve();
-
-      // Inject CSS once
-      if (!document.querySelector('link[data-dl-leaflet-css]')) {
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = LEAFLET_CSS;
-        link.dataset.dlLeafletCss = 'true';
-        document.head.appendChild(link);
-      }
-
-      // Reuse an in-flight script if another section already triggered it
-      const existing = document.querySelector('script[data-dl-leaflet-js]');
-      if (existing) {
-        existing.addEventListener('load', () => resolve(), { once: true });
-        existing.addEventListener('error', () => reject(new Error('Leaflet failed to load')), { once: true });
-        if (window.L) resolve();
-        return;
-      }
-
-      const script = document.createElement('script');
-      script.src = LEAFLET_JS;
-      script.async = true;
-      script.dataset.dlLeafletJs = 'true';
-      script.onload = () => resolve();
-      script.onerror = () => reject(new Error('Leaflet failed to load from ' + LEAFLET_JS));
-      document.head.appendChild(script);
-    });
-
-    const start = () => {
-      ensureLeaflet()
-        .then(() => initMap())
-        .catch((err) => {
-          if (window.console) console.error('[Dealer locator]', err);
-          if (mapEl) {
-            mapEl.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;padding:24px;color:#09274c;text-align:center;font-size:14px;">Map could not be loaded. Check the browser console.</div>';
-          }
+    const updateMap = (visibleCards) => {
+      if (!map || !markersLayer) return;
+      markersLayer.clearLayers();
+      const points = [];
+      visibleCards.forEach(card => {
+        const lat = parseFloat(card.dataset.dlLat);
+        const lng = parseFloat(card.dataset.dlLng);
+        if (!isFinite(lat) || !isFinite(lng)) return;
+        const icon = L.divIcon({
+          className: 'dl-pin',
+          html: '<span class="dl-pin__inner">Dynamat</span>',
+          iconSize: [76, 28],
+          iconAnchor: [38, 28]
         });
+        const marker = L.marker([lat, lng], { icon }).addTo(markersLayer);
+        marker.bindPopup('<strong>' + (card.dataset.dlName || '') + '</strong><br>' + (card.dataset.dlAddress || ''));
+        points.push([lat, lng]);
+      });
+      if (points.length > 1) map.fitBounds(points, { padding: [40, 40] });
+      else if (points.length === 1) map.setView(points[0], 9);
     };
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', start, { once: true });
-    } else {
-      start();
-    }
+    const ready = () => { if (window.L) initMap(); else setTimeout(ready, 80); };
+    ready();
 
-    update();
+    render();
   })();
 </script>
 
 {% schema %}
 {
   "name": "Dealer locator results",
-  "class": "section-wrapper",
+  "class": "section-wrapper dealer-locator-results-wrapper",
   "settings": [
-    {
-      "type": "text",
-      "id": "scope",
-      "label": "Scope ID",
-      "info": "Must match the Scope ID on the dealer locator hero section.",
-      "default": "default"
-    },
-    {
-      "type": "header",
-      "content": "List header"
-    },
-    {
-      "type": "text",
-      "id": "found_label",
-      "label": "\"Dealers Found\" label",
-      "default": "Dealers Found"
-    },
-    {
-      "type": "text",
-      "id": "location_label",
-      "label": "Default location label",
-      "default": "Results near Hamilton, OH"
-    },
-    {
-      "type": "text",
-      "id": "location_prefix",
-      "label": "Location prefix when searching",
-      "default": "Results near"
-    },
-    {
-      "type": "text",
-      "id": "empty_label",
-      "label": "Empty state label",
-      "default": "No dealers found. Try a different ZIP or category."
-    },
-    {
-      "type": "header",
-      "content": "Pagination"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_load_more",
-      "label": "Show \"Load more\" button",
-      "default": true
-    },
-    {
-      "type": "range",
-      "id": "dealers_per_page",
-      "label": "Dealers per page",
-      "min": 1,
-      "max": 30,
-      "step": 1,
-      "default": 3
-    },
-    {
-      "type": "text",
-      "id": "load_more_label",
-      "label": "Load more label",
-      "default": "Load more stores"
-    },
-    {
-      "type": "text",
-      "id": "show_less_label",
-      "label": "Show less label",
-      "default": "Show less"
-    },
-    {
-      "type": "header",
-      "content": "Map (Leaflet)"
-    },
-    {
-      "type": "text",
-      "id": "map_title",
-      "label": "Map accessible label",
-      "default": "Dealer locations map"
-    },
-    {
-      "type": "text",
-      "id": "default_lat",
-      "label": "Default latitude",
-      "info": "Center of the map when no dealers have coordinates.",
-      "default": "39.4067"
-    },
-    {
-      "type": "text",
-      "id": "default_lng",
-      "label": "Default longitude",
-      "default": "-84.5613"
-    },
-    {
-      "type": "range",
-      "id": "default_zoom",
-      "label": "Default zoom",
-      "min": 1,
-      "max": 18,
-      "step": 1,
-      "default": 7
-    },
-    {
-      "type": "text",
-      "id": "tile_url",
-      "label": "Tile URL template",
-      "info": "Leaflet tile URL. Defaults to OpenStreetMap.",
-      "default": "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-    },
-    {
-      "type": "text",
-      "id": "tile_attribution",
-      "label": "Tile attribution",
-      "default": "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a>"
-    },
-    {
-      "type": "header",
-      "content": "Appearance"
-    },
-    {
-      "type": "color_scheme",
-      "id": "color_scheme",
-      "label": "Color scheme",
-      "default": "scheme-1"
-    }
+    { "type": "text", "id": "scope", "label": "Scope ID", "default": "default" },
+    { "type": "text", "id": "found_label", "label": "Found label", "default": "Dealers Found" },
+    { "type": "text", "id": "location_prefix", "label": "Location prefix", "default": "Results near" },
+    { "type": "text", "id": "default_location", "label": "Default location", "default": "Hamilton, OH" },
+    { "type": "text", "id": "empty_label", "label": "Empty label", "default": "No dealers found." },
+    { "type": "checkbox", "id": "show_load_more", "label": "Show load more", "default": true },
+    { "type": "range", "id": "dealers_per_page", "label": "Dealers per page", "min": 1, "max": 12, "step": 1, "default": 3 },
+    { "type": "text", "id": "load_more_label", "label": "Load more label", "default": "Load more stores" },
+    { "type": "text", "id": "show_less_label", "label": "Show less label", "default": "Show less" },
+    { "type": "header", "content": "Map" },
+    { "type": "text", "id": "default_lat", "label": "Default latitude", "default": "39.4067" },
+    { "type": "text", "id": "default_lng", "label": "Default longitude", "default": "-84.5613" },
+    { "type": "range", "id": "default_zoom", "label": "Default zoom", "min": 1, "max": 18, "step": 1, "default": 6 },
+    { "type": "text", "id": "tile_url", "label": "Tile URL", "default": "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" },
+    { "type": "text", "id": "tile_attribution", "label": "Tile attribution" }
   ],
   "blocks": [
     {
       "type": "dealer",
       "name": "Dealer",
       "settings": [
-        {
-          "type": "text",
-          "id": "name",
-          "label": "Dealer name",
-          "default": "HD MEDIA SYSTEMS"
-        },
-        {
-          "type": "select",
-          "id": "category",
-          "label": "Category",
-          "options": [
-            { "value": "Car Audio", "label": "Car Audio" },
-            { "value": "Automotive Restoration", "label": "Automotive Restoration" },
-            { "value": "Home/Architectural", "label": "Home/Architectural" },
-            { "value": "International", "label": "International" }
-          ],
-          "default": "Home/Architectural"
-        },
-        {
-          "type": "text",
-          "id": "address",
-          "label": "Address",
-          "default": "1606 N Kings Highway Cape Girardeau, MO 63701 USA"
-        },
-        {
-          "type": "text",
-          "id": "distance",
-          "label": "Distance label",
-          "info": "e.g. \"28.1 MI\" — typically calculated, but can be hardcoded.",
-          "default": "28.1 MI"
-        },
-        {
-          "type": "url",
-          "id": "directions_url",
-          "label": "Get Directions URL",
-          "info": "e.g. https://maps.google.com/?q=…"
-        },
-        {
-          "type": "url",
-          "id": "website_url",
-          "label": "Website URL"
-        },
-        {
-          "type": "header",
-          "content": "Map coordinates (optional)"
-        },
-        {
-          "type": "text",
-          "id": "lat",
-          "label": "Latitude"
-        },
-        {
-          "type": "text",
-          "id": "lng",
-          "label": "Longitude"
-        }
+        { "type": "text", "id": "name", "label": "Name", "default": "HD MEDIA SYSTEMS" },
+        { "type": "text", "id": "category", "label": "Category", "default": "Home/Architectural" },
+        { "type": "textarea", "id": "address", "label": "Address", "default": "1606 N Kings Highway Cape Girardeau, MO 63701 USA" },
+        { "type": "text", "id": "distance", "label": "Distance label", "default": "28.1 MI" },
+        { "type": "text", "id": "lat", "label": "Latitude" },
+        { "type": "text", "id": "lng", "label": "Longitude" },
+        { "type": "url", "id": "directions_url", "label": "Directions URL" },
+        { "type": "url", "id": "website_url", "label": "Website URL" }
       ]
     }
   ],
-  "presets": [
-    {
-      "name": "Dealer locator results",
-      "blocks": [
-        { "type": "dealer" },
-        { "type": "dealer" },
-        { "type": "dealer" },
-        { "type": "dealer" },
-        { "type": "dealer" },
-        { "type": "dealer" }
-      ]
-    }
-  ]
+  "presets": [{ "name": "Dealer locator results" }]
 }
 {% endschema %}
