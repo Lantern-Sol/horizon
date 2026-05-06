@@ -2282,6 +2282,19 @@
         "padding-block-start-mobile": 0,
         "padding-block-end-mobile": 0
       }
+    },
+    "find_dealer_locator_43PpqB": {
+      "type": "find-dealer-locator",
+      "name": "Find dealer locator",
+      "settings": {
+        "heading_line_1": "Find a Dealer",
+        "heading_line_2": "Located Near You!",
+        "zip_placeholder": "Zip Code",
+        "application_placeholder": "Application Type",
+        "application_options": "All Applications,Car Audio,Automotive Restoration,Home/Architectural,International",
+        "button_label": "Find Dealer",
+        "target_url": ""
+      }
     }
   },
   "order": [
@@ -2290,6 +2303,7 @@
     "section_8RzkLe",
     "product_list_fa6P9H",
     "section_VWFD9A",
-    "section_bGxbfN"
+    "section_bGxbfN",
+    "find_dealer_locator_43PpqB"
   ]
 }
