@@ -35,3 +35,8 @@ header .mega-menu ul.mega-menu__list {
     border-radius: 8px;
     margin-top: 20px;
 }
+.best-seller-block h2 {
+    font-size: 12px;
+    font-weight: 700;
+	text-transform:uppercase;
+}
