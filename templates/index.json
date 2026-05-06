@@ -132,8 +132,8 @@
               "type": "button",
               "name": "t:names.button",
               "settings": {
-                "label": "Shop now",
-                "link": "shopify://collections/all",
+                "label": "Shop Automotive",
+                "link": "shopify://collections/automotive-restoration",
                 "open_in_new_tab": false,
                 "style_class": "button",
                 "width": "fit-content",
@@ -147,7 +147,7 @@
               "type": "button",
               "name": "t:names.button",
               "settings": {
-                "label": "Shop now",
+                "label": "Shop By Benefit",
                 "link": "shopify://collections/all",
                 "open_in_new_tab": false,
                 "style_class": "button-secondary",
