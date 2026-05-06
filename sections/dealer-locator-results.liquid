@@ -209,6 +209,18 @@
       `;
     };
 
+    const normalizeZip = (z) => {
+      if (z == null) return '';
+      const s = String(z).trim();
+      const m = s.match(/^(\d{5})/);
+      return m ? m[1] : s;
+    };
+
+    const addDistance = (list) => list
+      .filter((d) => isFinite(d.lat) && isFinite(d.lng))
+      .map((d) => ({ ...d, _distance: distanceMiles(userPoint, { lat: d.lat, lng: d.lng }) }))
+      .sort((a, b) => a._distance - b._distance);
+
     const applyFilters = () => {
       // Step 1: filter by application (always applies)
       let result = dealers.filter((d) => {
@@ -219,30 +231,31 @@
       });
 
       // Step 2: handle search query
-      if (filterQuery) {
-        if (userPoint) {
-          // ZIP/city geocoded: keep all (filtered by application), sort by distance
-          result = result
-            .filter((d) => isFinite(d.lat) && isFinite(d.lng))
-            .map((d) => ({ ...d, _distance: distanceMiles(userPoint, { lat: d.lat, lng: d.lng }) }))
-            .sort((a, b) => a._distance - b._distance);
-        } else {
-          // Geocoding failed: fall back to plain text match against address fields
-          const q = filterQuery.toLowerCase();
-          result = result
-            .filter((d) => {
-              const hay = [d.name, d.address, d.address2, d.city, d.state, d.zipCode, d.country, d.applicationType]
-                .filter(Boolean).join(' ').toLowerCase();
-              return hay.includes(q);
-            })
-            .map((d) => ({ ...d, _distance: null }));
-        }
-      } else {
-        // No query: show all (or all matching application), no distance
-        result = result.map((d) => ({ ...d, _distance: null }));
+      if (!filterQuery) {
+        return result.map((d) => ({ ...d, _distance: null }));
       }
 
-      return result;
+      if (isUsZip(filterQuery)) {
+        // Strict ZIP match: dealers must have this exact ZIP (first 5 digits compared)
+        const targetZip = normalizeZip(filterQuery);
+        result = result.filter((d) => normalizeZip(d.zipCode) === targetZip);
+        return userPoint ? addDistance(result) : result.map((d) => ({ ...d, _distance: null }));
+      }
+
+      if (userPoint) {
+        // City / free-text that geocoded: sort all matches by distance
+        return addDistance(result);
+      }
+
+      // Geocoding failed: plain text match against address fields
+      const q = filterQuery.toLowerCase();
+      return result
+        .filter((d) => {
+          const hay = [d.name, d.address, d.address2, d.city, d.state, d.zipCode, d.country, d.applicationType]
+            .filter(Boolean).join(' ').toLowerCase();
+          return hay.includes(q);
+        })
+        .map((d) => ({ ...d, _distance: null }));
     };
 
     const render = () => {
