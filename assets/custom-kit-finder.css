@@ -178,9 +178,15 @@ a.kit-finder__card:hover {
 .kit-finder__card-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(9, 39, 76, 0.45);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background-color: rgb(from var(--kf-overlay-color, #0a325b) r g b / var(--kf-overlay-alpha, 0.45));
+}
+
+/* Fallback for browsers without relative-color rgb() syntax. */
+@supports not (background-color: rgb(from red r g b / 1)) {
+  .kit-finder__card-overlay {
+    background-color: var(--kf-overlay-color, #0a325b);
+    opacity: var(--kf-overlay-alpha, 0.45);
+  }
 }
 
 .kit-finder__card-body {
@@ -254,26 +260,25 @@ a.kit-finder__card:hover {
     padding: 16px 24px;
   }
 
-  /* Horizontal scroll carousel on mobile */
-  .kit-finder--mobile-carousel .kit-finder__cards {
+  /* Horizontal scroll carousel on mobile, contained inside the section padding */
+  .kit-finder__cards {
     grid-template-columns: none;
     grid-auto-flow: column;
-    grid-auto-columns: 64%;
+    grid-auto-columns: minmax(70%, 80%);
     gap: 12px;
     overflow-x: auto;
     overflow-y: hidden;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    margin: 0 -20px;
-    padding: 0 20px 4px;
+    padding-bottom: 4px;
   }
 
-  .kit-finder--mobile-carousel .kit-finder__cards::-webkit-scrollbar {
+  .kit-finder__cards::-webkit-scrollbar {
     display: none;
   }
 
-  .kit-finder--mobile-carousel .kit-finder__card {
+  .kit-finder__card {
     scroll-snap-align: start;
     aspect-ratio: 165 / 130;
     min-height: 130px;

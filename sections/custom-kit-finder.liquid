@@ -1,14 +1,16 @@
 {%- liquid
   assign vehicles = section.blocks | where: 'type', 'vehicle'
-  assign show_carousel_on_mobile = section.settings.mobile_carousel
+  assign overlay_color = section.settings.card_overlay_color | default: '#0a325b'
+  assign overlay_alpha = section.settings.card_overlay_opacity | default: 45 | divided_by: 100.0
 -%}
 
 {{ 'custom-kit-finder.css' | asset_url | stylesheet_tag }}
 
 <section
   id="kit-finder-{{ section.id }}"
-  class="kit-finder{% if show_carousel_on_mobile %} kit-finder--mobile-carousel{% endif %}"
+  class="kit-finder"
   data-kit-finder
+  style="--kf-overlay-color: {{ overlay_color }}; --kf-overlay-alpha: {{ overlay_alpha }};"
 >
   <div class="kit-finder__inner">
     <div class="kit-finder__top">
@@ -104,8 +106,9 @@
     { "type": "textarea", "id": "subtitle", "label": "Subtitle", "default": "200+ vehicle-specific kits. Pre-cut to fit your exact make and model, no measuring, no cutting, no guesswork. Just peel, stick, and roll." },
     { "type": "text", "id": "button_label", "label": "Button label", "default": "Find My Custom Cut Kit" },
     { "type": "url", "id": "button_url", "label": "Button URL" },
-    { "type": "header", "content": "Layout" },
-    { "type": "checkbox", "id": "mobile_carousel", "label": "Horizontal scroll cards on mobile", "default": true }
+    { "type": "header", "content": "Vehicle card overlay" },
+    { "type": "color", "id": "card_overlay_color", "label": "Overlay color", "default": "#0a325b" },
+    { "type": "range", "id": "card_overlay_opacity", "label": "Overlay opacity", "min": 0, "max": 100, "step": 5, "unit": "%", "default": 45, "info": "Tints the vehicle photo so the title text stays readable." }
   ],
   "blocks": [
     {
