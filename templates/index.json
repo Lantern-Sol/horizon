@@ -16,7 +16,7 @@
           "type": "text",
           "name": "t:names.heading",
           "settings": {
-            "text": "<h2>New arrivals</h2>",
+            "text": "<p>#1 NAME IN SOUND DEADENING & HEAT CONTROL</p>",
             "mobile_text": "",
             "width": "fit-content",
             "max_width": "normal",
@@ -54,7 +54,7 @@
           "type": "text",
           "name": "t:names.heading",
           "settings": {
-            "text": "<p>Browse our latest products</p>",
+            "text": "<p>If You Don't Want To <strong>Hear</strong> It...We're Listening.</p>",
             "mobile_text": "",
             "width": "fit-content",
             "max_width": "normal",
