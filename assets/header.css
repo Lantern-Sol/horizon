@@ -24,3 +24,7 @@ header .mega-menu__list .mega-menu__link.mega-menu__link--parent span {
 header ul.mega-menu__list ul {
 	padding: 0 10px;
 }
+header .mega-menu ul.mega-menu__list {
+    display: flex;
+    justify-content: space-between;
+}
