@@ -120,12 +120,13 @@
   height: 100%;
 }
 
-.dl-hero__input,
-.dl-hero__select {
+.dl-hero__search-inner .dl-hero__input,
+.dl-hero__search-inner .dl-hero__select {
   flex: 1;
   min-width: 0;
   border: 0;
   background: transparent;
+  background-color: transparent;
   outline: none;
   height: 100%;
   font-family: inherit;
@@ -134,16 +135,35 @@
   line-height: 1.2;
   color: var(--dl-dark, #09274c);
   appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  box-shadow: none;
 }
 
-.dl-hero__input::placeholder {
+.dl-hero__search-inner .dl-hero__input::-webkit-search-decoration,
+.dl-hero__search-inner .dl-hero__input::-webkit-search-cancel-button,
+.dl-hero__search-inner .dl-hero__input::-webkit-search-results-button,
+.dl-hero__search-inner .dl-hero__input::-webkit-search-results-decoration {
+  display: none;
+}
+
+.dl-hero__search-inner .dl-hero__input::placeholder {
   color: var(--dl-dark, #09274c);
   font-weight: 700;
   opacity: 1;
 }
 
-.dl-hero__input:focus,
-.dl-hero__select:focus {
+.dl-hero__search-inner .dl-hero__input:-webkit-autofill,
+.dl-hero__search-inner .dl-hero__input:-webkit-autofill:hover,
+.dl-hero__search-inner .dl-hero__input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--dl-dark, #09274c);
+  -webkit-box-shadow: 0 0 0 1000px rgba(57, 180, 231, 0.12) inset;
+  caret-color: var(--dl-dark, #09274c);
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.dl-hero__search-inner .dl-hero__input:focus,
+.dl-hero__search-inner .dl-hero__select:focus {
   outline: 2px solid var(--dl-cyan, #39b4e7);
   outline-offset: 2px;
   border-radius: 6px;
