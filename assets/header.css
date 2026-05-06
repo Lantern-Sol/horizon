@@ -28,6 +28,8 @@ header ul.mega-menu__list ul {
 header .mega-menu ul.mega-menu__list {
     display: flex;
     justify-content: space-between;
+    width:100%;
+    max-width:95%;
 }
 .best-seller-block {
     background: linear-gradient(135deg, #09274C 0%, #09294F 11.11%, #092C53 22.22%, #0A2E56 33.33%, #0A315A 44.44%, #0A335D 55.56%, #0A3660 66.67%, #0A3864 77.78%, #0A3A67 88.89%, #0A3D6B 100%);
