@@ -175,8 +175,26 @@
           iconSize: [76, 28],
           iconAnchor: [38, 28]
         });
-        const marker = L.marker([lat, lng], { icon }).addTo(markersLayer);
-        marker.bindPopup('<strong>' + (card.dataset.dlName || '') + '</strong><br>' + (card.dataset.dlAddress || ''));
+        const marker = L.marker([lat, lng], { icon, riseOnHover: true }).addTo(markersLayer);
+        const name = card.dataset.dlName || '';
+        const addr = card.dataset.dlAddress || '';
+        const dist = card.dataset.dlDistance || '';
+        const tipHtml =
+          '<div class="dl-tip">' +
+            '<div class="dl-tip__head">' +
+              '<span class="dl-tip__name">' + name + '</span>' +
+              (dist ? '<span class="dl-tip__dist">' + dist + '</span>' : '') +
+            '</div>' +
+            (addr ? '<div class="dl-tip__addr">' + addr + '</div>' : '') +
+          '</div>';
+        marker.bindTooltip(tipHtml, {
+          direction: 'top',
+          offset: [0, -8],
+          opacity: 1,
+          className: 'dl-tip-wrap',
+          sticky: false
+        });
+        marker.bindPopup(tipHtml, { className: 'dl-tip-wrap', offset: [0, -4] });
         points.push([lat, lng]);
       });
       if (points.length > 1) map.fitBounds(points, { padding: [40, 40] });
