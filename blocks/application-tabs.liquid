@@ -1,0 +1,25 @@
+<div class="tab-content active" data-content="application">
+    <div class="app-grid">
+      {% for block in section.blocks %}
+        {%  content_for 'block', type: 'application-tab', id: 'application-tab'  %}
+      {% endfor %}
+    </div>
+  </div>
+
+
+{% schema %}
+{
+  "name": "Application Tabs",
+  "presets": [
+    {
+      "name": "Application Tabs",
+      "blocks": {
+        "application-tab": {
+          "type": "application-tab",
+          "static": true
+        }
+      }
+    }
+  ]
+}
+{% endschema %}
