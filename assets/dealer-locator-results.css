@@ -145,12 +145,6 @@
   background: #d5e6ee;
 }
 
-.dl-results__map .leaflet-pane,
-.dl-results__map .leaflet-top,
-.dl-results__map .leaflet-bottom {
-  z-index: auto;
-}
-
 .dl-results__map-controls {
   position: absolute;
   right: 16px;
