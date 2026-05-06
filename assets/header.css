@@ -44,3 +44,8 @@ header .mega-menu ul.mega-menu__list {
     letter-spacing: 1.2px;
 	font-family:
 }
+.best-seller-block p {
+    font-weight: 600;
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+}
