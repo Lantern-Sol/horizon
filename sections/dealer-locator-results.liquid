@@ -149,7 +149,7 @@
       const lat = parseFloat(root.dataset.dlDefaultLat || '39.4');
       const lng = parseFloat(root.dataset.dlDefaultLng || '-84.5');
       const zoom = parseInt(root.dataset.dlDefaultZoom || '6', 10);
-      map = L.map(mapEl, { zoomControl: false, scrollWheelZoom: false }).setView([lat, lng], zoom);
+      map = L.map(mapEl, { zoomControl: false, scrollWheelZoom: true, wheelDebounceTime: 40 }).setView([lat, lng], zoom);
       L.tileLayer(root.dataset.dlTileUrl, { attribution: root.dataset.dlTileAttribution, maxZoom: 19 }).addTo(map);
       markersLayer = L.layerGroup().addTo(map);
       if (zoomInBtn) zoomInBtn.addEventListener('click', () => map.zoomIn());
