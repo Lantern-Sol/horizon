@@ -172,10 +172,33 @@
       }));
     };
 
-    if (submit) submit.addEventListener('click', broadcast);
-    if (form) form.addEventListener('submit', broadcast);
-    if (zip) zip.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); broadcast(); } });
+    let lastBroadcastQuery = (zip && zip.value || '').trim();
+
+    if (submit) submit.addEventListener('click', () => { broadcast(); lastBroadcastQuery = (zip && zip.value || '').trim(); });
+    if (form) form.addEventListener('submit', (e) => { e.preventDefault(); broadcast(); lastBroadcastQuery = (zip && zip.value || '').trim(); });
+    if (zip) zip.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); broadcast(); lastBroadcastQuery = zip.value.trim(); } });
     if (sel) sel.addEventListener('change', broadcast);
+
+    // Reset to default state when the input is cleared (typing to empty,
+    // search-input X button, Esc) — without this the previous filter sticks
+    // until the user submits again.
+    const handleClear = () => {
+      const current = (zip && zip.value || '').trim();
+      if (current === '' && lastBroadcastQuery !== '') {
+        lastBroadcastQuery = '';
+        broadcast();
+      }
+    };
+    if (zip) {
+      zip.addEventListener('input', handleClear);
+      zip.addEventListener('search', handleClear);
+      zip.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          zip.value = '';
+          handleClear();
+        }
+      });
+    }
 
     root.querySelectorAll('[data-dl-category]').forEach((btn) => {
       btn.addEventListener('click', () => {
