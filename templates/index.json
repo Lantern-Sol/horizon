@@ -1550,9 +1550,9 @@
       "settings": {
         "collection": "all",
         "layout_type": "grid",
-        "carousel_on_mobile": false,
-        "max_products": 8,
-        "columns": 4,
+        "carousel_on_mobile": true,
+        "max_products": 3,
+        "columns": 3,
         "mobile_columns": "2",
         "mobile_card_size": "60cqw",
         "columns_gap": 8,
