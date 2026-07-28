@@ -360,6 +360,62 @@
         "padding-block-end": 0
       }
     },
+    "marquee_UKtMBV": {
+      "type": "marquee",
+      "blocks": {
+        "text_YhrVgG": {
+          "type": "text",
+          "settings": {
+            "text": "<p>We make things that work better and last longer.</p>",
+            "mobile_text": "",
+            "width": "fit-content",
+            "max_width": "normal",
+            "alignment": "left",
+            "height_mode": "auto",
+            "desktop_height": "",
+            "mobile_height": "",
+            "type_preset": "custom",
+            "font": "var(--font-body--family)",
+            "enable_custom_font_weight": false,
+            "weight": "400",
+            "font_size": "1rem",
+            "line_height": "tight",
+            "custom_line_height": 1.5,
+            "letter_spacing": "tight",
+            "case": "none",
+            "wrap": "nowrap",
+            "type_preset_mobile": "rte",
+            "mobile_font_size": "1rem",
+            "mobile_custom_line_height": 1.5,
+            "text_color": "",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0,
+            "use_mobile_padding": false,
+            "padding-block-start-mobile": 0,
+            "padding-block-end-mobile": 0,
+            "padding-inline-start-mobile": 0,
+            "padding-inline-end-mobile": 0
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "text_YhrVgG"
+      ],
+      "name": "t:names.marquee_section",
+      "settings": {
+        "movement_direction": "normal",
+        "background_color": "",
+        "padding-block-start": 24,
+        "padding-block-end": 24,
+        "gap_between_elements": 24
+      }
+    },
     "hero_jVaWmY": {
       "type": "hero",
       "blocks": {
@@ -692,6 +748,7 @@
   },
   "order": [
     "slideshow_gfWLi8",
+    "marquee_UKtMBV",
     "hero_jVaWmY",
     "product_list_fa6P9H"
   ]
