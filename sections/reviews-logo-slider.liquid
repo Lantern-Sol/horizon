@@ -1,0 +1,699 @@
+{%- liquid
+  # Background and Spacing Settings
+  assign bg_image = section.settings.bg_image | image_url: width: 1920
+  assign bg_color = section.settings.bg_color | default: '#0d3238'
+  assign overlay_color = section.settings.bg_overlay_color | default: '#000000'
+  assign overlay_opacity = section.settings.bg_overlay_opacity | divided_by: 100.0
+
+  # Card Glassmorphism Settings
+  assign card_bg = section.settings.card_bg_color | default: '#ffffff'
+  assign card_bg_opacity = section.settings.card_bg_opacity | divided_by: 100.0
+  assign card_blur = section.settings.card_blur | default: 12
+  assign text_color = section.settings.text_color | default: '#ffffff'
+  
+  # Pill Badge Settings
+  assign badge_text = section.settings.badge_text | default: 'REVIEWS'
+  assign badge_link = section.settings.badge_link
+-%}
+
+<div
+  id="ReviewsLogoSlider-{{ section.id }}"
+  class="reviews-logo-slider-section"
+  style="
+    --section-bg-color: {{ bg_color }};
+    --section-overlay-color: {{ overlay_color }};
+    --section-overlay-opacity: {{ overlay_opacity }};
+    --card-bg-color: {{ card_bg }};
+    --card-bg-opacity: {{ card_bg_opacity }};
+    --card-blur: {{ card_blur }}px;
+    --text-color: {{ text_color }};
+    --padding-block-start: {{ section.settings.padding-block-start }}px;
+    --padding-block-end: {{ section.settings.padding-block-end }}px;
+    {% if bg_image != blank %}
+      background-image: url('{{ bg_image }}');
+    {% endif %}
+  "
+>
+  <div class="reviews-logo-slider-section__overlay"></div>
+
+  <div class="reviews-logo-slider-section__container section section--page-width">
+    {% if section.blocks.size > 0 %}
+      <reviews-logo-slider
+        class="reviews-logo-slider"
+        data-autoplay="{{ section.settings.autoplay }}"
+        data-autoplay-speed="{{ section.settings.autoplay_speed | times: 1000 }}"
+        data-total-slides="{{ section.blocks.size }}"
+      >
+        <!-- Glassmorphism Main Card -->
+        <div class="reviews-logo-slider__card">
+          <!-- Top Linkable Pill Badge -->
+          <div class="reviews-logo-slider__badge-wrapper">
+            {% if badge_link != blank %}
+              <a href="{{ badge_link }}" class="reviews-logo-slider__badge">
+                {{ badge_text | escape }}
+              </a>
+            {% else %}
+              <span class="reviews-logo-slider__badge">
+                {{ badge_text | escape }}
+              </span>
+            {% endif %}
+          </div>
+
+          <!-- Slides Container (Quotes) -->
+          <div class="reviews-logo-slider__slides" ref="slidesContainer">
+            {% for block in section.blocks %}
+              <div
+                class="reviews-logo-slider__slide {% if forloop.first %}is-active{% endif %}"
+                data-index="{{ forloop.index0 }}"
+                {{ block.shopify_attributes }}
+              >
+                {% if block.settings.quote != blank %}
+                  <blockquote class="reviews-logo-slider__quote">
+                    <p class="reviews-logo-slider__quote-text">
+                      “{{ block.settings.quote | escape }}”
+                    </p>
+                  </blockquote>
+                {% endif %}
+
+                <!-- Mobile Only: Display Active Logo inside the Card at the bottom -->
+                <div class="reviews-logo-slider__mobile-logo">
+                  {% if block.settings.logo != blank %}
+                    {{ block.settings.logo | image_url: width: 300 | image_tag: class: 'reviews-logo-slider__brand-logo-img', alt: block.settings.brand_name, loading: 'lazy' }}
+                  {% else %}
+                    <span class="reviews-logo-slider__brand-fallback">{{ block.settings.brand_name | escape }}</span>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+
+          <!-- Desktop Only: Bottom Row of Brand Logos -->
+          <div class="reviews-logo-slider__desktop-thumbnails">
+            <div class="reviews-logo-slider__thumbnails-row">
+              {% for block in section.blocks %}
+                <button
+                  class="reviews-logo-slider__thumbnail-btn {% if forloop.first %}is-active{% endif %}"
+                  data-thumb-index="{{ forloop.index0 }}"
+                  type="button"
+                  aria-label="Go to review from {{ block.settings.brand_name | escape }}"
+                >
+                  {% if block.settings.logo != blank %}
+                    {{ block.settings.logo | image_url: width: 240 | image_tag: class: 'reviews-logo-slider__thumbnail-img', alt: block.settings.brand_name, loading: 'lazy' }}
+                  {% else %}
+                    <span class="reviews-logo-slider__thumbnail-fallback">{{ block.settings.brand_name | escape }}</span>
+                  {% endif %}
+                </button>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Mobile Only: Bottom Pagination Dots below the Card -->
+        {% if section.blocks.size > 1 %}
+          <div class="reviews-logo-slider__mobile-pagination">
+            <div class="reviews-logo-slider__dots" ref="dotsContainer">
+              {% for block in section.blocks %}
+                <button
+                  class="reviews-logo-slider__dot {% if forloop.first %}is-active{% endif %}"
+                  data-dot-index="{{ forloop.index0 }}"
+                  type="button"
+                  aria-label="Go to review {{ forloop.index }}"
+                ></button>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      </reviews-logo-slider>
+    {% else %}
+      <div class="reviews-logo-slider-section__empty text-center">
+        <p>Please add review blocks to showcase customer testimonials.</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+  .reviews-logo-slider-section {
+    position: relative;
+    background-color: var(--section-bg-color);
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    padding-block-start: var(--padding-block-start, 80px);
+    padding-block-end: var(--padding-block-end, 80px);
+    overflow: hidden;
+  }
+
+  .reviews-logo-slider-section__overlay {
+    position: absolute;
+    inset: 0;
+    background-color: var(--section-overlay-color);
+    opacity: var(--section-overlay-opacity, 0);
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .reviews-logo-slider-section__container {
+    position: relative;
+    z-index: 2;
+    max-width: 1100px;
+    margin-inline: auto;
+    padding-inline: 20px;
+  }
+
+  .reviews-logo-slider {
+    display: block;
+    width: 100%;
+  }
+
+  /* Frosted Glass Card */
+  .reviews-logo-slider__card {
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background-color: rgba({{ var_bg_color_rgb | default: '255, 255, 255' }}, var(--card-bg-opacity, 0.1));
+    background: color-mix(in srgb, var(--card-bg-color) calc(var(--card-bg-opacity) * 100%), transparent);
+    backdrop-filter: blur(var(--card-blur, 12px));
+    -webkit-backdrop-filter: blur(var(--card-blur, 12px));
+    border-radius: 24px;
+    padding: 48px 24px 36px;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+    max-width: 920px;
+    margin-inline: auto;
+  }
+
+  /* Top Pill Badge (Linkable) */
+  .reviews-logo-slider__badge-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+
+  .reviews-logo-slider__badge {
+    display: inline-block;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 6px 20px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  a.reviews-logo-slider__badge:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.8);
+    transform: translateY(-1px);
+  }
+
+  /* Slides */
+  .reviews-logo-slider__slides {
+    position: relative;
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: auto;
+    min-height: 120px;
+    margin-bottom: 32px;
+  }
+
+  .reviews-logo-slider__slide {
+    grid-column: 1;
+    grid-row: 1;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.4s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .reviews-logo-slider__slide.is-active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    position: relative;
+    z-index: 3;
+  }
+
+  .reviews-logo-slider__quote {
+    margin: 0;
+    padding: 0;
+    max-width: 720px;
+  }
+
+  .reviews-logo-slider__quote-text {
+    font-size: clamp(15px, 2.5vw, 19px);
+    line-height: 1.6;
+    font-weight: 500;
+    color: var(--text-color);
+    margin: 0;
+  }
+
+  /* Mobile Active Brand Logo inside Card */
+  .reviews-logo-slider__mobile-logo {
+    display: none;
+    margin-top: 24px;
+    height: 48px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .reviews-logo-slider__brand-logo-img {
+    max-height: 100%;
+    width: auto;
+    max-width: 140px;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+    opacity: 0.9;
+  }
+
+  .reviews-logo-slider__brand-fallback {
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Desktop Thumbnails bottom row */
+  .reviews-logo-slider__desktop-thumbnails {
+    display: block;
+    margin-top: 24px;
+  }
+
+  .reviews-logo-slider__thumbnails-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+
+  .reviews-logo-slider__thumbnail-btn {
+    background: transparent;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    opacity: 0.45;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+  }
+
+  .reviews-logo-slider__thumbnail-btn:hover {
+    opacity: 0.8;
+  }
+
+  .reviews-logo-slider__thumbnail-btn.is-active {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+
+  .reviews-logo-slider__thumbnail-img {
+    max-height: 38px;
+    width: auto;
+    max-width: 110px;
+    object-fit: contain;
+    filter: brightness(0) invert(1); /* Forces logos to render white just like the screenshot design */
+  }
+
+  .reviews-logo-slider__thumbnail-fallback {
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* Mobile Dots Navigation */
+  .reviews-logo-slider__mobile-pagination {
+    display: none;
+    justify-content: center;
+    margin-top: 24px;
+  }
+
+  .reviews-logo-slider__dots {
+    display: flex;
+    gap: 12px;
+  }
+
+  .reviews-logo-slider__dot {
+    background: transparent;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    padding: 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    outline: none;
+  }
+
+  .reviews-logo-slider__dot.is-active {
+    background-color: #ffffff;
+    border-color: #ffffff;
+    transform: scale(1.1);
+  }
+
+  /* Responsive Design Adjustments */
+  @media screen and (max-width: 767px) {
+    .reviews-logo-slider__card {
+      padding: 36px 18px 24px;
+    }
+
+    .reviews-logo-slider__desktop-thumbnails {
+      display: none; /* Hide bottom brand row on mobile */
+    }
+
+    .reviews-logo-slider__mobile-logo {
+      display: flex; /* Show active brand inside the card at the bottom on mobile */
+    }
+
+    .reviews-logo-slider__mobile-pagination {
+      display: flex; /* Show pagination dots below card on mobile */
+    }
+  }
+</style>
+
+<script>
+  /**
+   * Custom element <reviews-logo-slider> to handle slide transition logic
+   */
+  class ReviewsLogoSlider extends HTMLElement {
+    constructor() {
+      super();
+      this.currentSlide = 0;
+      this.autoplayTimer = null;
+      this.touchStartX = 0;
+      this.touchEndX = 0;
+    }
+
+    connectedCallback() {
+      this.totalSlides = parseInt(this.dataset.totalSlides) || 0;
+      this.autoplay = this.dataset.autoplay === 'true';
+      this.autoplaySpeed = parseInt(this.dataset.autoplaySpeed) || 5000;
+
+      this.slides = this.querySelectorAll('.reviews-logo-slider__slide');
+      this.thumbBtns = this.querySelectorAll('.reviews-logo-slider__thumbnail-btn');
+      this.dotBtns = this.querySelectorAll('.reviews-logo-slider__dot');
+
+      if (this.totalSlides <= 1) return;
+
+      // Handle desktop thumbnails interaction
+      this.thumbBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const index = parseInt(btn.dataset.thumbIndex);
+          this.goToSlide(index);
+          this.startAutoplay(); // Reset autoplay timer
+        });
+      });
+
+      // Handle mobile dots interaction
+      this.dotBtns.forEach((dot) => {
+        dot.addEventListener('click', () => {
+          const index = parseInt(dot.dataset.dotIndex);
+          this.goToSlide(index);
+          this.startAutoplay(); // Reset autoplay timer
+        });
+      });
+
+      // Swipe gestures for mobile
+      this.addEventListener('touchstart', (e) => {
+        this.touchStartX = e.changedTouches[0].screenX;
+      }, { passive: true });
+
+      this.addEventListener('touchend', (e) => {
+        this.touchEndX = e.changedTouches[0].screenX;
+        this.handleSwipe();
+      }, { passive: true });
+
+      // Start Autoplay
+      this.startAutoplay();
+
+      // Pause autoplay on mouse enter, resume on leave
+      this.addEventListener('mouseenter', () => this.stopAutoplay());
+      this.addEventListener('mouseleave', () => this.startAutoplay());
+    }
+
+    disconnectedCallback() {
+      this.stopAutoplay();
+    }
+
+    startAutoplay() {
+      if (!this.autoplay) return;
+      this.stopAutoplay();
+      this.autoplayTimer = setInterval(() => {
+        this.nextSlide();
+      }, this.autoplaySpeed);
+    }
+
+    stopAutoplay() {
+      if (this.autoplayTimer) {
+        clearInterval(this.autoplayTimer);
+        this.autoplayTimer = null;
+      }
+    }
+
+    nextSlide() {
+      const nextIndex = (this.currentSlide + 1) % this.totalSlides;
+      this.goToSlide(nextIndex);
+    }
+
+    prevSlide() {
+      const prevIndex = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+      this.goToSlide(prevIndex);
+    }
+
+    goToSlide(index) {
+      if (index === this.currentSlide || index < 0 || index >= this.totalSlides) return;
+
+      // Deactivate current elements
+      this.slides[this.currentSlide].classList.remove('is-active');
+      if (this.thumbBtns.length > 0) this.thumbBtns[this.currentSlide].classList.remove('is-active');
+      if (this.dotBtns.length > 0) this.dotBtns[this.currentSlide].classList.remove('is-active');
+
+      // Update slide index
+      this.currentSlide = index;
+
+      // Activate new elements
+      this.slides[this.currentSlide].classList.add('is-active');
+      if (this.thumbBtns.length > 0) this.thumbBtns[this.currentSlide].classList.add('is-active');
+      if (this.dotBtns.length > 0) this.dotBtns[this.currentSlide].classList.add('is-active');
+    }
+
+    handleSwipe() {
+      const swipeDistance = this.touchEndX - this.touchStartX;
+      const swipeThreshold = 50; // pixels
+
+      if (swipeDistance > swipeThreshold) {
+        this.prevSlide();
+        this.startAutoplay();
+      } else if (swipeDistance < -swipeThreshold) {
+        this.nextSlide();
+        this.startAutoplay();
+      }
+    }
+  }
+
+  if (!customElements.get('reviews-logo-slider')) {
+    customElements.define('reviews-logo-slider', ReviewsLogoSlider);
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Reviews Logo Slider",
+  "tag": "section",
+  "class": "reviews-logo-slider-section-wrapper",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "bg_image",
+      "label": "Background Image",
+      "info": "Upload a background texture (e.g. water texture)."
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#0d3238"
+    },
+    {
+      "type": "color",
+      "id": "bg_overlay_color",
+      "label": "Background Overlay Color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "bg_overlay_opacity",
+      "label": "Background Overlay Opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Pill Badge Settings"
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge Text",
+      "default": "REVIEWS"
+    },
+    {
+      "type": "url",
+      "id": "badge_link",
+      "label": "Badge Link",
+      "info": "Makes the top badge clickable to a reviews page."
+    },
+    {
+      "type": "header",
+      "content": "Frosted Card Design"
+    },
+    {
+      "type": "color",
+      "id": "card_bg_color",
+      "label": "Card Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "card_bg_opacity",
+      "label": "Card Background Opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "card_blur",
+      "label": "Backdrop Blur Amount",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Quote Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Autoplay Options"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Auto-Rotate Slides",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "label": "Rotation Speed (Seconds)",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "unit": "s",
+      "default": 5
+    },
+    {
+      "type": "header",
+      "content": "Section Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Padding Top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Padding Bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Quote",
+          "default": "Nobody is doing more for the cannabis industry when it comes to eco-science packaging. Redwood Roots is proud to work with a company with our same values."
+        },
+        {
+          "type": "image_picker",
+          "id": "logo",
+          "label": "Brand Logo"
+        },
+        {
+          "type": "text",
+          "id": "brand_name",
+          "label": "Brand Name",
+          "default": "Brand Name"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Reviews Logo Slider",
+      "blocks": [
+        {
+          "type": "review",
+          "settings": {
+            "quote": "Nobody is doing more for the cannabis industry when it comes to eco-science packaging. Redwood Roots is proud to work with a company with our same values.",
+            "brand_name": "Redwood Roots"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "quote": "Incredible customer service and high-quality sustainable stencils. They helped us organize all of our pavement markings layouts effortlessly.",
+            "brand_name": "Bask"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "quote": "The stencils are extremely durable and simple to align. Perfect outcome on every job. We highly recommend their custom products.",
+            "brand_name": "Krucial"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
