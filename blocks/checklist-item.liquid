@@ -1,0 +1,41 @@
+{% liquid
+  assign bs = block.settings
+%}
+
+<div class="checklist__item" {{ block.shopify_attributes }}>
+  <input
+    type="checkbox"
+    id="Checklist-{{ block.id }}"
+    class="checklist__input"
+  >
+  <label class="checklist__label" for="Checklist-{{ block.id }}">
+    <span class="checklist__box" aria-hidden="true">
+      <span class="svg-wrapper checklist__icon checklist__icon--checkmark">{{ 'icon-checkmark.svg' | inline_asset_content }}</span>
+      <span class="svg-wrapper checklist__icon checklist__icon--plus">{{ 'icon-plus.svg' | inline_asset_content }}</span>
+      <span class="svg-wrapper checklist__icon checklist__icon--caret">{{ 'icon-caret.svg' | inline_asset_content }}</span>
+      <span class="svg-wrapper checklist__icon checklist__icon--close">{{ 'icon-close.svg' | inline_asset_content }}</span>
+    </span>
+    <span class="checklist__text">{{ bs.text }}</span>
+  </label>
+</div>
+
+{% stylesheet %}
+  .checklist__text {
+    display: inline-block;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Checklist item",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Item text",
+      "default": "Checklist item"
+    }
+  ]
+}
+{% endschema %}
