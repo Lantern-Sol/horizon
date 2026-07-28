@@ -815,6 +815,418 @@
         "padding-block-end-mobile": 0
       }
     },
+    "section_iYFX6L": {
+      "type": "section",
+      "blocks": {
+        "text_KUqYPg": {
+          "type": "text",
+          "name": "t:names.heading",
+          "settings": {
+            "text": "<h2>Frequently asked questions</h2>",
+            "mobile_text": "",
+            "width": "fit-content",
+            "max_width": "narrow",
+            "alignment": "left",
+            "height_mode": "auto",
+            "desktop_height": "",
+            "mobile_height": "",
+            "type_preset": "h3",
+            "font": "var(--font-body--family)",
+            "enable_custom_font_weight": false,
+            "weight": "400",
+            "font_size": "",
+            "line_height": "normal",
+            "custom_line_height": 1.5,
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "type_preset_mobile": "rte",
+            "mobile_font_size": "1rem",
+            "mobile_custom_line_height": 1.5,
+            "text_color": "",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0,
+            "use_mobile_padding": false,
+            "padding-block-start-mobile": 0,
+            "padding-block-end-mobile": 0,
+            "padding-inline-start-mobile": 0,
+            "padding-inline-end-mobile": 0
+          },
+          "blocks": {}
+        },
+        "accordion_yH77bH": {
+          "type": "accordion",
+          "name": "t:names.accordion",
+          "settings": {
+            "icon": "caret",
+            "dividers": true,
+            "divider_color": "",
+            "type_preset": "h5",
+            "background_color": "",
+            "text_color": "",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "accordion_row_CCe7gw": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "What is the return policy?",
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
+              },
+              "blocks": {
+                "text_4yziUR": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Our goal is for every customer to be totally satisfied with their purchase. If this isn't the case, let us know and we'll do our best to work with you to make it right.</p>",
+                    "mobile_text": "",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "height_mode": "auto",
+                    "desktop_height": "",
+                    "mobile_height": "",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "enable_custom_font_weight": false,
+                    "weight": "400",
+                    "font_size": "",
+                    "line_height": "normal",
+                    "custom_line_height": 1.5,
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "type_preset_mobile": "rte",
+                    "mobile_font_size": "1rem",
+                    "mobile_custom_line_height": 1.5,
+                    "text_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0,
+                    "use_mobile_padding": false,
+                    "padding-block-start-mobile": 0,
+                    "padding-block-end-mobile": 0,
+                    "padding-inline-start-mobile": 0,
+                    "padding-inline-end-mobile": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "text_4yziUR"
+              ]
+            },
+            "accordion_row_8zRdEJ": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "Are any purchases final sale?",
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
+              },
+              "blocks": {
+                "text_pH3zhh": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>We are unable to accept returns on certain items. These will be carefully marked before purchase.</p>",
+                    "mobile_text": "",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "height_mode": "auto",
+                    "desktop_height": "",
+                    "mobile_height": "",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "enable_custom_font_weight": false,
+                    "weight": "400",
+                    "font_size": "",
+                    "line_height": "normal",
+                    "custom_line_height": 1.5,
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "type_preset_mobile": "rte",
+                    "mobile_font_size": "1rem",
+                    "mobile_custom_line_height": 1.5,
+                    "text_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0,
+                    "use_mobile_padding": false,
+                    "padding-block-start-mobile": 0,
+                    "padding-block-end-mobile": 0,
+                    "padding-inline-start-mobile": 0,
+                    "padding-inline-end-mobile": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "text_pH3zhh"
+              ]
+            },
+            "accordion_row_ippgiJ": {
+              "type": "_accordion-row",
+              "name": "t:names.accordion_row",
+              "settings": {
+                "heading": "When will I get my order?",
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
+              },
+              "blocks": {
+                "text_VTNjdE": {
+                  "type": "text",
+                  "name": "t:names.text",
+                  "settings": {
+                    "text": "<p>We will work quickly to ship your order as soon as possible. Once your order has shipped, you will receive an email with further information. Delivery times vary depending on your location.</p>",
+                    "mobile_text": "",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "height_mode": "auto",
+                    "desktop_height": "",
+                    "mobile_height": "",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "enable_custom_font_weight": false,
+                    "weight": "400",
+                    "font_size": "",
+                    "line_height": "normal",
+                    "custom_line_height": 1.5,
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "type_preset_mobile": "rte",
+                    "mobile_font_size": "1rem",
+                    "mobile_custom_line_height": 1.5,
+                    "text_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0,
+                    "use_mobile_padding": false,
+                    "padding-block-start-mobile": 0,
+                    "padding-block-end-mobile": 0,
+                    "padding-inline-start-mobile": 0,
+                    "padding-inline-end-mobile": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "text_VTNjdE"
+              ]
+            },
+            "accordion_row_Crhipw": {
+              "type": "_accordion-row",
+              "name": "t:names.accordion_row",
+              "settings": {
+                "heading": "Where are your products manufactured?",
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
+              },
+              "blocks": {
+                "text_ryJwrR": {
+                  "type": "text",
+                  "name": "t:names.text",
+                  "settings": {
+                    "text": "<p>Our products are manufactured both locally and globally. We carefully select our manufacturing partners to ensure our products are high quality and a fair value.</p>",
+                    "mobile_text": "",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "height_mode": "auto",
+                    "desktop_height": "",
+                    "mobile_height": "",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "enable_custom_font_weight": false,
+                    "weight": "400",
+                    "font_size": "",
+                    "line_height": "normal",
+                    "custom_line_height": 1.5,
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "type_preset_mobile": "rte",
+                    "mobile_font_size": "1rem",
+                    "mobile_custom_line_height": 1.5,
+                    "text_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0,
+                    "use_mobile_padding": false,
+                    "padding-block-start-mobile": 0,
+                    "padding-block-end-mobile": 0,
+                    "padding-inline-start-mobile": 0,
+                    "padding-inline-end-mobile": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "text_ryJwrR"
+              ]
+            },
+            "accordion_row_8FYL6n": {
+              "type": "_accordion-row",
+              "name": "t:names.accordion_row",
+              "settings": {
+                "heading": "How much does shipping cost?",
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
+              },
+              "blocks": {
+                "text_Q7emCt": {
+                  "type": "text",
+                  "name": "t:names.text",
+                  "settings": {
+                    "text": "<p>Shipping is calculated based on your location and the items in your order. You will always know the shipping price before you purchase.</p>",
+                    "mobile_text": "",
+                    "width": "100%",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "height_mode": "auto",
+                    "desktop_height": "",
+                    "mobile_height": "",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "enable_custom_font_weight": false,
+                    "weight": "400",
+                    "font_size": "",
+                    "line_height": "normal",
+                    "custom_line_height": 1.5,
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "type_preset_mobile": "rte",
+                    "mobile_font_size": "1rem",
+                    "mobile_custom_line_height": 1.5,
+                    "text_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0,
+                    "use_mobile_padding": false,
+                    "padding-block-start-mobile": 0,
+                    "padding-block-end-mobile": 0,
+                    "padding-inline-start-mobile": 0,
+                    "padding-inline-end-mobile": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "text_Q7emCt"
+              ]
+            }
+          },
+          "block_order": [
+            "accordion_row_CCe7gw",
+            "accordion_row_8zRdEJ",
+            "accordion_row_ippgiJ",
+            "accordion_row_Crhipw",
+            "accordion_row_8FYL6n"
+          ]
+        }
+      },
+      "block_order": [
+        "text_KUqYPg",
+        "accordion_yH77bH"
+      ],
+      "name": "t:names.faq_section",
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 32,
+        "use_mobile_gap": false,
+        "mobile_gap": 12,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "background_media": "none",
+        "background_color": "",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "floating_media_type": "image",
+        "floating_media_text": "",
+        "floating_media_text_preset": "paragraph",
+        "floating_media_text_preset_mobile": "",
+        "floating_media_text_alignment": "center",
+        "floating_media_text_padding_y": 8,
+        "floating_media_text_padding_x": 16,
+        "floating_media_width": 120,
+        "floating_media_anchor": "top-right",
+        "floating_media_offset_x": 0,
+        "floating_media_offset_y": 0,
+        "floating_media_rotation": 0,
+        "floating_media_hide_mobile": false,
+        "use_floating_media_mobile_settings": false,
+        "floating_media_width_mobile": 120,
+        "floating_media_anchor_mobile": "",
+        "floating_media_offset_x_mobile": 0,
+        "floating_media_offset_y_mobile": 0,
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
+        "padding-block-start": 48,
+        "padding-block-end": 48,
+        "padding-inline-start": 0,
+        "padding-inline-end": 0,
+        "use_mobile_padding": false,
+        "padding-block-start-mobile": 0,
+        "padding-block-end-mobile": 0,
+        "padding-inline-start-mobile": 0,
+        "padding-inline-end-mobile": 0
+      }
+    },
     "product_list_fa6P9H": {
       "type": "product-list",
       "blocks": {
@@ -1042,6 +1454,7 @@
     "section_cBzJLe",
     "marquee_UKtMBV",
     "hero_jVaWmY",
+    "section_iYFX6L",
     "product_list_fa6P9H"
   ]
 }
