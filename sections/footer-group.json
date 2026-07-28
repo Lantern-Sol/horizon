@@ -350,7 +350,7 @@
               "type": "text",
               "name": "t:names.text",
               "settings": {
-                "text": "<p>We make things that work better and last longer. Our products solve real problems with clean design and honest materials.</p>",
+                "text": "<p><a href=\"mailto:info@sanapackaging.com?subject=Sana%20Packaging%20General%20Inquiry\">info@sanapackaging.com</a></p>",
                 "mobile_text": "",
                 "width": "fit-content",
                 "max_width": "normal",
@@ -391,7 +391,7 @@
               "type": "text",
               "name": "t:names.text",
               "settings": {
-                "text": "<p>We make things that work better and last longer. Our products solve real problems with clean design and honest materials.</p>",
+                "text": "<p><a><strong>(303) 729-0644</strong></a></p>",
                 "mobile_text": "",
                 "width": "fit-content",
                 "max_width": "normal",
