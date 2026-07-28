@@ -138,11 +138,32 @@
                 "padding-inline-end-mobile": 0
               },
               "blocks": {}
+            },
+            "social_links_iThbCm": {
+              "type": "social-links",
+              "settings": {
+                "icon_color": "",
+                "facebook_url": "https://www.facebook.com",
+                "instagram_url": "https://www.instagram.com",
+                "youtube_url": "https://www.youtube.com",
+                "tiktok_url": "https://www.tiktok.com",
+                "twitter_url": "https://www.twitter.com",
+                "threads_url": "",
+                "linkedin_url": "",
+                "bluesky_url": "",
+                "snapchat_url": "",
+                "pinterest_url": "",
+                "tumblr_url": "",
+                "vimeo_url": "",
+                "custom_url": ""
+              },
+              "blocks": {}
             }
           },
           "block_order": [
             "image_gVmLMj",
-            "text_crNCRD"
+            "text_crNCRD",
+            "social_links_iThbCm"
           ]
         },
         "menu_footer": {
@@ -269,32 +290,11 @@
             "case": "none"
           },
           "blocks": {}
-        },
-        "social_icons": {
-          "type": "social-links",
-          "settings": {
-            "icon_color": "",
-            "facebook_url": "https://www.facebook.com",
-            "instagram_url": "https://www.instagram.com",
-            "youtube_url": "https://www.youtube.com",
-            "tiktok_url": "https://www.tiktok.com",
-            "twitter_url": "https://www.twitter.com",
-            "threads_url": "",
-            "linkedin_url": "",
-            "bluesky_url": "",
-            "snapchat_url": "",
-            "pinterest_url": "",
-            "tumblr_url": "",
-            "vimeo_url": "",
-            "custom_url": ""
-          },
-          "blocks": {}
         }
       },
       "block_order": [
         "copyright",
-        "policy_list",
-        "social_icons"
+        "policy_list"
       ],
       "settings": {
         "section_width": "page-width",
