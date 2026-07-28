@@ -815,6 +815,53 @@
         "padding-block-end-mobile": 0
       }
     },
+    "reviews_logo_slider_9hhV4x": {
+      "type": "reviews-logo-slider",
+      "blocks": {
+        "review_TNaafe": {
+          "type": "review",
+          "settings": {
+            "quote": "Nobody is doing more for the cannabis industry when it comes to eco-science packaging. Redwood Roots is proud to work with a company with our same values.",
+            "brand_name": "Redwood Roots"
+          }
+        },
+        "review_WWb6xh": {
+          "type": "review",
+          "settings": {
+            "quote": "Incredible customer service and high-quality sustainable stencils. They helped us organize all of our pavement markings layouts effortlessly.",
+            "brand_name": "Bask"
+          }
+        },
+        "review_zgaUnt": {
+          "type": "review",
+          "settings": {
+            "quote": "The stencils are extremely durable and simple to align. Perfect outcome on every job. We highly recommend their custom products.",
+            "brand_name": "Krucial"
+          }
+        }
+      },
+      "block_order": [
+        "review_TNaafe",
+        "review_WWb6xh",
+        "review_zgaUnt"
+      ],
+      "name": "Reviews Logo Slider",
+      "settings": {
+        "bg_color": "#0d3238",
+        "bg_overlay_color": "#000000",
+        "bg_overlay_opacity": 0,
+        "badge_text": "REVIEWS",
+        "badge_link": "",
+        "card_bg_color": "#ffffff",
+        "card_bg_opacity": 10,
+        "card_blur": 12,
+        "text_color": "#ffffff",
+        "autoplay": true,
+        "autoplay_speed": 5,
+        "padding-block-start": 80,
+        "padding-block-end": 80
+      }
+    },
     "section_iYFX6L": {
       "type": "section",
       "blocks": {
@@ -1868,6 +1915,7 @@
     "section_cBzJLe",
     "marquee_UKtMBV",
     "hero_jVaWmY",
+    "reviews_logo_slider_9hhV4x",
     "section_iYFX6L",
     "product_list_fa6P9H",
     "section_tgGdei"
