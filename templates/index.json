@@ -495,6 +495,16 @@
               },
               "blocks": {}
             },
+            "checklist_jtzFAL": {
+              "type": "checklist",
+              "name": "Checklist",
+              "settings": {
+                "icon_style": "checkmark",
+                "text_color": "#ffffff",
+                "checkbox_border_color": "#ffffff"
+              },
+              "blocks": {}
+            },
             "button_NCXc68": {
               "type": "button",
               "settings": {
@@ -517,6 +527,7 @@
           "block_order": [
             "text_LwAzC9",
             "text_XMzpDa",
+            "checklist_jtzFAL",
             "button_NCXc68"
           ]
         },
