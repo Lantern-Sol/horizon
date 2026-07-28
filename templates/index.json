@@ -282,7 +282,7 @@
         "full_frame_on_mobile": true,
         "slideshow_gap": 18,
         "corner_radius": 20,
-        "slide_height": "medium",
+        "slide_height": "large",
         "content_position": "on-media",
         "background_color": "",
         "icons_style": "arrows_large",
