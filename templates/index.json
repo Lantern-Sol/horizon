@@ -500,7 +500,7 @@
               "name": "Checklist",
               "settings": {
                 "icon_style": "checkmark",
-                "text_color": "{{ settings.color_palette.foreground }}",
+                "text_color": "{{ settings.color_palette.color1 }}",
                 "checkbox_border_color": "{{ settings.color_palette.foreground }}"
               },
               "blocks": {
