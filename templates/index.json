@@ -495,6 +495,43 @@
               },
               "blocks": {}
             },
+            "checklist_b3TLzA": {
+              "type": "checklist",
+              "name": "Checklist",
+              "settings": {
+                "icon_style": "checkmark",
+                "text_color": "#ffffff",
+                "checkbox_border_color": "#ffffff"
+              },
+              "blocks": {
+                "checklist_item_e9Na6A": {
+                  "type": "checklist-item",
+                  "settings": {
+                    "text": "Rubber flooring rolls or tiles"
+                  },
+                  "blocks": {}
+                },
+                "checklist_item_6aeUTz": {
+                  "type": "checklist-item",
+                  "settings": {
+                    "text": "Measuring tape"
+                  },
+                  "blocks": {}
+                },
+                "checklist_item_aWJErQ": {
+                  "type": "checklist-item",
+                  "settings": {
+                    "text": "Utility knife or rubber cutter"
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "checklist_item_e9Na6A",
+                "checklist_item_6aeUTz",
+                "checklist_item_aWJErQ"
+              ]
+            },
             "button_NCXc68": {
               "type": "button",
               "settings": {
@@ -517,6 +554,7 @@
           "block_order": [
             "text_LwAzC9",
             "text_XMzpDa",
+            "checklist_b3TLzA",
             "button_NCXc68"
           ]
         },
