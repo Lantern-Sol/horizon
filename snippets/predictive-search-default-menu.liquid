@@ -1,0 +1,32 @@
+{% doc %}
+  Renders one labelled link group in the search panel's default view.
+
+  Figma: Sana_nav_dropdown_search 2001:1233 / 2001:1241 (desktop),
+         Sana_nav_mobile_dropdown_search 2001:2095 / 2001:2103 (mobile).
+
+  @param {object} menu - The linklist to render.
+  @param {string} [heading] - Heading text; falls back to the menu's own title.
+
+  @example
+  {% render 'predictive-search-default-menu', menu: linklists.footer, heading: 'Info' %}
+{% enddoc %}
+
+{%- if menu.links.size > 0 -%}
+  <div class="predictive-search-default-menu">
+    <h3 class="predictive-search-default-menu__heading">
+      {{- heading | default: menu.title -}}
+    </h3>
+    <ul class="predictive-search-default-menu__list list-unstyled">
+      {%- for link in menu.links -%}
+        <li>
+          <a
+            class="predictive-search-default-menu__link"
+            href="{{ link.url }}"
+          >
+            {{- link.title -}}
+          </a>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+{%- endif -%}

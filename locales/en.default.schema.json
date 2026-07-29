@@ -418,6 +418,7 @@
     "read_only": "Read only",
     "row": "Row",
     "search": "Search",
+    "search_default_view": "Default view",
     "search_input": "Search input",
     "search_results": "Search results",
     "secondary_button": "Secondary button",
@@ -1093,6 +1094,13 @@
     "row": "Row",
     "scroll_speed": "Time to next announcement",
     "search": "Search",
+    // Menus shown in the search panel before anything is typed
+    "search_default_menu_first": "First menu",
+    "search_default_menu_second": "Second menu",
+    "search_default_menu_heading": "Heading",
+    "search_default_menu_heading_info": "Leave blank to use the menu's own name",
+    "search_default_menus_info": "Shown in the search panel before a search is entered.",
+    "search_default_show_products": "Show products below the menus",
     "search_icon": "Search icon",
     // Setting for search bar placement in header
     "search_position": "Position",

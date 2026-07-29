@@ -665,4 +665,57 @@
     position: static;
     background-image: none;
   }
+
+  /* ── Default view — Figma 2001:1233 / 2001:1241 (desktop),
+        2001:2095 / 2001:2103 (mobile) ────────────────────────────────
+
+     Two labelled link groups shown before anything is typed. Figma pads each
+     group by 8 and leaves 16 either side of the rule, so the rule sits 24 from
+     the text above and the next heading sits 24 below it. The last group keeps
+     its rule — the design closes the stack with one. */
+
+  .predictive-search-default-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem; /* 8 */
+    padding-block: 0.5rem 1.5rem; /* 8 / 8 + 16 */
+    border-block-end: 1px solid var(--color-sand-200);
+  }
+
+  .predictive-search-default-menu + .predictive-search-default-menu {
+    padding-block-start: 1.5rem; /* 16 + 8 */
+  }
+
+  .predictive-search-default-menu__heading {
+    margin: 0;
+    font-family: var(--font-body--family);
+    font-size: var(--font-body-lg--size); /* 18 */
+    font-weight: 600;
+    line-height: var(--font-body-lg--line-height);
+    letter-spacing: var(--letter-spacing--000);
+    text-transform: none;
+    color: var(--nav-panel-link-color);
+  }
+
+  .predictive-search-default-menu__list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem; /* 8 */
+  }
+
+  .predictive-search-default-menu__link {
+    display: block;
+    font-family: var(--font-body--family);
+    font-size: var(--font-body-md--size); /* 16 */
+    font-weight: 400;
+    line-height: var(--font-body-md--line-height);
+    color: var(--nav-panel-link-color);
+    text-decoration: none;
+    transition: color var(--animation-speed) var(--animation-easing);
+  }
+
+  .predictive-search-default-menu__link:hover,
+  .predictive-search-default-menu__link:focus-visible {
+    color: var(--nav-panel-link-color-hover);
+  }
 {% endstylesheet %}

@@ -106,7 +106,12 @@
       "color1": "#064c4d",
       "color2": "#f3ebe1",
       "color3": "#bfe3e3"
-    }
+    },
+    "search_default_menu_first": "main-menu",
+    "search_default_menu_first_heading": "Popular Products",
+    "search_default_menu_second": "footer",
+    "search_default_menu_second_heading": "Info",
+    "search_default_show_products": false
   },
   "presets": {
     "Default": {

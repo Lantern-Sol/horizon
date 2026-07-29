@@ -9,6 +9,44 @@
   {% render 'predictive-search-empty-state', shadow_opacity: 0.1, products_test_id: 'empty-state' %}
 {% enddoc %}
 
+{% liquid
+  comment
+    Sana 2026 default view — Figma 2001:1221 (desktop) / 2001:2080 (mobile) show
+    two labelled link groups and no products before anything is typed. Products
+    stay behind a setting, and still render when neither menu is picked so the
+    panel is never blank.
+  endcomment
+  assign first_menu = settings.search_default_menu_first
+  assign second_menu = settings.search_default_menu_second
+
+  assign has_default_menus = false
+  if first_menu.links.size > 0 or second_menu.links.size > 0
+    assign has_default_menus = true
+  endif
+
+  assign show_products = settings.search_default_show_products
+  unless has_default_menus
+    assign show_products = true
+  endunless
+%}
+
+{% if load_empty_state and has_default_menus %}
+  {%- comment -%}
+    Rendered outside the listbox: these are navigation links, not search results,
+    so they stay out of the combobox's option list and its arrow-key cycle.
+  {%- endcomment -%}
+  <div class="predictive-search-default-menus">
+    {% render 'predictive-search-default-menu',
+      menu: first_menu,
+      heading: settings.search_default_menu_first_heading
+    %}
+    {% render 'predictive-search-default-menu',
+      menu: second_menu,
+      heading: settings.search_default_menu_second_heading
+    %}
+  </div>
+{% endif %}
+
 <div
   id="predictive-search-results"
   class="predictive-search-dropdown"
@@ -16,7 +54,7 @@
   aria-expanded="true"
   style="--color-shadow: rgb(var(--color-foreground-rgb) / {{ shadow_opacity }});"
 >
-  {% if load_empty_state %}
+  {% if load_empty_state and show_products %}
     <div class="predictive-search-results__inner">
       {% liquid
         assign collection = settings.empty_state_collection | default: collections.all
