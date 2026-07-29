@@ -195,35 +195,13 @@
     position: relative;
   }
 
-  .dialog-modal
-    .predictive-search-form__header:has(
-      .predictive-search__reset-button:not(.predictive-search__reset-button[hidden])
-    )::before {
-    content: '';
-    position: absolute;
-    right: calc(var(--padding-sm) + var(--minimum-touch-target));
-    top: 0;
-    bottom: 0;
-    width: var(--border-width-sm);
-    background-color: var(--color-border);
-  }
-
-  .dialog-modal
-    .predictive-search-form__header:has(.predictive-search__reset-button:not(.predictive-search__reset-button[hidden]))
-    > .predictive-search__close-modal-button {
-    &::before {
-      content: none;
-    }
-  }
-
-  @media screen and (min-width: 750px) {
-    .dialog-modal
-      .predictive-search-form__header:has(
-        .predictive-search__reset-button:not(.predictive-search__reset-button[hidden])
-      )::before {
-      right: calc(var(--padding-2xl) * 2);
-    }
-  }
+  {%- comment -%}
+    The stock header drew a full-height 1px rule before the close button while
+    "Clear" was showing, to divide the two controls in what was a single row of
+    field + Clear + Close. The Sana header below stacks a title row above the
+    field, so that rule spanned both rows and cut down through the panel. It has
+    no counterpart in the design, so it is gone rather than restyled.
+  {%- endcomment -%}
 
   predictive-search-component {
     --resource-card-corner-radius: var(--product-corner-radius);
