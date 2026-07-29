@@ -100,6 +100,15 @@
       elsif block_settings.menu_style == 'featured_products'
         assign ratio = block_settings.featured_products_aspect_ratio
       endif
+
+      # LS: with no submenu media, the desktop dropdown renders as the Figma
+      # card (2001:454) — a white panel anchored under its parent link and
+      # sized to its own content. The media modes still need the full-width
+      # mega menu to lay out image cards, so they keep the stock layout.
+      assign submenu_layout_class = ''
+      if menu_content_type == 'text'
+        assign submenu_layout_class = ' menu-list__submenu--card'
+      endif
     %}
 
     {% capture children %}
@@ -132,7 +141,7 @@
             {%- endif -%}
           </a>
           {%- if link.links != blank -%}
-            <div class="menu-list__submenu{{ background_color_classes }}" ref="submenu[]">
+            <div class="menu-list__submenu{{ background_color_classes }}{{ submenu_layout_class }}" ref="submenu[]">
               <div
                 id="submenu-{{ forloop.index }}"
                 class="menu-list__submenu-inner"
@@ -802,6 +811,158 @@
   /* Hide product cards in collapsed submenus from the IntersectionObserver that fires product view events */
   .menu-list__list-item:not(:has([aria-expanded='true'])) > .menu-list__submenu product-component {
     display: none;
+  }
+
+  /* ================================================================
+     Sana 2026 — desktop nav links + dropdown card
+     Figma: Nav/Desktop 2001:492, Nav Links 2001:454 / 2001:821
+     ================================================================ */
+
+  @media screen and (min-width: 750px) {
+    /* ---- Top-level links: 18px SemiBold pills (Figma 2001:393) ---- */
+    .header-menu .menu-list .menu-list__link,
+    .header-menu .menu-list .menu-list__list-item .menu-list__link.menu-list__link--has-children {
+      font-family: var(--font-heading--family);
+      font-size: var(--nav-link-size);
+      font-weight: var(--nav-link-weight);
+      line-height: var(--nav-link-line-height);
+      letter-spacing: var(--nav-link-letter-spacing);
+      text-transform: none;
+      color: var(--color-teal-800);
+      flex-direction: row;
+      align-items: center;
+      gap: 0;
+      height: auto;
+      padding: var(--nav-link-padding-block) var(--nav-link-padding-inline);
+      border-radius: var(--nav-link-radius);
+      transition: background-color var(--animation-speed) var(--animation-easing), color var(--animation-speed)
+        var(--animation-easing);
+    }
+
+    .header-menu .menu-list .menu-list__link .menu-list__link-title {
+      padding-inline: 0;
+    }
+
+    /* Figma's top-level links carry no chevron — the pill signals the dropdown. */
+    .header-menu .menu-list .menu-list__link .icon-chevron-down {
+      display: none;
+    }
+
+    /* Siblings keep full strength while one link is open; the stock rules dim
+       every non-hovered link, which the Figma dropdown states do not do. */
+    .header-menu .menu-list .menu-list__link,
+    .header-menu .menu-list:where(:has(.menu-list__list-item:hover)) .menu-list__link,
+    .header-menu .menu-list:where(:has(.menu-list__list-item:focus-within)) .menu-list__link {
+      color: var(--color-teal-800);
+    }
+
+    .header-menu .menu-list .menu-list__list-item:where(:hover, :focus-within) > .menu-list__link,
+    .header-menu .menu-list .menu-list__list-item > .menu-list__link[aria-expanded='true'],
+    .header-menu .menu-list .menu-list__list-item > .menu-list__link--active {
+      background-color: var(--color-teal-800);
+      color: var(--color-white);
+    }
+
+    /* ---- Dropdown card (Figma "Nav Links" 2001:454) --------------- */
+
+    /* overflow-list's shadow <ul part="list"> clips on both axes. The stock
+       submenu escapes that because its containing block is .header__row, but
+       the card anchors to its own <li>, so the clip has to go. The list never
+       needs to scroll — overflow-list moves items to the "more" slot instead. */
+    #header-component:has(.menu-list__submenu--card) .overflow-menu::part(list) {
+      overflow: visible;
+    }
+
+    /* The card paints its own surface, so the full-width underlay that backs
+       the stock mega menu is unused here. */
+    #header-component:has(.menu-list__submenu--card) .header__underlay-open {
+      display: none;
+    }
+
+    /* ...which leaves the overflow ("More") panel without one, so give it one. */
+    #header-component:has(.menu-list__submenu--card) .overflow-menu::part(overflow) {
+      background-color: var(--color-background);
+      box-shadow: var(--nav-scroll-shadow);
+    }
+
+    .menu-list__list-item:where(:not([slot='overflow'])):has(> .menu-list__submenu--card) {
+      position: relative;
+    }
+
+    .menu-list__list-item:where(:not([slot='overflow'])) > .menu-list__submenu--card {
+      /* Hangs off the bottom edge of the bar; the row's block padding is the
+         distance from the link box down to that edge. */
+      top: calc(100% + var(--header-padding));
+
+      /* Lines the card's text column up with the parent link's label — the
+         card pads 32px where the link pads 24px. */
+      left: calc(var(--nav-link-padding-inline) - var(--nav-panel-padding-inline));
+      /* Figma sizes each card by hand (362 for Products, 228 for About) with
+         no consistent rule for the trailing space, so the width follows the
+         content and only the minimum is pinned to the narrower Figma card. */
+      width: max-content;
+      min-width: 14.25rem; /* 228 */
+      max-width: min(28rem, 90vw);
+      padding-inline: 0;
+      clip-path: none; /* stylelint-disable-line */
+      content-visibility: visible;
+      transition: opacity var(--submenu-animation-speed) var(--ease-out-cubic), visibility
+        var(--submenu-animation-speed) var(--ease-out-cubic);
+    }
+
+    .menu-list__submenu--card .menu-list__submenu-inner {
+      display: block;
+      background-color: var(--nav-panel-background);
+      border-end-start-radius: var(--nav-panel-radius);
+      border-end-end-radius: var(--nav-panel-radius);
+
+      /* Not in Figma, which shows the card over a hero image. Without it a
+         white card on a white section has no edge at all. */
+      box-shadow: var(--nav-scroll-shadow);
+      padding-inline: var(--nav-panel-padding-inline);
+      padding-block: 0 var(--nav-panel-padding-block-end);
+      transform: none;
+    }
+
+    /* Collapse the page-width section grid the stock mega menu lays out in. */
+    .menu-list__submenu--card .mega-menu,
+    .menu-list__submenu--card .mega-menu__grid,
+    .menu-list__submenu--card .mega-menu__list,
+    .menu-list__submenu--card .mega-menu__column {
+      display: block;
+      width: auto;
+      grid-column: auto;
+      gap: 0;
+    }
+
+    .menu-list__submenu--card .mega-menu__link {
+      font-family: var(--font-heading--family);
+      font-size: var(--nav-link-size);
+      font-weight: var(--nav-link-weight);
+      line-height: var(--nav-link-line-height);
+      letter-spacing: var(--nav-link-letter-spacing);
+      text-transform: none;
+      color: var(--nav-panel-link-color);
+      display: flex;
+      align-items: center;
+      gap: var(--gap-2xs);
+      padding-block: var(--nav-panel-item-padding-block);
+      padding-inline: 0;
+      white-space: nowrap;
+    }
+
+    .menu-list__submenu--card .mega-menu__link:hover,
+    .menu-list__submenu--card .mega-menu__link:focus-visible {
+      color: var(--nav-panel-link-color-hover);
+    }
+
+    /* Trailing call-to-action row — Figma "Shop All" (2001:485). */
+    .menu-list__submenu--card .mega-menu__link-arrow,
+    .menu-list__submenu--card .mega-menu__link-arrow svg {
+      width: 0.9375rem; /* 15 */
+      height: 0.9375rem;
+      flex-shrink: 0;
+    }
   }
 {% endstylesheet %}
 

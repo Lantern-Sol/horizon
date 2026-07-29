@@ -94,11 +94,17 @@
               {% endif %}
             {% endcapture %}
             {% assign cart_drawer_title = 'content.cart_title' | t %}
+            {%- comment -%}
+              Figma 2001:1015 labels the cart panel's close control "Close"
+              rather than using an icon.
+            {%- endcomment -%}
+            {% assign cart_drawer_close_label = 'actions.close' | t %}
             {% render 'theme-drawer-header',
               title: cart_drawer_title,
               drawer_id: 'cart-drawer',
               heading_id: 'cart-drawer-heading',
-              title_append: cart_badge_html
+              title_append: cart_badge_html,
+              close_label: cart_drawer_close_label
             %}
           {%- endif -%}
 
@@ -276,5 +282,64 @@
     .cart-drawer__content {
       background: transparent;
     }
+  }
+
+  /* ================================================================
+     Sana 2026 cart panel
+     Figma: Sana_nav_dropdown_cart 2001:1012 (desktop)
+            Sana_nav_mobile_dropdown_cart 2001:2132 (mobile)
+     ================================================================ */
+
+  #cart-drawer .theme-drawer__dialog {
+    --theme-drawer-width: var(--nav-utility-width);
+
+    background-color: var(--nav-utility-background);
+    border: none;
+    border-radius: var(--nav-panel-radius);
+    box-shadow: var(--nav-utility-shadow);
+
+    @media screen and (max-width: 749px) {
+      border-radius: 0;
+      box-shadow: none;
+    }
+  }
+
+  #cart-drawer .theme-drawer__header {
+    padding-inline: var(--nav-panel-padding-inline);
+    padding-block: var(--nav-panel-padding-inline) var(--padding-lg);
+    background-color: transparent;
+    align-items: center;
+    border-block-end: 1px solid rgb(var(--color-foreground-rgb) / var(--opacity-10));
+  }
+
+  #cart-drawer .theme-drawer__title,
+  #cart-drawer .theme-drawer__close-button--text {
+    font-family: var(--font-heading--family);
+    font-size: var(--nav-link-size);
+    font-weight: var(--nav-link-weight);
+    line-height: var(--nav-link-line-height);
+    color: var(--color-teal-800);
+    margin: 0;
+  }
+
+  #cart-drawer .theme-drawer__close-button--text {
+    width: auto;
+    height: auto;
+    min-width: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    cursor: pointer;
+  }
+
+  #cart-drawer :is(.cart-drawer__content, .cart-drawer__items, .cart-drawer__summary, .cart-drawer__inner) {
+    background-color: transparent;
+  }
+
+  #cart-drawer .cart-drawer__content,
+  #cart-drawer .cart-drawer__summary {
+    padding-inline: var(--nav-panel-padding-inline);
   }
 {% endstylesheet %}

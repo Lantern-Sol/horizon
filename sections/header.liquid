@@ -1177,6 +1177,160 @@
     font-family: var(--menu-localization-font);
     font-size: var(--menu-localization-font-size);
   }
+
+  /* ================================================================
+     Sana 2026 navigation bar
+     Figma: Navigation/Desktop 2001:385 · Navigation/Mobile 2001:1842
+
+     Both frames specify the bar as full-bleed with a fixed gutter
+     (80px desktop / 24px mobile) rather than a page-width container,
+     so the row overrides the section grid and `section_width` no
+     longer changes the bar's gutters.
+     ================================================================ */
+
+  .header {
+    --header-padding: var(--nav-bar-padding-block);
+    --color-account-icon: currentcolor;
+
+    color: var(--color-teal-800);
+  }
+
+  .header .header__row .header__columns {
+    /* stylelint-disable-next-line length-zero-no-unit */
+    --padding-block-start: 0px;
+    /* stylelint-disable-next-line length-zero-no-unit */
+    --padding-block-end: 0px;
+
+    grid-column: 1 / -1;
+    grid-gap: var(--nav-bar-gap);
+
+    /* Deliberately NOT `align-items: center` — the columns have to stretch to
+       the row's content height so the menu items inherit it, which is what
+       lets the dropdown card hang off the bar's bottom edge. Each
+       .header__column centres its own contents. */
+    align-items: stretch;
+    padding-inline: var(--nav-bar-padding-inline);
+    padding-block: var(--nav-bar-padding-block);
+  }
+
+  /* Logo — Figma "Brand/Logo" 152 x 62, never squeezed by the link row. */
+  .header .header-logo {
+    flex-shrink: 0;
+    padding: 0;
+  }
+
+  /* Actions — three 24px icons, 20px apart (Figma "Actions" 2001:506). */
+  .header .header__column--right {
+    gap: var(--nav-actions-gap);
+  }
+
+  .header header-actions {
+    gap: var(--nav-actions-gap);
+    align-items: center;
+  }
+
+  .header .header-actions__action {
+    --button-color: currentcolor;
+
+    width: var(--nav-icon-size);
+    height: var(--nav-icon-size);
+    padding: 0;
+    align-items: center;
+  }
+
+  .header .header-actions__action .svg-wrapper,
+  .header .header-actions__action svg,
+  .header .account-button__icon {
+    width: var(--nav-icon-size);
+    height: var(--nav-icon-size);
+  }
+
+  /* Figma draws the cart glyph whole (2001:513). The stock treatment punches a
+     donut out of the icon so a 20px bubble can nest inside it — at 24px that
+     eats the handle. Instead the bubble is smaller and tucked just outside the
+     glyph's top-right corner, and the mask is dropped. */
+  .header .header-actions__cart-icon {
+    --cart-bubble-size: 14px;
+    --cart-bubble-top: -3px;
+    --cart-bubble-right: -4px;
+  }
+
+  .header .header-actions__cart-icon.header-actions__cart-icon--has-cart svg {
+    mask: none;
+  }
+
+  /* .cart-bubble__text reads --font-size--3xs, which this theme deliberately
+     leaves undefined, so the count would inherit the bar's font size and
+     overflow the circle. */
+  .header .header-actions__cart-icon .cart-bubble__text {
+    font-size: 0.5625rem; /* 9 */
+  }
+
+  .header cart-icon:has(.cart-bubble__text-count:empty) {
+    --cart-bubble-size: 8px;
+    --cart-bubble-top: -1px;
+    --cart-bubble-right: -1px;
+  }
+
+  /* The stock rules pull these back with negative margins sized for the old
+     icon set; the Figma spacing is a plain 20px gap, so neutralise them. */
+  @media screen and (min-width: 750px) {
+    .header .header__column--right .search-action,
+    .header .header__column--right header-actions,
+    .header [data-menu-style='menu'] .header__column--left .search-action {
+      margin-inline: 0;
+    }
+  }
+
+  .header .account-button.account-button {
+    width: var(--nav-icon-size);
+    height: var(--nav-icon-size);
+    padding: 0;
+  }
+
+  .header .account-button shopify-account:not(:defined) {
+    min-width: var(--nav-icon-size);
+    height: var(--nav-icon-size);
+  }
+
+  /* ---- Mobile bar — Figma "Nav/Desktop" 2001:1855 --------------- */
+  @media screen and (max-width: 749px) {
+    .header .header__row .header__columns {
+      grid-template-columns: 1fr auto auto auto;
+      grid-template-areas: 'logo search actions menu';
+      column-gap: var(--nav-actions-gap-mobile);
+      padding-inline: var(--nav-bar-padding-mobile);
+      padding-block: var(--nav-bar-padding-mobile);
+    }
+
+    .header header-actions {
+      gap: var(--nav-actions-gap-mobile);
+    }
+  }
+
+  /* Touch devices get the drawer layout at any width, so mirror it. */
+  #header-component[data-menu-style='drawer'] .header__row .header__columns {
+    grid-template-columns: 1fr auto auto auto;
+    grid-template-areas: 'logo search actions menu';
+    column-gap: var(--nav-actions-gap-mobile);
+    padding-inline: var(--nav-bar-padding-mobile);
+    padding-block: var(--nav-bar-padding-mobile);
+  }
+
+  #header-component[data-menu-style='drawer'] header-actions {
+    gap: var(--nav-actions-gap-mobile);
+  }
+
+  /* ---- Scrolled state — Figma "Sana_nav_bar_scroll_shadow" ------- */
+  .header[data-sticky-state='active'] .header__underlay-closed {
+    box-shadow: var(--nav-scroll-shadow);
+  }
+
+  @media screen and (max-width: 749px) {
+    .header[data-sticky-state='active'] .header__underlay-closed {
+      box-shadow: var(--nav-scroll-shadow-mobile);
+    }
+  }
 {% endstylesheet %}
 
 {% unless request.design_mode %}

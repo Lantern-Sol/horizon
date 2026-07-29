@@ -31,30 +31,22 @@
       class="svg-wrapper {% if display_style != 'icon' %}desktop:hidden{% endif %}"
       aria-hidden="true"
     >
-      {{ 'icon-cart.svg' | inline_asset_content }}
+      {{ 'icon-nav-cart.svg' | inline_asset_content }}
     </span>
 
     {% render 'cart-bubble', limit: 100 %}
   </cart-icon>
 {% endcapture %}
 
+{% comment %}
+  Account glyph — exported from Figma "Account" (2001:511). Wrapped so the
+  asset keeps its own 24x24 viewBox while still being slotted into
+  shopify-account's signed-out avatar.
+{% endcomment %}
 {% capture account_icon %}
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="15"
-    height="17"
-    viewBox="0 0 15 17"
-    fill="none"
-    slot="signed-out-avatar"
-    class="account-button__icon"
-  >
-    <path
-      stroke="currentColor"
-      stroke-linejoin="round"
-      stroke-width="var(--icon-stroke-width)"
-      d="M10.375 3.813a3.063 3.063 0 1 1-6.125 0 3.063 3.063 0 0 1 6.125 0ZM7.313 9.5c-3.667 0-6.24 2.691-6.563 6.125h13.125C13.552 12.191 10.979 9.5 7.312 9.5Z"
-    />
-  </svg>
+  <span class="svg-wrapper account-button__icon">
+    {{- 'icon-nav-account.svg' | inline_asset_content -}}
+  </span>
 {% endcapture %}
 
 <header-actions
@@ -82,6 +74,11 @@
         assign account_actions_style = '--header-actions-font-family: ' | append: font_family_safe | append: '; --header-actions-font-weight: ' | append: font_obj.weight | append: ';'
       endif
     %}
+    {%- comment -%}
+      Desktop only. Figma's mobile bar shows an account icon (2001:1865), but
+      per review the mobile bar stays search / cart / menu — account lives in
+      the drawer's Login control instead.
+    {%- endcomment -%}
     <div
       class="account-button header-actions__action mobile:hidden{% if display_style == 'text' %} account-button--text{% endif %} color-custom-popover"
     >
@@ -174,19 +171,30 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  {%- comment -%}
+    Sign-in panel — Figma Sana_nav_dropdown_sign-in (2001:1138).
+
+    This store runs new customer accounts, so the sign-in UI is rendered by
+    Shopify inside <shopify-account>; the theme cannot supply the panel's own
+    markup (the email/password fields, the "Close" row, the paired
+    Sign In / Create Account buttons). These custom properties are the whole
+    surface Shopify exposes, so the panel is themed to the Figma sand card —
+    background, radius, pill buttons, 8px inputs — but its internal layout
+    stays Shopify's.
+  {%- endcomment -%}
   shopify-account {
     --shopify-account-font-heading: var(--font-heading--family);
     --shopify-account-font-heading-weight: var(--font-heading--weight);
     --shopify-account-font-body: var(--font-body--family);
     --shopify-account-font-body-weight: var(--font-body--weight);
-    --shopify-account-radius-base: var(--style-border-radius-popover);
-    --shopify-account-radius-button: var(--style-border-radius-buttons-primary);
-    --shopify-account-radius-button-small: var(--style-border-radius-buttons-primary);
-    --shopify-account-radius-input: var(--style-border-radius-buttons-primary);
-    --shopify-account-color-background: var(--color-background);
-    --shopify-account-color-text: var(--color-foreground);
-    --shopify-account-color-accent: var(--color-primary-button-background);
-    --shopify-account-color-accent-text: var(--color-primary-button-text);
+    --shopify-account-radius-base: var(--nav-panel-radius);
+    --shopify-account-radius-button: 5rem;
+    --shopify-account-radius-button-small: 5rem;
+    --shopify-account-radius-input: var(--nav-utility-field-radius);
+    --shopify-account-color-background: var(--nav-utility-background);
+    --shopify-account-color-text: var(--color-teal-800);
+    --shopify-account-color-accent: var(--color-teal-800);
+    --shopify-account-color-accent-text: var(--color-white);
     --shopify-account-dialog-position-top: var(--account-offset-top);
 
     &:not(:defined) {

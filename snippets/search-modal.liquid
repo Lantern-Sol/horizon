@@ -56,6 +56,22 @@
         <div
           class="predictive-search-form__header"
         >
+          {%- comment -%}
+            Panel title row — Figma 2001:1224. The close control is the word
+            "Close" rather than an icon.
+          {%- endcomment -%}
+          <div class="predictive-search-form__title-row">
+            <span class="predictive-search-form__title">{{ 'content.search' | t }}</span>
+            <button
+              type="button"
+              class="button-unstyled predictive-search__close-modal-button"
+              aria-label="{{ 'accessibility.close_dialog' | t }}"
+              on:click="dialog-component/closeDialog"
+              ref="closeModalButton"
+            >
+              {{ 'actions.close' | t }}
+            </button>
+          </div>
           <div class="predictive-search-form__header-inner">
             <label
               for="{{ 'cmdk-input' | default: 'Search' }}"
@@ -85,9 +101,6 @@
               type="hidden"
               value="last"
             >
-            <span class="svg-wrapper predictive-search__icon">
-              {{ 'icon-search.svg' | inline_asset_content }}
-            </span>
             <button
               type="button"
               class="button-unstyled predictive-search__reset-button"
@@ -97,18 +110,10 @@
             >
               {{ 'actions.clear' | t }}
             </button>
-          </div>
-          <button
-            type="button"
-            class="button predictive-search__close-modal-button"
-            aria-label="{{ 'accessibility.close_dialog' | t }}"
-            on:click="dialog-component/closeDialog"
-            ref="closeModalButton"
-          >
-            <span class="svg-wrapper">
-              {{ 'icon-close.svg' | inline_asset_content }}
+            <span class="svg-wrapper predictive-search__icon">
+              {{ 'icon-nav-search.svg' | inline_asset_content }}
             </span>
-          </button>
+          </div>
         </div>
 
         <div class="predictive-search-form__content-wrapper">
@@ -514,5 +519,150 @@
   .predictive-search__close-modal-button:hover {
     --button-color: var(--color-foreground);
     --button-background-color: transparent;
+  }
+
+  /* ================================================================
+     Sana 2026 search panel
+     Figma: Sana_nav_dropdown_search 2001:1221 (desktop)
+            Sana_nav_mobile_dropdown_search 2001:2081 (mobile)
+
+     The stock modal is a centred dialog; Figma anchors it to the right edge
+     as a full-height sand panel (full-screen on mobile).
+     ================================================================ */
+
+  .search-modal__content.dialog-modal {
+    --search-border-radius: var(--nav-panel-radius);
+
+    margin: 0 0 0 auto;
+    max-height: none;
+    height: 100dvh;
+    width: var(--nav-utility-width-search);
+    max-width: 100vw;
+    background-color: var(--nav-utility-background);
+    border: none;
+
+    @media screen and (min-width: 750px) {
+      width: var(--nav-utility-width-search);
+      margin-block-start: 0;
+      overflow: hidden auto;
+    }
+
+    @media screen and (max-width: 749px) {
+      width: 100vw;
+    }
+  }
+
+  .dialog-modal[open].search-modal__content {
+    border-radius: var(--nav-panel-radius);
+    box-shadow: var(--nav-utility-shadow);
+    animation: none;
+
+    @media screen and (max-width: 749px) {
+      border-radius: 0;
+      box-shadow: none;
+    }
+  }
+
+  .search-modal__content predictive-search-component,
+  .search-modal__content .predictive-search-form__content,
+  .search-modal__content .predictive-search-form__header {
+    background-color: var(--nav-utility-background);
+  }
+
+  .search-modal__content predictive-search-component {
+    align-items: flex-start;
+    padding-inline: var(--nav-panel-padding-inline);
+    padding-block: var(--nav-panel-padding-inline);
+  }
+
+  /* Header stacks the title row above the field. */
+  .search-modal__content .predictive-search-form__header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--padding-lg);
+    border: none;
+    border-radius: 0;
+    padding: 0;
+  }
+
+  .predictive-search-form__title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--gap-md);
+    padding-block: var(--nav-panel-item-padding-block);
+  }
+
+  .predictive-search-form__title,
+  .search-modal__content .predictive-search__close-modal-button {
+    font-family: var(--font-heading--family);
+    font-size: var(--nav-link-size);
+    font-weight: var(--nav-link-weight);
+    line-height: var(--nav-link-line-height);
+    color: var(--color-teal-800);
+  }
+
+  .search-modal__content .predictive-search__close-modal-button {
+    width: auto;
+    height: auto;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    cursor: pointer;
+  }
+
+  /* Field — Figma 2001:1227: sand-200 at 50%, 8px radius, icon on the right. */
+  .search-modal__content .predictive-search-form__header-inner {
+    background-color: var(--nav-utility-field-background);
+    border: none;
+    border-radius: var(--nav-utility-field-radius);
+    padding: 1rem 1.5rem; /* 16 / 24 */
+    gap: var(--gap-sm);
+  }
+
+  .search-modal__content input.search-input {
+    padding: 0;
+    font-size: 1.25rem; /* 20 */
+    line-height: var(--line-height--130);
+    color: var(--color-teal-800);
+  }
+
+  .search-modal__content input.search-input::placeholder {
+    color: var(--color-sand-500);
+  }
+
+  .search-modal__content .predictive-search__icon {
+    position: static;
+    width: var(--nav-icon-size);
+    height: var(--nav-icon-size);
+    color: var(--color-sand-500);
+    flex-shrink: 0;
+  }
+
+  .search-modal__content .predictive-search__icon > svg {
+    width: var(--nav-icon-size);
+    height: var(--nav-icon-size);
+  }
+
+  /* Results sit in the flow of the panel rather than in a floating dropdown. */
+  .search-modal__content .predictive-search-form__content-wrapper {
+    position: static;
+    max-height: none;
+    border-radius: 0;
+    overflow: visible;
+  }
+
+  .search-modal__content .predictive-search-form__content {
+    max-height: none;
+    padding-block-start: var(--padding-lg);
+  }
+
+  .search-modal__content .predictive-search-form__footer {
+    position: static;
+    background-image: none;
   }
 {% endstylesheet %}
