@@ -375,7 +375,7 @@
         "desktop_media_position": "left",
         "equal_columns": false,
         "limit_details_width": false,
-        "gap": 48,
+        "gap": 28,
         "use_mobile_gap": false,
         "mobile_gap": 16,
         "enable_sticky_add_to_cart": true,
