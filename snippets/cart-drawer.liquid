@@ -290,8 +290,23 @@
             Sana_nav_mobile_dropdown_cart 2001:2132 (mobile)
      ================================================================ */
 
+  /* The stock drawer squeezes the page: theme-drawer.liquid puts
+     .page-wrapper--drawer-open on the wrapper, and assets/base.css margins the
+     content in by the drawer width, which reflows the whole layout (the header
+     narrows enough to collapse links into "More"). Figma floats the cart card
+     over the page instead, so cancel the squeeze while the cart is the only
+     open drawer — filters, chat and the rest still push. */
+  body:has(#cart-drawer[open]):not(:has(theme-drawer[open]:not(#cart-drawer))) .page-wrapper--drawer-open {
+    margin-right: 0;
+  }
+
   #cart-drawer .theme-drawer__dialog {
     --theme-drawer-width: var(--nav-utility-width);
+
+    /* Floating over the page instead of beside it means the panel now has to
+       clear the sticky header, which sits at --layer-menu-drawer (18) while the
+       stock drawer only reaches --layer-sticky (8) + its stack order. */
+    z-index: calc(var(--layer-temporary) + var(--drawer-stack-order, 0));
 
     background-color: var(--nav-utility-background);
     border: none;
