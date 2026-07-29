@@ -1,0 +1,382 @@
+{% comment %}
+  Sana 2026 newsletter CTA — the rounded gradient card that sits between the page
+  content and the footer, pulling up over the previous section.
+  Figma: Section/CTA/Newletter 169:952 (desktop)
+         Section/CTA/Newletter 227:939 (mobile)
+
+  The email form is the theme's `email-signup` block, restyled into the
+  translucent white pill via the input CSS variables this section scopes.
+{% endcomment %}
+
+{% liquid
+  if section.settings.background_color != blank
+    render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
+  endif
+%}
+
+<div
+  class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+></div>
+<div
+  class="section section--{{ section.settings.section_width }} newsletter-cta spacing-style{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+  style="{% render 'spacing-style', settings: section.settings %}"
+>
+  <div
+    class="newsletter-cta__card"
+    style="--newsletter-overlap: {{ section.settings.overlap | times: 1.0 | divided_by: 16 }}rem;"
+  >
+    {%- liquid
+      assign background_class = 'newsletter-cta__background'
+      if section.settings.image_mobile != blank
+        assign background_class = background_class | append: ' hidden--mobile'
+      endif
+    -%}
+    {%- if section.settings.image != blank -%}
+      {{
+        section.settings.image
+        | image_url: width: 2600
+        | image_tag:
+          class: background_class,
+          widths: '750, 1100, 1500, 1780, 2000, 2600',
+          sizes: '(min-width: 750px) 1280px, 100vw',
+          loading: 'lazy',
+          alt: ''
+      }}
+    {%- endif -%}
+    {%- if section.settings.image_mobile != blank -%}
+      {{
+        section.settings.image_mobile
+        | image_url: width: 1500
+        | image_tag:
+          class: 'newsletter-cta__background hidden--desktop',
+          widths: '390, 590, 716, 850, 1100, 1500',
+          sizes: '100vw',
+          loading: 'lazy',
+          alt: ''
+      }}
+    {%- endif -%}
+    <div class="newsletter-cta__intro">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="newsletter-cta__heading">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+      {%- if section.settings.description != blank -%}
+        <p class="newsletter-cta__description">{{ section.settings.description }}</p>
+      {%- endif -%}
+    </div>
+    <div class="newsletter-cta__form">
+      {% content_for 'blocks' %}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  /* ================================================================
+     Sana 2026 newsletter CTA
+     Figma: Section/CTA/Newletter 169:952 (desktop)
+            Section/CTA/Newletter 227:939 (mobile)
+     ================================================================ */
+
+  /* The card overlaps the section above it (Figma places the card 125px
+     above the footer boundary), so the section wrapper must sit on top of
+     the preceding section and never clip. */
+  .newsletter-cta-section {
+    position: relative;
+    z-index: 1;
+  }
+
+  .section.newsletter-cta {
+    /* Figma page margin is 80px at the 1440 anchor (16px mobile), matching
+       the header nav's --nav-bar-padding-inline, not the theme's 50px. */
+    --page-margin: 5rem; /* 80 */
+  }
+
+  .newsletter-cta__card {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem; /* 32 — breathing room between intro and form before wrap */
+    padding: 5rem 6rem; /* 80 / 96 */
+    border-radius: 1.25rem; /* 20 */
+    overflow: hidden;
+    margin-block-start: calc(-1 * var(--newsletter-overlap, 0rem));
+    color: var(--color-white, #fff);
+    /* Brand-gradient fallback until the artwork is uploaded in the editor. */
+    background: var(--gradient-brand-deep, var(--color-teal-800));
+  }
+
+  .newsletter-cta__background {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+  }
+
+  .newsletter-cta__intro {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem; /* 20 */
+  }
+
+  .newsletter-cta__heading {
+    margin: 0;
+    font-family: var(--font-geom--family);
+    font-size: 2.25rem; /* 36 — the mobile frame keeps the desktop H3 size */
+    font-weight: 600;
+    line-height: 1.2;
+    color: inherit;
+  }
+
+  .newsletter-cta__description {
+    margin: 0;
+    max-width: 20.875rem; /* 334 */
+    font-family: var(--font-geom--family);
+    font-size: 1.125rem; /* 18 */
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  .newsletter-cta__form {
+    flex-shrink: 0;
+  }
+
+  .newsletter-cta__form .email-signup-block {
+    width: 30.625rem; /* 490 */
+    max-width: 100%;
+  }
+
+  /* --- Email pill: restyle the stock email-signup block ------------- */
+  /* The integrated input group reads these variables for its border,
+     radius and colors — no markup changes needed. */
+  .newsletter-cta__form {
+    --color-input-background: rgb(255 255 255 / 0.2);
+    --color-input-border: var(--color-white, #fff);
+    --color-input-text: #fff;
+    --color-input-text-rgb: 255 255 255;
+    --style-border-radius-inputs: 3.125rem; /* 50 */
+    --style-border-width-inputs: 1px;
+  }
+
+  .newsletter-cta__form .email-signup__input-group--integrated {
+    padding: 0.25rem 0.25rem 0.25rem 1.5rem; /* 4 / 4 / 4 / 24 */
+  }
+
+  .newsletter-cta__form .email-signup__input-group--integrated .email-signup__input {
+    padding: 0;
+    min-width: 0;
+    font-size: 1rem; /* 16 */
+    line-height: 1.25rem; /* 20 */
+  }
+
+  .newsletter-cta__form .email-signup__input::placeholder {
+    color: var(--color-white, #fff);
+    opacity: 1;
+  }
+
+  /* Submit: white 99x40 pill, teal label (Figma 169:961) */
+  .newsletter-cta__form .email-signup__button.email-signup__button--integrated {
+    align-self: center;
+    margin: 0;
+    height: 2.5rem; /* 40 */
+    min-width: 6.1875rem; /* 99 */
+    padding: 0 1.625rem; /* 26 */
+    border-radius: 3.125rem; /* 50 */
+    font-family: var(--font-geom--family);
+    font-size: 1rem; /* 16 */
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    --button-color: var(--color-teal-600);
+    --button-background-color: var(--color-white, #fff);
+    --button-border-width: 0px; /* stylelint-disable-line length-zero-no-unit */
+  }
+
+  .newsletter-cta__form .email-signup__button.email-signup__button--integrated:hover {
+    --button-color: var(--color-teal-800);
+    --button-background-color: var(--color-white, #fff);
+  }
+
+  .newsletter-cta__form .email-signup__message {
+    color: var(--color-white, #fff);
+  }
+
+  @media screen and (max-width: 749px) {
+    .section.newsletter-cta {
+      --page-margin: 1rem; /* 16 */
+    }
+
+    .newsletter-cta__card {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 2rem; /* 32 */
+      padding: 3rem 1.5rem; /* 48 / 24 */
+    }
+
+    .newsletter-cta__intro {
+      gap: 1rem; /* 16 */
+    }
+
+    .newsletter-cta__description {
+      max-width: none;
+    }
+
+    .newsletter-cta__form .email-signup-block {
+      width: 100%;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Newsletter CTA",
+  "class": "newsletter-cta-section",
+  "blocks": [
+    {
+      "type": "email-signup"
+    },
+    {
+      "type": "@app"
+    }
+  ],
+  "enabled_on": {
+    "groups": ["footer"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Stay in the Loop"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "Join our mailing list to keep up to date with everything Sana Packaging"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Background image",
+      "info": "Leave blank to use a brand gradient."
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "Mobile background image",
+      "info": "Optional. Replaces the background image on screens under 750px."
+    },
+    {
+      "type": "range",
+      "id": "overlap",
+      "label": "Overlap previous section",
+      "info": "Pulls the card up over the section above it, as in the Figma design. Only use when the section above leaves room for it.",
+      "min": 0,
+      "max": 200,
+      "step": 5,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:settings.width",
+      "options": [
+        {
+          "value": "page-width",
+          "label": "t:options.page"
+        },
+        {
+          "value": "full-width",
+          "label": "t:options.full"
+        }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:settings.background_color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "checkbox",
+      "id": "use_mobile_padding",
+      "label": "Use mobile padding",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start-mobile",
+      "label": "Mobile top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ section.settings.use_mobile_padding }}"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end-mobile",
+      "label": "Mobile bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 48,
+      "visible_if": "{{ section.settings.use_mobile_padding }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Newsletter CTA",
+      "category": "t:categories.footer",
+      "blocks": {
+        "email-form": {
+          "type": "email-signup",
+          "settings": {
+            "width": "fill",
+            "border_style": "all",
+            "integrated_button": true,
+            "display_type": "text",
+            "label": "Submit",
+            "placeholder": "Enter your email",
+            "style_class": "button-custom",
+            "custom_button_background": "#FFFFFF",
+            "custom_button_text": "#2B8B83",
+            "custom_button_border": "#FFFFFF"
+          }
+        }
+      },
+      "block_order": ["email-form"]
+    }
+  ]
+}
+{% endschema %}

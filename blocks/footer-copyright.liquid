@@ -14,6 +14,9 @@
   <span class="footer-utilities__text">
     &copy; {{ 'now' | date: '%Y' }}
     {{ shop.name | link_to: routes.root_url -}}
+    {%- if block_settings.suffix != blank -%}
+      {{ block_settings.suffix | escape }}
+    {%- endif -%}
     {%- if block_settings.show_powered_by -%}
       , {{ powered_by_link }}
     {%- endif -%}
@@ -36,6 +39,12 @@
       "id": "show_powered_by",
       "label": "t:settings.show_powered_by_shopify",
       "default": true
+    },
+    {
+      "type": "text",
+      "id": "suffix",
+      "label": "Text after shop name",
+      "info": "Rendered right after the shop name, e.g. \". All Rights Reserved.\""
     },
     {
       "type": "paragraph",

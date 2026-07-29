@@ -93,6 +93,29 @@
       text-align: right;
     }
   }
+
+  /* ================================================================
+     Sana 2026 footer bottom bar
+     Figma: Bottom Bar 169:1025 (desktop)
+            Bottom Bar 227:1009 (mobile)
+     ================================================================ */
+
+  .footer-utilities .section {
+    /* Match the 80px Figma page margin used by the footer columns above. */
+    --page-margin: 5rem; /* 80 */
+  }
+
+  @media screen and (max-width: 749px) {
+    .footer-utilities .section {
+      --page-margin: 1rem; /* 16 */
+    }
+
+    .footer-utilities .utilities {
+      /* The mobile frame has no divider above the bottom bar (227:1009). */
+      border-top: 0;
+      padding-block: 0 1.5rem; /* 0 / 24 */
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}

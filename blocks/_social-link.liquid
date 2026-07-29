@@ -46,15 +46,30 @@
       {% endunless %}
     >
       <span class="social-icons__icon-label">{{ platform | capitalize }}</span>
-      <svg
-        class="social-icons__icon icon-default"
-        aria-hidden="true"
-        focusable="false"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 20 20"
-      >
-        {%- render 'icon', icon: platform -%}
-      </svg>
+      {%- liquid
+        # LS: Sana 2026 — prefer the brand glyphs drawn for the footer chips
+        # (Figma Social Links 169:974). They live in chip-space (29.48 viewBox)
+        # so the footer CSS can render them full-bleed inside the circle.
+        assign brand_platform = platform
+        if brand_platform == 'twitter'
+          assign brand_platform = 'x'
+        endif
+        assign brand_icon_platforms = 'facebook,x,instagram,linkedin,youtube' | split: ','
+      -%}
+      {%- if brand_icon_platforms contains brand_platform -%}
+        {%- assign brand_icon_asset = 'icon-social-' | append: brand_platform | append: '.svg' -%}
+        {{- brand_icon_asset | inline_asset_content -}}
+      {%- else -%}
+        <svg
+          class="social-icons__icon icon-default"
+          aria-hidden="true"
+          focusable="false"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+        >
+          {%- render 'icon', icon: platform -%}
+        </svg>
+      {%- endif -%}
     </a>
   </div>
 {% endif %}
