@@ -1303,6 +1303,26 @@
      separates the two, so the count reads as a badge over the icon. */
   .header .header-actions__cart-icon .cart-bubble__background {
     box-shadow: 0 0 0 2px var(--color-background);
+    border-radius: 999px;
+  }
+
+  /* The action button is overflow: hidden and exactly 24x24, so a badge that
+     sits proud of the glyph's corner gets its top and right sliced off — the
+     circle renders as a wedge with the count cut in half. Only the badge
+     overflows this box, so it can clip nothing else. */
+  .header .header-actions__action:has(cart-icon),
+  .header .header-actions__cart-icon {
+    overflow: visible;
+  }
+
+  /* Fixed width fits one digit; a two-digit count needs to grow into a pill
+     rather than overflow the circle. */
+  .header .header-actions__cart-icon .cart-bubble {
+    width: auto;
+    min-width: var(--cart-bubble-size);
+    height: var(--cart-bubble-size);
+    aspect-ratio: auto;
+    border-radius: 999px;
   }
 
   /* .visually-hidden collapses the bubble to 1px, but the theme's own
