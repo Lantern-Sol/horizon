@@ -25,14 +25,32 @@
     class="newsletter-cta__card"
     style="--newsletter-overlap: {{ section.settings.overlap | times: 1.0 | divided_by: 16 }}rem;"
   >
+    {%- liquid
+      assign background_class = 'newsletter-cta__background'
+      if section.settings.image_mobile != blank
+        assign background_class = background_class | append: ' hidden--mobile'
+      endif
+    -%}
     {%- if section.settings.image != blank -%}
       {{
         section.settings.image
         | image_url: width: 2600
         | image_tag:
-          class: 'newsletter-cta__background',
+          class: background_class,
           widths: '750, 1100, 1500, 1780, 2000, 2600',
           sizes: '(min-width: 750px) 1280px, 100vw',
+          loading: 'lazy',
+          alt: ''
+      }}
+    {%- endif -%}
+    {%- if section.settings.image_mobile != blank -%}
+      {{
+        section.settings.image_mobile
+        | image_url: width: 1500
+        | image_tag:
+          class: 'newsletter-cta__background hidden--desktop',
+          widths: '390, 590, 716, 850, 1100, 1500',
+          sizes: '100vw',
           loading: 'lazy',
           alt: ''
       }}
@@ -243,6 +261,12 @@
       "id": "image",
       "label": "Background image",
       "info": "Leave blank to use a brand gradient."
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "Mobile background image",
+      "info": "Optional. Replaces the background image on screens under 750px."
     },
     {
       "type": "range",
