@@ -843,6 +843,14 @@
       padding-inline: 0;
     }
 
+    /* The item stretches to the bar's content height (62px, set by the logo)
+       while the pill above sizes to its own text (42.5px). It is a column flex
+       that packs from the top, so without this the links sit ~10px above the
+       logo's centre line. */
+    .header-menu .menu-list .menu-list__list-item:not([slot='overflow']) {
+      justify-content: center;
+    }
+
     /* Figma's top-level links carry no chevron — the pill signals the dropdown. */
     .header-menu .menu-list .menu-list__link .icon-chevron-down {
       display: none;
