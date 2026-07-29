@@ -36,15 +36,6 @@
           loading: 'lazy',
           alt: ''
       }}
-    {%- else -%}
-      <img
-        class="newsletter-cta__background"
-        src="{{ 'newsletter-cta-bg.jpg' | asset_url }}"
-        width="1920"
-        height="411"
-        loading="lazy"
-        alt=""
-      >
     {%- endif -%}
     <div class="newsletter-cta__intro">
       {%- if section.settings.heading != blank -%}
@@ -93,6 +84,8 @@
     overflow: hidden;
     margin-block-start: calc(-1 * var(--newsletter-overlap, 0rem));
     color: var(--color-white, #fff);
+    /* Brand-gradient fallback until the artwork is uploaded in the editor. */
+    background: var(--gradient-brand-deep, var(--color-teal-800));
   }
 
   .newsletter-cta__background {
@@ -249,18 +242,18 @@
       "type": "image_picker",
       "id": "image",
       "label": "Background image",
-      "info": "Leave blank to use the bundled brand gradient."
+      "info": "Leave blank to use a brand gradient."
     },
     {
       "type": "range",
       "id": "overlap",
       "label": "Overlap previous section",
-      "info": "Pulls the card up over the section above it, as in the Figma design.",
+      "info": "Pulls the card up over the section above it, as in the Figma design. Only use when the section above leaves room for it.",
       "min": 0,
       "max": 200,
       "step": 5,
       "unit": "px",
-      "default": 125
+      "default": 0
     },
     {
       "type": "select",

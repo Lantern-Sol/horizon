@@ -37,7 +37,7 @@
       "settings": {
         "heading": "Stay in the Loop",
         "description": "Join our mailing list to keep up to date with everything Sana Packaging",
-        "overlap": 125,
+        "overlap": 0,
         "section_width": "page-width",
         "background_color": "#FFFFFF",
         "padding-block-start": 0,
