@@ -1,0 +1,123 @@
+{%- comment -%}
+  Sana 2026 cart drawer "You May Also Like" card.
+
+  Figma: Sana_nav_dropdown_cart 2001:1039 (desktop)
+         Sana_nav_mobile_dropdown_cart 2001:2160 (mobile)
+
+  Rendered only through the Section Rendering API, fetched by
+  <cart-recommendations> (assets/cart-recommendations.js) from
+  /recommendations/products?section_id=cart-recommendations&product_id=…
+  so the `recommendations` object is populated. It is never placed on a
+  template, which is why there are no presets.
+
+  Styles live in snippets/cart-drawer.liquid — that snippet is always on the
+  page, so the card is styled the moment this markup is injected.
+{%- endcomment -%}
+
+{%- liquid
+  assign reco_limit = section.settings.max_products | default: 6
+
+  assign products = recommendations.products
+
+  # Same fallback the stock product-recommendations section uses: a young store
+  # has no recommendation graph yet, so pull from the catalogue instead of
+  # rendering an empty card.
+  if recommendations.performed and recommendations.products_count == 0
+    assign products = collections.all.products
+  endif
+-%}
+
+{%- if products.size > 0 -%}
+  <div class="cart-reco__card">
+    <div class="cart-reco__head">
+      <h3 class="cart-reco__title">{{ 'content.cart_recommendations_title' | t }}</h3>
+
+      <div class="cart-reco__nav">
+        <button
+          type="button"
+          class="cart-reco__arrow cart-reco__arrow--prev"
+          data-cart-reco-prev
+          aria-label="{{ 'accessibility.slideshow_previous' | t }}"
+        >
+          <span class="cart-reco__arrow-icon svg-wrapper">
+            {{- 'icon-cart-carousel-chevron.svg' | inline_asset_content -}}
+          </span>
+        </button>
+
+        <button
+          type="button"
+          class="cart-reco__arrow cart-reco__arrow--next"
+          data-cart-reco-next
+          aria-label="{{ 'accessibility.slideshow_next' | t }}"
+        >
+          <span class="cart-reco__arrow-icon svg-wrapper">
+            {{- 'icon-cart-carousel-chevron.svg' | inline_asset_content -}}
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <ul
+      class="cart-reco__track"
+      data-cart-reco-track
+      role="list"
+    >
+      {%- for product in products limit: reco_limit -%}
+        <li class="cart-reco__slide">
+          <a
+            class="cart-reco__media"
+            href="{{ product.url }}"
+            tabindex="-1"
+            aria-hidden="true"
+          >
+            {%- if product.featured_image -%}
+              {{
+                product.featured_image
+                | image_url: width: 300
+                | image_tag: class: 'cart-reco__image', widths: '100, 150, 200, 300', loading: 'lazy', alt: ''
+              }}
+            {%- endif -%}
+          </a>
+
+          <div class="cart-reco__info">
+            <a
+              class="cart-reco__name"
+              href="{{ product.url }}"
+            >
+              {{- product.title -}}
+            </a>
+            <span class="cart-reco__price">{{ product.price | money }}</span>
+          </div>
+
+          <a
+            class="button cart-reco__view"
+            href="{{ product.url }}"
+            aria-label="{{ 'content.view_product' | t }} {{ product.title | escape }}"
+          >
+            <span class="cart-reco__view-text">{{ 'content.view_product' | t }}</span>
+            <span class="cart-reco__view-icon svg-wrapper">
+              {{- 'icon-cart-plus.svg' | inline_asset_content -}}
+            </span>
+          </a>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:names.cart_recommendations",
+  "settings": [
+    {
+      "type": "range",
+      "id": "max_products",
+      "label": "t:settings.product_count",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "default": 6
+    }
+  ]
+}
+{% endschema %}
