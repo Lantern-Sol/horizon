@@ -13,6 +13,12 @@
 
 {% liquid
   assign block_settings = block.settings
+
+  # Figma 2001:1028 — the drawer's stepper is a stacked chevron pair, the cart page keeps +/-.
+  assign stepper_style = ''
+  if context == 'drawer'
+    assign stepper_style = 'chevron'
+  endif
 %}
 
 {%- if block_settings.input_style == 'custom' -%}
@@ -337,17 +343,22 @@
                       quantity: item.quantity
                     %}
 
+                    {%- comment -%}
+                      The Sana cart drawer (Figma 2001:1027) stacks a chevron stepper over a
+                      plain "Remove" link instead of the trash-can button used on the cart page.
+                    {%- endcomment -%}
                     {% render 'quantity-selector',
                       product: item.product,
                       variant: item.variant,
                       in_cart_quantity: item.quantity,
                       line_index: item.index,
                       class: 'cart-primary-typography',
-                      can_update_quantity: can_update_quantity
+                      can_update_quantity: can_update_quantity,
+                      stepper_style: stepper_style
                     %}
 
                     <button
-                      class="button cart-items__remove"
+                      class="button cart-items__remove{% if context == 'drawer' %} cart-items__remove--text{% endif %}"
                       type="button"
                       aria-label="{{ 'accessibility.remove_item' | t: title: item.title | escape }}"
                       on:click="/onLineItemRemove/{{ item.index | plus: 1 }}"
@@ -356,8 +367,12 @@
                         hidden
                       {% endif %}
                     >
-                      {{- 'icon-delete.svg' | inline_asset_content -}}
-                      <span class="visually-hidden">{{ 'accessibility.remove' | t }}</span>
+                      {%- if context == 'drawer' -%}
+                        <span class="cart-items__remove-label">{{ 'accessibility.remove' | t }}</span>
+                      {%- else -%}
+                        {{- 'icon-delete.svg' | inline_asset_content -}}
+                        <span class="visually-hidden">{{ 'accessibility.remove' | t }}</span>
+                      {%- endif -%}
                     </button>
                   </div>
                 </td>
@@ -684,6 +699,28 @@
     justify-content: center;
     box-shadow: none;
     padding: 0;
+  }
+
+  /* Figma 2001:1037 — the drawer spells "Remove" out as an underlined link. */
+  .cart-items__remove--text {
+    width: auto;
+    height: auto;
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    font-family: var(--font-body--family);
+    font-size: 0.875rem; /* 14 */
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--color-teal-800);
+    text-decoration-line: underline;
+    text-decoration-skip-ink: none;
+    text-underline-position: from-font;
+    cursor: pointer;
+  }
+
+  .cart-items__remove--text:hover {
+    text-decoration-color: transparent;
   }
 
   .cart-items__media {

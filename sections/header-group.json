@@ -87,7 +87,7 @@
             "navigation_bar": false,
             "background_color_navigation_bar": "{{ settings.color_palette.background }}",
             "text_color_navigation_bar": "",
-            "drawer_dividers": true
+            "drawer_dividers": false
           },
           "blocks": {}
         }
@@ -109,7 +109,7 @@
         "localization_row": "top",
         "section_width": "page-width",
         "section_height": "standard",
-        "enable_sticky_header": "scroll-up",
+        "enable_sticky_header": "always",
         "divider_width": 0,
         "divider_size": "page-width",
         "divider_color": "",

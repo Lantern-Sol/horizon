@@ -2885,6 +2885,42 @@
     "name": "t:names.search",
     "settings": [
       {
+        "type": "header",
+        "content": "t:names.search_default_view"
+      },
+      {
+        "type": "paragraph",
+        "content": "t:settings.search_default_menus_info"
+      },
+      {
+        "type": "link_list",
+        "id": "search_default_menu_first",
+        "label": "t:settings.search_default_menu_first"
+      },
+      {
+        "type": "text",
+        "id": "search_default_menu_first_heading",
+        "label": "t:settings.search_default_menu_heading",
+        "info": "t:settings.search_default_menu_heading_info"
+      },
+      {
+        "type": "link_list",
+        "id": "search_default_menu_second",
+        "label": "t:settings.search_default_menu_second"
+      },
+      {
+        "type": "text",
+        "id": "search_default_menu_second_heading",
+        "label": "t:settings.search_default_menu_heading",
+        "info": "t:settings.search_default_menu_heading_info"
+      },
+      {
+        "type": "checkbox",
+        "id": "search_default_show_products",
+        "label": "t:settings.search_default_show_products",
+        "default": false
+      },
+      {
         "type": "collection",
         "id": "empty_state_collection",
         "label": "t:settings.empty_state_collection",

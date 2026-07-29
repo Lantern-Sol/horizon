@@ -459,6 +459,71 @@
     --menu-font-2xl--size: 1.75rem;
     --menu-font-2xl--line-height: calc(1.1 + 0.5 * min(16 / 28));
 
+    {%- comment -%}
+      Navigation — Figma "Navigation/Desktop" (2001:385) and "Navigation/Mobile" (2001:1842).
+
+      1rem is exactly 16px at BOTH Figma anchors (the html font-size rules above pin it to
+      100vw/1440 on desktop and 100vw/393 on mobile), so every rem value here renders as the
+      literal Figma pixel size at its anchor and scales with the rest of the page in between.
+      The px comments are the Figma values, not a second source of truth.
+
+      These are additive: nothing below re-values an existing token. The header reads these
+      instead of --menu-* so the merchant-facing menu typography settings stay independent.
+    {%- endcomment -%}
+
+    /* Bar — desktop */
+    --nav-bar-padding-inline: 5rem; /* 80 */
+    --nav-bar-padding-block: 1.5rem; /* 24 */
+    --nav-bar-gap: 4rem; /* 64 */
+    --nav-logo-height: 3.875rem; /* 62 */
+    --nav-icon-size: 1.5rem; /* 24 */
+    --nav-actions-gap: 1.25rem; /* 20 */
+
+    /* Bar — mobile */
+    --nav-bar-padding-mobile: 1.5rem; /* 24 */
+    --nav-logo-height-mobile: 3.0625rem; /* 49 */
+    --nav-actions-gap-mobile: 1.125rem; /* 18 */
+
+    /* Top-level link — Figma style "UI/Nav" (18/1.25, +2% tracking, SemiBold) */
+    --nav-link-size: 1.125rem; /* 18 */
+    --nav-link-weight: 600;
+    --nav-link-line-height: var(--line-height--125);
+    --nav-link-letter-spacing: var(--letter-spacing--002);
+    --nav-link-padding-inline: 1.5rem; /* 24 */
+    --nav-link-padding-block: 0.625rem; /* 10 */
+    --nav-link-radius: 3.125rem; /* 50 */
+
+    /* Top-level link — Figma style "Mobile/UI/Nav" (20/1.25) */
+    --nav-link-size-mobile: 1.25rem; /* 20 */
+    --nav-link-padding-block-mobile: 1rem; /* 16 */
+
+    /* Menu dropdown card */
+    --nav-panel-radius: 1.5rem; /* 24 */
+    --nav-panel-padding-inline: 2rem; /* 32 */
+    --nav-panel-padding-block-end: 1.75rem; /* 28 */
+    --nav-panel-item-padding-block: 0.5rem; /* 8 */
+    --nav-panel-background: var(--color-white);
+    --nav-panel-link-color: var(--color-teal-800);
+    --nav-panel-link-color-hover: var(--color-teal-500);
+
+    /* Utility panels — search / account / cart */
+    --nav-utility-background: var(--color-sand-50);
+    --nav-utility-shadow: -10px 4px 20px rgb(0 0 0 / 0.14);
+    --nav-utility-field-background: rgb(230 215 195 / 0.5); /* sand-200 @ 50% */
+    --nav-utility-field-radius: 0.5rem; /* 8 */
+    --nav-utility-width: 32.625rem; /* 522 */
+    --nav-utility-width-search: 29.25rem; /* 468 */
+
+    /* Sticky / scrolled bar */
+    --nav-scroll-shadow: 0 10px 20px rgb(0 0 0 / 0.12);
+    --nav-scroll-shadow-mobile: 0 10px 20px rgb(0 0 0 / 0.32);
+
+    /* Mobile drawer */
+    --nav-drawer-background: linear-gradient(180deg, var(--color-teal-800) 0%, var(--color-teal-600) 100%);
+    --nav-drawer-foreground: var(--color-white);
+    --nav-drawer-muted: var(--color-teal-200);
+    --nav-drawer-accent: var(--color-teal-300);
+
     /* Colors
        Status values come from the Figma "Alert & Status" group — see 'color-tokens'.
        Stock states reuse the status ramp so in/low/out read as success/warning/disabled. */
