@@ -171,6 +171,38 @@
           {
             "value": "body-loose",
             "label": "t:options.loose"
+          },
+          {
+            "value": "095",
+            "label": "0.95"
+          },
+          {
+            "value": "100",
+            "label": "1.0"
+          },
+          {
+            "value": "110",
+            "label": "1.1"
+          },
+          {
+            "value": "115",
+            "label": "1.15"
+          },
+          {
+            "value": "120",
+            "label": "1.2"
+          },
+          {
+            "value": "125",
+            "label": "1.25"
+          },
+          {
+            "value": "130",
+            "label": "1.3"
+          },
+          {
+            "value": "150",
+            "label": "1.5"
           }
         ],
         "default": "body-normal"
@@ -229,12 +261,20 @@
             "label": "24px"
           },
           {
+            "value": "26",
+            "label": "26px"
+          },
+          {
             "value": "28",
             "label": "28px"
           },
           {
             "value": "32",
             "label": "32px"
+          },
+          {
+            "value": "36",
+            "label": "36px"
           },
           {
             "value": "40",
@@ -247,6 +287,10 @@
           {
             "value": "56",
             "label": "56px"
+          },
+          {
+            "value": "64",
+            "label": "64px"
           },
           {
             "value": "72",
@@ -287,6 +331,38 @@
           {
             "value": "display-loose",
             "label": "t:options.loose"
+          },
+          {
+            "value": "095",
+            "label": "0.95"
+          },
+          {
+            "value": "100",
+            "label": "1.0"
+          },
+          {
+            "value": "110",
+            "label": "1.1"
+          },
+          {
+            "value": "115",
+            "label": "1.15"
+          },
+          {
+            "value": "120",
+            "label": "1.2"
+          },
+          {
+            "value": "125",
+            "label": "1.25"
+          },
+          {
+            "value": "130",
+            "label": "1.3"
+          },
+          {
+            "value": "150",
+            "label": "1.5"
           }
         ],
         "default": "display-normal"
@@ -307,6 +383,22 @@
           {
             "value": "heading-loose",
             "label": "t:options.loose"
+          },
+          {
+            "value": "000",
+            "label": "0"
+          },
+          {
+            "value": "001",
+            "label": "1%"
+          },
+          {
+            "value": "002",
+            "label": "2%"
+          },
+          {
+            "value": "030",
+            "label": "30%"
           }
         ],
         "default": "heading-normal"
@@ -381,12 +473,20 @@
             "label": "24px"
           },
           {
+            "value": "26",
+            "label": "26px"
+          },
+          {
             "value": "28",
             "label": "28px"
           },
           {
             "value": "32",
             "label": "32px"
+          },
+          {
+            "value": "36",
+            "label": "36px"
           },
           {
             "value": "40",
@@ -399,6 +499,10 @@
           {
             "value": "56",
             "label": "56px"
+          },
+          {
+            "value": "64",
+            "label": "64px"
           },
           {
             "value": "72",
@@ -439,6 +543,38 @@
           {
             "value": "display-loose",
             "label": "t:options.loose"
+          },
+          {
+            "value": "095",
+            "label": "0.95"
+          },
+          {
+            "value": "100",
+            "label": "1.0"
+          },
+          {
+            "value": "110",
+            "label": "1.1"
+          },
+          {
+            "value": "115",
+            "label": "1.15"
+          },
+          {
+            "value": "120",
+            "label": "1.2"
+          },
+          {
+            "value": "125",
+            "label": "1.25"
+          },
+          {
+            "value": "130",
+            "label": "1.3"
+          },
+          {
+            "value": "150",
+            "label": "1.5"
           }
         ],
         "default": "display-normal"
@@ -459,6 +595,22 @@
           {
             "value": "heading-loose",
             "label": "t:options.loose"
+          },
+          {
+            "value": "000",
+            "label": "0"
+          },
+          {
+            "value": "001",
+            "label": "1%"
+          },
+          {
+            "value": "002",
+            "label": "2%"
+          },
+          {
+            "value": "030",
+            "label": "30%"
           }
         ],
         "default": "heading-normal"
@@ -541,12 +693,20 @@
             "label": "24px"
           },
           {
+            "value": "26",
+            "label": "26px"
+          },
+          {
             "value": "28",
             "label": "28px"
           },
           {
             "value": "32",
             "label": "32px"
+          },
+          {
+            "value": "36",
+            "label": "36px"
           },
           {
             "value": "40",
@@ -559,6 +719,10 @@
           {
             "value": "56",
             "label": "56px"
+          },
+          {
+            "value": "64",
+            "label": "64px"
           },
           {
             "value": "72",
@@ -599,6 +763,38 @@
           {
             "value": "display-loose",
             "label": "t:options.loose"
+          },
+          {
+            "value": "095",
+            "label": "0.95"
+          },
+          {
+            "value": "100",
+            "label": "1.0"
+          },
+          {
+            "value": "110",
+            "label": "1.1"
+          },
+          {
+            "value": "115",
+            "label": "1.15"
+          },
+          {
+            "value": "120",
+            "label": "1.2"
+          },
+          {
+            "value": "125",
+            "label": "1.25"
+          },
+          {
+            "value": "130",
+            "label": "1.3"
+          },
+          {
+            "value": "150",
+            "label": "1.5"
           }
         ],
         "default": "display-normal"
@@ -619,6 +815,22 @@
           {
             "value": "heading-loose",
             "label": "t:options.loose"
+          },
+          {
+            "value": "000",
+            "label": "0"
+          },
+          {
+            "value": "001",
+            "label": "1%"
+          },
+          {
+            "value": "002",
+            "label": "2%"
+          },
+          {
+            "value": "030",
+            "label": "30%"
           }
         ],
         "default": "heading-normal"
@@ -701,12 +913,20 @@
             "label": "24px"
           },
           {
+            "value": "26",
+            "label": "26px"
+          },
+          {
             "value": "28",
             "label": "28px"
           },
           {
             "value": "32",
             "label": "32px"
+          },
+          {
+            "value": "36",
+            "label": "36px"
           },
           {
             "value": "40",
@@ -719,6 +939,10 @@
           {
             "value": "56",
             "label": "56px"
+          },
+          {
+            "value": "64",
+            "label": "64px"
           },
           {
             "value": "72",
@@ -759,6 +983,38 @@
           {
             "value": "display-loose",
             "label": "t:options.loose"
+          },
+          {
+            "value": "095",
+            "label": "0.95"
+          },
+          {
+            "value": "100",
+            "label": "1.0"
+          },
+          {
+            "value": "110",
+            "label": "1.1"
+          },
+          {
+            "value": "115",
+            "label": "1.15"
+          },
+          {
+            "value": "120",
+            "label": "1.2"
+          },
+          {
+            "value": "125",
+            "label": "1.25"
+          },
+          {
+            "value": "130",
+            "label": "1.3"
+          },
+          {
+            "value": "150",
+            "label": "1.5"
           }
         ],
         "default": "display-normal"
@@ -779,6 +1035,22 @@
           {
             "value": "heading-loose",
             "label": "t:options.loose"
+          },
+          {
+            "value": "000",
+            "label": "0"
+          },
+          {
+            "value": "001",
+            "label": "1%"
+          },
+          {
+            "value": "002",
+            "label": "2%"
+          },
+          {
+            "value": "030",
+            "label": "30%"
           }
         ],
         "default": "heading-normal"
@@ -861,12 +1133,20 @@
             "label": "24px"
           },
           {
+            "value": "26",
+            "label": "26px"
+          },
+          {
             "value": "28",
             "label": "28px"
           },
           {
             "value": "32",
             "label": "32px"
+          },
+          {
+            "value": "36",
+            "label": "36px"
           },
           {
             "value": "40",
@@ -879,6 +1159,10 @@
           {
             "value": "56",
             "label": "56px"
+          },
+          {
+            "value": "64",
+            "label": "64px"
           },
           {
             "value": "72",
@@ -919,6 +1203,38 @@
           {
             "value": "display-loose",
             "label": "t:options.loose"
+          },
+          {
+            "value": "095",
+            "label": "0.95"
+          },
+          {
+            "value": "100",
+            "label": "1.0"
+          },
+          {
+            "value": "110",
+            "label": "1.1"
+          },
+          {
+            "value": "115",
+            "label": "1.15"
+          },
+          {
+            "value": "120",
+            "label": "1.2"
+          },
+          {
+            "value": "125",
+            "label": "1.25"
+          },
+          {
+            "value": "130",
+            "label": "1.3"
+          },
+          {
+            "value": "150",
+            "label": "1.5"
           }
         ],
         "default": "display-normal"
@@ -939,6 +1255,22 @@
           {
             "value": "heading-loose",
             "label": "t:options.loose"
+          },
+          {
+            "value": "000",
+            "label": "0"
+          },
+          {
+            "value": "001",
+            "label": "1%"
+          },
+          {
+            "value": "002",
+            "label": "2%"
+          },
+          {
+            "value": "030",
+            "label": "30%"
           }
         ],
         "default": "heading-normal"
@@ -1021,12 +1353,20 @@
             "label": "24px"
           },
           {
+            "value": "26",
+            "label": "26px"
+          },
+          {
             "value": "28",
             "label": "28px"
           },
           {
             "value": "32",
             "label": "32px"
+          },
+          {
+            "value": "36",
+            "label": "36px"
           },
           {
             "value": "40",
@@ -1039,6 +1379,10 @@
           {
             "value": "56",
             "label": "56px"
+          },
+          {
+            "value": "64",
+            "label": "64px"
           },
           {
             "value": "72",
@@ -1079,6 +1423,38 @@
           {
             "value": "display-loose",
             "label": "t:options.loose"
+          },
+          {
+            "value": "095",
+            "label": "0.95"
+          },
+          {
+            "value": "100",
+            "label": "1.0"
+          },
+          {
+            "value": "110",
+            "label": "1.1"
+          },
+          {
+            "value": "115",
+            "label": "1.15"
+          },
+          {
+            "value": "120",
+            "label": "1.2"
+          },
+          {
+            "value": "125",
+            "label": "1.25"
+          },
+          {
+            "value": "130",
+            "label": "1.3"
+          },
+          {
+            "value": "150",
+            "label": "1.5"
           }
         ],
         "default": "display-normal"
@@ -1099,6 +1475,22 @@
           {
             "value": "heading-loose",
             "label": "t:options.loose"
+          },
+          {
+            "value": "000",
+            "label": "0"
+          },
+          {
+            "value": "001",
+            "label": "1%"
+          },
+          {
+            "value": "002",
+            "label": "2%"
+          },
+          {
+            "value": "030",
+            "label": "30%"
           }
         ],
         "default": "heading-normal"
@@ -1181,12 +1573,20 @@
             "label": "24px"
           },
           {
+            "value": "26",
+            "label": "26px"
+          },
+          {
             "value": "28",
             "label": "28px"
           },
           {
             "value": "32",
             "label": "32px"
+          },
+          {
+            "value": "36",
+            "label": "36px"
           },
           {
             "value": "40",
@@ -1199,6 +1599,10 @@
           {
             "value": "56",
             "label": "56px"
+          },
+          {
+            "value": "64",
+            "label": "64px"
           },
           {
             "value": "72",
@@ -1239,6 +1643,38 @@
           {
             "value": "display-loose",
             "label": "t:options.loose"
+          },
+          {
+            "value": "095",
+            "label": "0.95"
+          },
+          {
+            "value": "100",
+            "label": "1.0"
+          },
+          {
+            "value": "110",
+            "label": "1.1"
+          },
+          {
+            "value": "115",
+            "label": "1.15"
+          },
+          {
+            "value": "120",
+            "label": "1.2"
+          },
+          {
+            "value": "125",
+            "label": "1.25"
+          },
+          {
+            "value": "130",
+            "label": "1.3"
+          },
+          {
+            "value": "150",
+            "label": "1.5"
           }
         ],
         "default": "display-normal"
@@ -1259,6 +1695,22 @@
           {
             "value": "heading-loose",
             "label": "t:options.loose"
+          },
+          {
+            "value": "000",
+            "label": "0"
+          },
+          {
+            "value": "001",
+            "label": "1%"
+          },
+          {
+            "value": "002",
+            "label": "2%"
+          },
+          {
+            "value": "030",
+            "label": "30%"
           }
         ],
         "default": "heading-normal"

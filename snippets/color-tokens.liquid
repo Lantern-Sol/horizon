@@ -1,0 +1,179 @@
+{% doc %}
+  Sana brand color primitives, mirrored from the Figma design system.
+
+  Source: Sana Website 2026 → Colors (node 243:2887)
+  https://www.figma.com/design/KdseOWJ94y4w77qNbSJ7Du/Sana-Website-2026?node-id=243-2887
+
+  These are DESIGN CONSTANTS, not merchant settings — they are the raw palette every
+  semantic color is chosen from. Merchant-editable assignments (page background, buttons,
+  inputs, variants, badges) live in theme settings and are resolved in 'color-palette'.
+
+  Rendered before 'theme-styles-variables' and 'color-palette' so both can reference these.
+  Custom properties resolve at computed-value time, so declaration order is not load-bearing —
+  the ordering is for readability only.
+
+  When the Figma palette changes, regenerate this file rather than editing values inline
+  elsewhere. Every value below is bound to a Figma variable of the same name.
+{% enddoc %}
+
+{% style %}
+  :root {
+    /* ---------------------------------------------------------------
+       Scales — 7 families x 11 steps. Figma: "Color Scales"
+       --------------------------------------------------------------- */
+
+    /* Teal — the brand family. Anchors every gradient. */
+    --color-teal-50: #f0fdfa;
+    --color-teal-100: #d6faf2;
+    --color-teal-200: #b3f7e5;
+    --color-teal-300: #7ce5cc;
+    --color-teal-400: #5bc5ad;
+    --color-teal-500: #42a899;
+    --color-teal-600: #2b8b83;
+    --color-teal-700: #146b68;
+    --color-teal-800: #064c4d;
+    --color-teal-900: #023031;
+    --color-teal-950: #011515;
+
+    /* Sand — warm neutral */
+    --color-sand-50: #f7f1eb;
+    --color-sand-100: #f3ebe1;
+    --color-sand-200: #e6d7c3;
+    --color-sand-300: #dac6ac;
+    --color-sand-400: #bfac94;
+    --color-sand-500: #a4937e;
+    --color-sand-600: #8a7d6d;
+    --color-sand-700: #766c5e;
+    --color-sand-800: #534c42;
+    --color-sand-900: #38322b;
+    --color-sand-950: #221f1a;
+
+    /* Sea Grey — cool neutral */
+    --color-sea-grey-50: #f1f9f9;
+    --color-sea-grey-100: #e1f4f3;
+    --color-sea-grey-200: #cdeeec;
+    --color-sea-grey-300: #bfe3e3;
+    --color-sea-grey-400: #b1d4d5;
+    --color-sea-grey-500: #a0c0c2;
+    --color-sea-grey-600: #89a5a6;
+    --color-sea-grey-700: #6c8283;
+    --color-sea-grey-800: #556667;
+    --color-sea-grey-900: #3d4a4a;
+    --color-sea-grey-950: #283131;
+
+    /* Yellow */
+    --color-yellow-50: #fff0ca;
+    --color-yellow-100: #ffe499;
+    --color-yellow-200: #fed76e;
+    --color-yellow-300: #f7c846;
+    --color-yellow-400: #ecb83c;
+    --color-yellow-500: #dfa832;
+    --color-yellow-600: #d59b29;
+    --color-yellow-700: #ca8c20;
+    --color-yellow-800: #c07f17;
+    --color-yellow-900: #b4710d;
+    --color-yellow-950: #a86403;
+
+    /* Orange */
+    --color-orange-50: #fff8f4;
+    --color-orange-100: #fde1cb;
+    --color-orange-200: #fccaa1;
+    --color-orange-300: #fab16b;
+    --color-orange-400: #f3923d;
+    --color-orange-500: #df8130;
+    --color-orange-600: #ca7024;
+    --color-orange-700: #af5d1f;
+    --color-orange-800: #984e1a;
+    --color-orange-900: #7a3c14;
+    --color-orange-950: #622d0e;
+
+    /* Red */
+    --color-red-50: #fdede9;
+    --color-red-100: #fcd8d1;
+    --color-red-200: #fabdb1;
+    --color-red-300: #f8a69b;
+    --color-red-400: #f68470;
+    --color-red-500: #e25d3d;
+    --color-red-600: #c84f33;
+    --color-red-700: #a63f26;
+    --color-red-800: #8d321d;
+    --color-red-900: #762716;
+    --color-red-950: #631e0f;
+
+    /* Pink */
+    --color-pink-50: #fdf5f6;
+    --color-pink-100: #fae6e7;
+    --color-pink-200: #f6d1d4;
+    --color-pink-300: #f1b4b9;
+    --color-pink-400: #ed9da4;
+    --color-pink-500: #e97884;
+    --color-pink-600: #e55064;
+    --color-pink-700: #cc3e55;
+    --color-pink-800: #a83247;
+    --color-pink-900: #812537;
+    --color-pink-950: #591725;
+
+    /* ---------------------------------------------------------------
+       Roles — Figma's own grouping of the scales above
+       --------------------------------------------------------------- */
+
+    /* "Primary Colors" */
+    --color-primary-1: var(--color-teal-800);
+    --color-primary-2: var(--color-teal-600);
+    --color-primary-3: var(--color-teal-400);
+    --color-primary-4: var(--color-teal-200);
+    --color-primary-5: var(--color-sea-grey-500);
+    --color-primary-6: var(--color-sand-200);
+    --color-primary-7: var(--color-sand-100);
+    --color-primary-8: #ffffff;
+
+    /* "Secondary Colors" */
+    --color-secondary-1: var(--color-yellow-400);
+    --color-secondary-2: var(--color-orange-400);
+    --color-secondary-3: var(--color-red-500);
+    --color-secondary-4: var(--color-pink-600);
+    --color-secondary-5: var(--color-sand-400);
+    --color-secondary-6: var(--color-sand-700);
+    --color-secondary-7: var(--color-sea-grey-700);
+    --color-secondary-8: var(--color-sea-grey-300);
+
+    /* "Neutral Colors" — surface tints for alternating sections */
+    --color-neutral-1: var(--color-teal-50);
+    --color-neutral-2: var(--color-teal-100);
+    --color-neutral-3: var(--color-sand-50);
+    --color-neutral-4: var(--color-sea-grey-50);
+
+    /* Convenience aliases for the brand anchors */
+    --color-brand: var(--color-teal-800);
+    --color-brand-strong: var(--color-teal-900);
+    --color-brand-muted: var(--color-teal-600);
+    --color-brand-soft: var(--color-teal-200);
+    --color-brand-tint: var(--color-teal-50);
+
+    /* ---------------------------------------------------------------
+       Alert & status. Figma: "Alert & Status"
+       Info / Success / Disabled are standalone fills in Figma — they are
+       not bound to any scale, so they are literal values here.
+       --------------------------------------------------------------- */
+    --color-status-info: #4a8bad;
+    --color-status-success: #4a8c6f;
+    --color-status-warning: var(--color-yellow-600);
+    --color-status-error: var(--color-red-600);
+    --color-status-disabled: #a8a89e;
+    --color-status-disabled-button: #969687;
+
+    /* ---------------------------------------------------------------
+       Gradients. Figma: "Gradients" — swatch labels read left to right,
+       so each runs at 90deg.
+       --------------------------------------------------------------- */
+    --gradient-brand-deep: linear-gradient(90deg, var(--color-teal-800) 0%, var(--color-teal-200) 100%);
+    --gradient-brand-warm: linear-gradient(
+      90deg,
+      var(--color-teal-800) 0%,
+      var(--color-teal-400) 50%,
+      var(--color-sand-100) 100%
+    );
+    --gradient-brand-fresh: linear-gradient(90deg, var(--color-teal-400) 0%, var(--color-teal-200) 100%);
+    --gradient-brand-light: linear-gradient(90deg, var(--color-teal-200) 0%, var(--color-teal-50) 100%);
+  }
+{% endstyle %}

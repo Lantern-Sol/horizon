@@ -21,3 +21,7 @@ package.json
 package-lock.json
 shopify_dev.log
 shopify_errors.log
+
+# Source-repo copy of the SIL Open Font License for the self-hosted Geom
+# webfonts in assets/. Kept for license compliance; not a theme file.
+LICENSE-Geom.txt
