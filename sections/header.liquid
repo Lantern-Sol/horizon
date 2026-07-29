@@ -1256,7 +1256,18 @@
     height: var(--nav-icon-size);
   }
 
+  /* The .header-actions__action wrapper hit-tests above the shopify-account it
+     contains, so real pointer events landed on the div and never reached
+     Shopify's button — the account panel could not open. The wrapper carries no
+     visuals of its own, so it opts out of hit-testing and the component takes
+     the whole target. */
+  .header .account-button.header-actions__action {
+    pointer-events: none;
+  }
+
   .header .account-button shopify-account {
+    pointer-events: auto;
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1354,6 +1365,29 @@
 
   #header-component[data-menu-style='drawer'] header-actions {
     gap: var(--nav-actions-gap-mobile);
+  }
+
+  /* ---- Menu optical centring ------------------------------------
+     The stock grid gives both side columns an equal 1fr, which centres the
+     menu on the page. But the logo (152px) is wider than the actions cluster
+     (112px), so the whitespace either side of the links differs by that 40px
+     and the row reads as sitting left. Figma has the same imbalance; this
+     centres the links between the logo and the icons instead, which is what
+     "centred" looks like. Costs ~20px against Figma's literal x. */
+  @media screen and (min-width: 750px) {
+    .header .header__row .header__columns:has(.header__column--center .header-menu) {
+      --header-left: max-content;
+      --header-center: 1fr;
+      --header-right: max-content;
+    }
+
+    .header .header__column--center {
+      justify-content: center;
+    }
+
+    .header .overflow-menu::part(list) {
+      justify-content: center;
+    }
   }
 
   /* ---- Scrolled state — Figma "Sana_nav_bar_scroll_shadow" ------- */
