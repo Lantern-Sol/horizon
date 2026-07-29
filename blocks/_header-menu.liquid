@@ -820,6 +820,11 @@
 
   @media screen and (min-width: 750px) {
     /* ---- Top-level links: 18px SemiBold pills (Figma 2001:393) ---- */
+    /* The second selector only exists to out-rank the stock rule that lays out
+       links with children. Colour deliberately stays out of it: at five classes
+       it would also out-rank the open/active states below, and the label would
+       keep its resting teal inside the teal pill. Resting colour is set once, at
+       a lower weight, in the rule further down. */
     .header-menu .menu-list .menu-list__link,
     .header-menu .menu-list .menu-list__list-item .menu-list__link.menu-list__link--has-children {
       font-family: var(--font-heading--family);
@@ -828,7 +833,6 @@
       line-height: var(--nav-link-line-height);
       letter-spacing: var(--nav-link-letter-spacing);
       text-transform: none;
-      color: var(--color-teal-800);
       flex-direction: row;
       align-items: center;
       gap: 0;
