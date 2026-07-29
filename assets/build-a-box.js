@@ -1399,7 +1399,7 @@ if (!document.getElementById(STYLE_ID)) {
       padding: 0 24px 0 0;
       background: var(--bab-bg);
       color: var(--bab-fg);
-      font-family: 'Inter', system-ui, sans-serif;
+      font-family: var(--font-body--family, system-ui, sans-serif);
       box-sizing: border-box;
     }
 
@@ -1890,7 +1890,7 @@ if (!document.getElementById(STYLE_ID)) {
       background: var(--bab-fg);
       color: var(--bab-fg-onfill);
       border: 1.5px solid var(--bab-fg);
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font-body--family, sans-serif);
       font-weight: 700;
       font-size: 16px;
       text-transform: uppercase;
@@ -1929,7 +1929,7 @@ if (!document.getElementById(STYLE_ID)) {
       background: transparent;
       border: 0;
       padding: 0;
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font-body--family, sans-serif);
       font-weight: 700;
       font-size: 16px;
       color: var(--bab-fg);

@@ -1,12 +1,10 @@
-{%- unless settings.type_body_font.system? -%}
-  {{ settings.type_body_font | font_url | preload_tag: as: 'font', type: 'font/woff2', fetchpriority: 'low' }}
-{%- endunless -%}
-{%- unless settings.type_subheading_font.system? -%}
-  {{ settings.type_subheading_font | font_url | preload_tag: as: 'font', type: 'font/woff2', fetchpriority: 'low' }}
-{%- endunless -%}
-{%- unless settings.type_heading_font.system? -%}
-  {{ settings.type_heading_font | font_url | preload_tag: as: 'font', type: 'font/woff2', fetchpriority: 'low' }}
-{%- endunless -%}
-{%- unless settings.type_accent_font.system? -%}
-  {{ settings.type_accent_font | font_url | preload_tag: as: 'font', type: 'font/woff2', fetchpriority: 'low' }}
-{%- endunless -%}
+{%- comment -%}
+  Geom is self-hosted (assets/geom-variable.woff2) and is the theme's default
+  typeface for body, subheading, heading and accent — see 'theme-styles-variables'.
+  Because it is one variable font covering wght 300–900, a single preload replaces
+  the four picker-driven preloads this snippet used to emit.
+
+  Italic (assets/geom-italic-variable.woff2) is deliberately not preloaded: it is
+  used rarely enough that fetching it up front costs more than it saves.
+{%- endcomment -%}
+{{ 'geom-variable.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', fetchpriority: 'low' }}

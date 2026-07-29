@@ -64,47 +64,20 @@
     {{ content_for_header }}
 
     {% # theme-check-disable AssetPreload %}
-    {%- unless settings.type_body_font.system? -%}
-      <link
-        rel="preload"
-        as="font"
-        href="{{ settings.type_body_font | font_url }}"
-        type="font/woff2"
-        crossorigin
-        fetchpriority="low"
-      >
-    {%- endunless -%}
-    {%- unless settings.type_subheading_font.system? -%}
-      <link
-        rel="preload"
-        as="font"
-        href="{{ settings.type_subheading_font | font_url }}"
-        type="font/woff2"
-        crossorigin
-        fetchpriority="low"
-      >
-    {%- endunless -%}
-    {%- unless settings.type_heading_font.system? -%}
-      <link
-        rel="preload"
-        as="font"
-        href="{{ settings.type_heading_font | font_url }}"
-        type="font/woff2"
-        crossorigin
-        fetchpriority="low"
-      >
-    {%- endunless -%}
-    {%- unless settings.type_accent_font.system? -%}
-      <link
-        rel="preload"
-        as="font"
-        href="{{ settings.type_accent_font | font_url }}"
-        type="font/woff2"
-        crossorigin
-        fetchpriority="low"
-      >
-    {%- endunless -%}
+    {%- comment -%}
+      One preload covers every role: Geom is a variable font and the theme uses it
+      for body, subheading, heading and accent alike. See 'theme-styles-variables'.
+    {%- endcomment -%}
+    <link
+      rel="preload"
+      as="font"
+      href="{{ 'geom-variable.woff2' | asset_url }}"
+      type="font/woff2"
+      crossorigin
+      fetchpriority="low"
+    >
     {% # theme-check-enable AssetPreload %}
+    {%- render 'color-tokens' -%}
     {%- render 'theme-styles-variables' -%}
     {%- render 'color-palette' -%}
   </head>
