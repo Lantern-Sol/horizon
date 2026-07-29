@@ -75,12 +75,11 @@
       endif
     %}
     {%- comment -%}
-      Desktop only. Figma's mobile bar shows an account icon (2001:1865), but
-      per review the mobile bar stays search / cart / menu — account lives in
-      the drawer's Login control instead.
+      Shown on mobile too — Figma's mobile bar carries the account control
+      alongside search and cart (2001:1865).
     {%- endcomment -%}
     <div
-      class="account-button header-actions__action mobile:hidden{% if display_style == 'text' %} account-button--text{% endif %} color-custom-popover"
+      class="account-button header-actions__action{% if display_style == 'text' %} account-button--text{% endif %} color-custom-popover"
     >
       <shopify-account
         menu="{{ customer_account_menu }}"

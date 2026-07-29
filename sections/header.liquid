@@ -1229,13 +1229,41 @@
     align-items: center;
   }
 
+  /* Every action resolves to the same 24x24 flex-centred box so the three
+     glyphs share a baseline. Without this the boxes disagree: cart-icon is an
+     inline box (line-height adds ~4px below it) and shopify-account renders a
+     44px box inside the 24px button, so the glyphs land ~3px apart. */
+  .header .header-actions__action,
+  .header .search-action,
+  .header cart-icon,
+  .header .account-button .svg-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+  }
+
   .header .header-actions__action {
     --button-color: currentcolor;
 
     width: var(--nav-icon-size);
     height: var(--nav-icon-size);
     padding: 0;
+  }
+
+  .header cart-icon {
+    width: var(--nav-icon-size);
+    height: var(--nav-icon-size);
+  }
+
+  .header .account-button shopify-account {
+    display: flex;
     align-items: center;
+    justify-content: center;
+    width: var(--nav-icon-size);
+    height: var(--nav-icon-size);
+    min-width: 0;
+    line-height: 0;
   }
 
   .header .header-actions__action .svg-wrapper,
@@ -1257,6 +1285,13 @@
 
   .header .header-actions__cart-icon.header-actions__cart-icon--has-cart svg {
     mask: none;
+  }
+
+  /* .visually-hidden collapses the bubble to 1px, but the theme's own
+     `width: var(--cart-bubble-size)` rule outranks it — leaving an empty cart
+     with a 14x1px bar sitting over the glyph. */
+  .header .header-actions__cart-icon .cart-bubble.visually-hidden {
+    display: none;
   }
 
   /* .cart-bubble__text reads --font-size--3xs, which this theme deliberately
