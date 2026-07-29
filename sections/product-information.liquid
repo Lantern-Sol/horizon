@@ -8,6 +8,7 @@
     id: 'media-gallery',
     closest.product: closest.product
   -%}
+  {% content_for 'blocks' %}
 {% endcapture %}
 
 {% capture product_details %}
@@ -19,7 +20,7 @@
 {% endcapture %}
 
 {% capture additional_blocks %}
-  {% content_for 'blocks' %}
+ 
 {% endcapture %}
 
 {% if section.settings.enable_sticky_add_to_cart %}

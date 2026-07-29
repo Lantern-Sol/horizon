@@ -1,0 +1,552 @@
+{%- liquid
+  assign bg_color = section.settings.section_bg_color | default: '#fbf8f3'
+  assign featured_bg_1 = section.settings.featured_bg_color_1 | default: '#054742'
+  assign featured_bg_2 = section.settings.featured_bg_color_2 | default: '#022926'
+  assign wave_color = section.settings.wave_icon_color | default: '#008060'
+  assign text_color = section.settings.featured_text_color | default: '#ffffff'
+  assign card_text_color = section.settings.card_text_color | default: '#022926'
+-%}
+
+<div
+  id="CustomPackagingGrid-{{ section.id }}"
+  class="custom-packaging-grid-section"
+  style="
+    --section-bg-color: {{ bg_color }};
+    --featured-bg-gradient: linear-gradient(135deg, {{ featured_bg_1 }} 0%, {{ featured_bg_2 }} 100%);
+    --wave-color: {{ wave_color }};
+    --featured-text-color: {{ text_color }};
+    --card-text-color: {{ card_text_color }};
+    --padding-block-start: {{ section.settings.padding-block-start }}px;
+    --padding-block-end: {{ section.settings.padding-block-end }}px;
+  "
+>
+  <div class="custom-packaging-grid__container section section--page-width">
+    <div class="custom-packaging-grid__layout">
+      <!-- Large Featured Card (Spans 2 columns on desktop) -->
+      <div class="custom-packaging-grid__featured-card">
+        <!-- Wave Icon Cutout Badge at Top-Right -->
+        <div class="custom-packaging-grid__wave-badge" aria-hidden="true">
+          <svg class="custom-packaging-grid__wave-svg" viewBox="0 0 36 16" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 3C6.5 6.5 9.5 0.5 14 4C18.5 7.5 21.5 1.5 26 5C30.5 8.5 32 3.5 34 3" />
+            <path d="M2 8C6.5 11.5 9.5 5.5 14 9C18.5 12.5 21.5 6.5 26 10C30.5 13.5 32 8.5 34 8" />
+            <path d="M2 13C6.5 16.5 9.5 10.5 14 14C18.5 17.5 21.5 11.5 26 15C30.5 18.5 32 13.5 34 13" />
+          </svg>
+        </div>
+
+        <div class="custom-packaging-grid__featured-content">
+          <!-- Left Content Side -->
+          <div class="custom-packaging-grid__featured-info">
+            {%- if section.settings.featured_title != blank -%}
+              <h2 class="custom-packaging-grid__featured-title">{{ section.settings.featured_title | escape }}</h2>
+            {%- endif -%}
+            {%- if section.settings.featured_description != blank -%}
+              <p class="custom-packaging-grid__featured-desc">{{ section.settings.featured_description | escape }}</p>
+            {%- endif -%}
+            {%- if section.settings.featured_link_text != blank and section.settings.featured_link != blank -%}
+              <a href="{{ section.settings.featured_link }}" class="custom-packaging-grid__featured-btn">
+                <span>{{ section.settings.featured_link_text | escape }}</span>
+                <span class="btn-arrow">↗</span>
+              </a>
+            {%- endif -%}
+          </div>
+
+          <!-- Right Image Side -->
+          <div class="custom-packaging-grid__featured-media">
+            {%- if section.settings.featured_image != blank -%}
+              {{ section.settings.featured_image | image_url: width: 800 | image_tag: class: 'custom-packaging-grid__featured-img', loading: 'lazy' }}
+            {%- else -%}
+              {{ 'collection-1' | placeholder_svg_tag: 'custom-packaging-grid__featured-img custom-packaging-grid__featured-img--placeholder' }}
+            {%- endif -%}
+          </div>
+        </div>
+      </div>
+
+      <!-- Small Info Cards Block Loop -->
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign card_tag = 'div'
+          if block.settings.link != blank
+            assign card_tag = 'a'
+          endif
+        -%}
+        <{{ card_tag }}
+          {% if block.settings.link != blank %}href="{{ block.settings.link }}"{% endif %}
+          class="custom-packaging-grid__info-card"
+          {{ block.shopify_attributes }}
+        >
+          <!-- Custom or Prebuilt Icon -->
+          <div class="custom-packaging-grid__card-icon-wrapper">
+            {%- if block.settings.custom_icon_image != blank -%}
+              {{ block.settings.custom_icon_image | image_url: width: 60 | image_tag: class: 'custom-packaging-grid__card-custom-icon', alt: block.settings.title, loading: 'lazy' }}
+            {%- else -%}
+              <!-- Default receipt/ticket SVG matching the design mockup -->
+              <svg class="custom-packaging-grid__card-icon-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1-2-1z" />
+                <path d="M8 6h8M8 10h8M8 14h6" />
+              </svg>
+            {%- endif -%}
+          </div>
+
+          <!-- Title & Description -->
+          {%- if block.settings.title != blank -%}
+            <h3 class="custom-packaging-grid__card-title">{{ block.settings.title | escape }}</h3>
+          {%- endif -%}
+          {%- if block.settings.description != blank -%}
+            <p class="custom-packaging-grid__card-desc">{{ block.settings.description | escape }}</p>
+          {%- endif -%}
+        </{{ card_tag }}>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+<style>
+  .custom-packaging-grid-section {
+    background-color: var(--section-bg-color);
+    padding-block-start: var(--padding-block-start, 60px);
+    padding-block-end: var(--padding-block-end, 60px);
+  }
+
+  .custom-packaging-grid__container {
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: 20px;
+  }
+
+  /* Desktop Grid Layout: 3 Columns */
+  .custom-packaging-grid__layout {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    align-items: stretch;
+  }
+
+  /* Featured Card spans 2 columns on desktop */
+  .custom-packaging-grid__featured-card {
+    position: relative;
+    grid-column: span 2;
+    background: var(--featured-bg-gradient);
+    border-radius: 24px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 380px;
+  }
+
+  /* Wave Cutout Badge Top Right */
+  .custom-packaging-grid__wave-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: var(--section-bg-color);
+    border-bottom-left-radius: 24px;
+    padding: 20px 24px;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: padding 0.3s ease;
+  }
+
+  /* Rounded inner shadow effect mimicking the design cutout */
+  .custom-packaging-grid__wave-badge::before,
+  .custom-packaging-grid__wave-badge::after {
+    content: '';
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    background: transparent;
+    pointer-events: none;
+  }
+
+  .custom-packaging-grid__wave-badge::before {
+    top: 0;
+    left: -24px;
+    border-top-right-radius: 24px;
+    box-shadow: 12px -12px 0 12px var(--section-bg-color);
+  }
+
+  .custom-packaging-grid__wave-badge::after {
+    bottom: -24px;
+    right: 0;
+    border-top-right-radius: 24px;
+    box-shadow: 12px -12px 0 12px var(--section-bg-color);
+  }
+
+  .custom-packaging-grid__wave-svg {
+    width: 38px;
+    height: 18px;
+    fill: none;
+    stroke: var(--wave-color);
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+
+  /* Featured Card Inner Content layout */
+  .custom-packaging-grid__featured-content {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    height: 100%;
+    flex-grow: 1;
+  }
+
+  .custom-packaging-grid__featured-info {
+    padding: 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    color: var(--featured-text-color);
+    z-index: 2;
+  }
+
+  .custom-packaging-grid__featured-title {
+    font-size: clamp(24px, 3vw, 32px);
+    font-weight: 700;
+    line-height: 1.25;
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: var(--featured-text-color);
+  }
+
+  .custom-packaging-grid__featured-desc {
+    font-size: 14px;
+    line-height: 1.6;
+    margin-top: 0;
+    margin-bottom: 32px;
+    opacity: 0.9;
+  }
+
+  .custom-packaging-grid__featured-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: #ffffff;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .custom-packaging-grid__featured-btn:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: #ffffff;
+    transform: translateY(-2px);
+  }
+
+  .custom-packaging-grid__featured-btn .btn-arrow {
+    font-size: 14px;
+    transition: transform 0.25s ease;
+  }
+
+  .custom-packaging-grid__featured-btn:hover .btn-arrow {
+    transform: translate(2px, -2px);
+  }
+
+  .custom-packaging-grid__featured-media {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 280px;
+    overflow: hidden;
+  }
+
+  .custom-packaging-grid__featured-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .custom-packaging-grid__featured-img--placeholder {
+    padding: 40px;
+    fill: rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  /* Info Cards (Small Cards) */
+  .custom-packaging-grid__info-card {
+    background-color: #ffffff;
+    border-radius: 24px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s ease;
+    cursor: default;
+  }
+
+  a.custom-packaging-grid__info-card {
+    cursor: pointer;
+  }
+
+  a.custom-packaging-grid__info-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+  }
+
+  .custom-packaging-grid__card-icon-wrapper {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background-color: rgba(0, 128, 96, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    color: var(--wave-color);
+  }
+
+  .custom-packaging-grid__card-icon-svg {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .custom-packaging-grid__card-custom-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+  }
+
+  .custom-packaging-grid__card-title {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-top: 0;
+    margin-bottom: 12px;
+    color: var(--card-text-color);
+  }
+
+  .custom-packaging-grid__card-desc {
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 0;
+    color: #556260;
+  }
+
+  /* Responsive Design Adjustments */
+  @media screen and (max-width: 989px) {
+    .custom-packaging-grid__layout {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media screen and (max-width: 767px) {
+    .custom-packaging-grid__layout {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .custom-packaging-grid__featured-card {
+      grid-column: auto;
+      min-height: auto;
+    }
+
+    .custom-packaging-grid__featured-content {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .custom-packaging-grid__featured-media {
+      order: -1; /* Image at the top on mobile, just like screenshot */
+      height: 250px;
+      min-height: auto;
+    }
+
+    .custom-packaging-grid__featured-info {
+      padding: 32px 24px;
+    }
+
+    .custom-packaging-grid__wave-badge {
+      padding: 16px 20px;
+    }
+
+    .custom-packaging-grid__info-card {
+      padding: 24px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Custom Packaging Grid",
+  "tag": "section",
+  "class": "custom-packaging-grid-wrapper",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "label": "Section Background",
+      "default": "#fbf8f3"
+    },
+    {
+      "type": "header",
+      "content": "Featured Card Banner"
+    },
+    {
+      "type": "text",
+      "id": "featured_title",
+      "label": "Banner Heading",
+      "default": "Custom Packaging, Simplified"
+    },
+    {
+      "type": "textarea",
+      "id": "featured_description",
+      "label": "Banner Description",
+      "default": "We understand how difficult it is to source high-quality, sustainable, and customized packaging - that's why we've done all the legwork for you!"
+    },
+    {
+      "type": "image_picker",
+      "id": "featured_image",
+      "label": "Banner Image"
+    },
+    {
+      "type": "url",
+      "id": "featured_link",
+      "label": "Button Link"
+    },
+    {
+      "type": "text",
+      "id": "featured_link_text",
+      "label": "Button Text",
+      "default": "Learn More"
+    },
+    {
+      "type": "color",
+      "id": "featured_bg_color_1",
+      "label": "Gradient Color 1",
+      "default": "#054742"
+    },
+    {
+      "type": "color",
+      "id": "featured_bg_color_2",
+      "label": "Gradient Color 2",
+      "default": "#022926"
+    },
+    {
+      "type": "color",
+      "id": "featured_text_color",
+      "label": "Banner Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "wave_icon_color",
+      "label": "Wave Icon Color",
+      "default": "#008060"
+    },
+    {
+      "type": "color",
+      "id": "card_text_color",
+      "label": "Card Heading Color",
+      "default": "#022926"
+    },
+    {
+      "type": "header",
+      "content": "Section Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Padding Top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Padding Bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    }
+  ],
+  "blocks": [
+    {
+      "type": "info_card",
+      "name": "Info Card",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Short Lead Times"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description",
+          "default": "Move quickly without compromising quality. Our streamlined process helps you get to market faster."
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_icon_image",
+          "label": "Custom Icon Image",
+          "info": "Upload custom icon PNG/SVG. If blank, default ticket icon will be used."
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Card Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Packaging Grid",
+      "blocks": [
+        {
+          "type": "info_card",
+          "settings": {
+            "title": "Short Lead Times",
+            "description": "Move quickly without compromising quality. Our streamlined process helps you get to market faster."
+          }
+        },
+        {
+          "type": "info_card",
+          "settings": {
+            "title": "Label Printing & Application",
+            "description": "We coordinate high-quality label printing and application to ensure your packaging is consistent and shelf-ready."
+          }
+        },
+        {
+          "type": "info_card",
+          "settings": {
+            "title": "Direct Printing",
+            "description": "Apply your branding directly to packaging for a clean, seamless finish. We work with trusted partners to ensure consistent results."
+          }
+        },
+        {
+          "type": "info_card",
+          "settings": {
+            "title": "Fully Customizable Pouches",
+            "description": "Choose from a range of sizes to create pouches that align with your product and brand. We help you find the right fit."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

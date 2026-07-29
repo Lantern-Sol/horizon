@@ -815,6 +815,64 @@
         "padding-block-end-mobile": 0
       }
     },
+    "custom_packaging_grid_4WJYtx": {
+      "type": "custom-packaging-grid",
+      "blocks": {
+        "info_card_xTVRHA": {
+          "type": "info_card",
+          "settings": {
+            "title": "Short Lead Times",
+            "description": "Move quickly without compromising quality. Our streamlined process helps you get to market faster.",
+            "link": ""
+          }
+        },
+        "info_card_GQQQNg": {
+          "type": "info_card",
+          "settings": {
+            "title": "Label Printing & Application",
+            "description": "We coordinate high-quality label printing and application to ensure your packaging is consistent and shelf-ready.",
+            "link": ""
+          }
+        },
+        "info_card_VzWBBJ": {
+          "type": "info_card",
+          "settings": {
+            "title": "Direct Printing",
+            "description": "Apply your branding directly to packaging for a clean, seamless finish. We work with trusted partners to ensure consistent results.",
+            "link": ""
+          }
+        },
+        "info_card_8BamqA": {
+          "type": "info_card",
+          "settings": {
+            "title": "Fully Customizable Pouches",
+            "description": "Choose from a range of sizes to create pouches that align with your product and brand. We help you find the right fit.",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "info_card_xTVRHA",
+        "info_card_GQQQNg",
+        "info_card_VzWBBJ",
+        "info_card_8BamqA"
+      ],
+      "name": "Custom Packaging Grid",
+      "settings": {
+        "section_bg_color": "#fbf8f3",
+        "featured_title": "Custom Packaging, Simplified",
+        "featured_description": "We understand how difficult it is to source high-quality, sustainable, and customized packaging - that's why we've done all the legwork for you!",
+        "featured_link": "#",
+        "featured_link_text": "Learn More",
+        "featured_bg_color_1": "#054742",
+        "featured_bg_color_2": "#022926",
+        "featured_text_color": "#ffffff",
+        "wave_icon_color": "#008060",
+        "card_text_color": "#022926",
+        "padding-block-start": 60,
+        "padding-block-end": 60
+      }
+    },
     "section_QDQTDn": {
       "type": "section",
       "blocks": {
@@ -823,6 +881,7 @@
           "name": "t:names.video",
           "settings": {
             "source": "uploaded",
+            "video_url": "",
             "video_autoplay": true,
             "video_loop": true,
             "alt": "",
@@ -2122,6 +2181,7 @@
     "section_cBzJLe",
     "marquee_UKtMBV",
     "hero_jVaWmY",
+    "custom_packaging_grid_4WJYtx",
     "section_QDQTDn",
     "reviews_logo_slider_9hhV4x",
     "section_iYFX6L",
