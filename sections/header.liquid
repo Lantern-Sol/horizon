@@ -1298,6 +1298,13 @@
     mask: none;
   }
 
+  /* Dropping the mask leaves the badge sitting directly on the glyph, where it
+     merges into the basket rim. A ring in the bar's own background colour
+     separates the two, so the count reads as a badge over the icon. */
+  .header .header-actions__cart-icon .cart-bubble__background {
+    box-shadow: 0 0 0 2px var(--color-background);
+  }
+
   /* .visually-hidden collapses the bubble to 1px, but the theme's own
      `width: var(--cart-bubble-size)` rule outranks it — leaving an empty cart
      with a 14x1px bar sitting over the glyph. */
