@@ -70,6 +70,7 @@
               "type": "image",
               "name": "t:names.image",
               "settings": {
+                "image": "shopify://shop_images/Sana_Logo.svg",
                 "link": "",
                 "hide_on_mobile": false,
                 "hide_on_desktop": false,
@@ -309,7 +310,7 @@
               "type": "text",
               "name": "t:names.heading",
               "settings": {
-                "text": "<h2>New arrivals</h2>",
+                "text": "<h2>Company</h2>",
                 "mobile_text": "",
                 "width": "fit-content",
                 "max_width": "normal",
@@ -489,7 +490,7 @@
       "settings": {
         "section_width": "page-width",
         "gap": 24,
-        "background_color": "{{ settings.color_palette.color1 }}",
+        "background_color": "#FFFFFF",
         "padding-block-start": 36,
         "padding-block-end": 36
       }
