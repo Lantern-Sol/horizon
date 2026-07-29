@@ -1,7 +1,38 @@
 {% if shop.policies.size > 0 %}
-  <anchored-popover-component
-    data-hover-triggered="true"
-  >
+  {%- comment -%}
+    LS: Sana 2026 — "inline" display style lists the policy links directly in the
+    bottom bar (Figma Policy pages 169:1027) instead of the stock hover popover.
+  {%- endcomment -%}
+  {%- if block.settings.display_style == 'inline' -%}
+    <ul
+      class="
+        policy-list-inline list-unstyled
+        custom-typography
+        {% if block.settings.font_size != "" %}custom-font-size{% endif %}
+      "
+      style="
+        {% render 'typography-style', preset: 'custom', settings: block.settings %}
+        {% if block.settings.text_color != blank %}--color-utilities: {{ block.settings.text_color }};{% endif %}
+      "
+      {{ block.shopify_attributes }}
+    >
+      {%- for policy in shop.policies -%}
+        {%- if policy != blank -%}
+          <li>
+            <a
+              href="{{ policy.url }}"
+              class="footer-utilities__text"
+            >
+              {{- policy.title | escape -}}
+            </a>
+          </li>
+        {%- endif -%}
+      {%- endfor -%}
+    </ul>
+  {%- else -%}
+    <anchored-popover-component
+      data-hover-triggered="true"
+    >
     <button
       class="policy-list-trigger button-unstyled"
       popovertarget="terms-policies-popover"
@@ -42,10 +73,34 @@
         {%- endfor -%}
       </ul>
     </div>
-  </anchored-popover-component>
+    </anchored-popover-component>
+  {%- endif -%}
 {% endif %}
 
 {% stylesheet %}
+  /* Sana 2026 — inline policy links (Figma Policy pages 169:1027 / 227:1011) */
+  .policy-list-inline {
+    display: flex;
+    align-items: flex-start;
+    gap: 3rem; /* 48 */
+    margin: 0;
+    font-size: var(--font-size, 0.75rem);
+    text-transform: var(--text-transform, none);
+  }
+
+  .policy-list-inline a {
+    color: var(--color-utilities, var(--color-foreground-muted));
+    font-size: var(--font-size, 0.75rem);
+    text-transform: var(--text-transform, none);
+  }
+
+  @media screen and (max-width: 749px) {
+    .policy-list-inline {
+      gap: 1rem; /* 16 */
+      justify-content: center;
+    }
+  }
+
   .policy-list-trigger {
     anchor-name: --terms-policies-trigger;
     cursor: pointer;
@@ -151,6 +206,22 @@
     {
       "type": "paragraph",
       "content": "t:content.manage_policies"
+    },
+    {
+      "type": "select",
+      "id": "display_style",
+      "label": "Display style",
+      "options": [
+        {
+          "value": "popover",
+          "label": "Popover"
+        },
+        {
+          "value": "inline",
+          "label": "Inline links"
+        }
+      ],
+      "default": "popover"
     },
     {
       "type": "header",
