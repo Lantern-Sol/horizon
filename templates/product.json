@@ -12,24 +12,6 @@
     "main": {
       "type": "product-information",
       "blocks": {
-        "disclosures": {
-          "type": "disclosures",
-          "settings": {
-            "heading": "Disclosures",
-            "heading_preset": "h4",
-            "open_by_default": false,
-            "icon": "caret",
-            "disclosure_heading_preset": "h5",
-            "text_color": "",
-            "dividers": true,
-            "divider_color": "",
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        },
         "media-gallery": {
           "type": "_product-media-gallery",
           "static": true,
@@ -367,9 +349,6 @@
           ]
         }
       },
-      "block_order": [
-        "disclosures"
-      ],
       "settings": {
         "content_width": "content-center-aligned",
         "desktop_media_position": "left",
