@@ -17,14 +17,10 @@
 {%- liquid
   assign reco_limit = section.settings.max_products | default: 6
 
+  # Genuine recommendations only — no catalogue fallback. When Shopify has
+  # nothing to suggest the card renders empty and <cart-recommendations> keeps
+  # itself hidden, rather than padding the upsell with arbitrary products.
   assign products = recommendations.products
-
-  # Same fallback the stock product-recommendations section uses: a young store
-  # has no recommendation graph yet, so pull from the catalogue instead of
-  # rendering an empty card.
-  if recommendations.performed and recommendations.products_count == 0
-    assign products = collections.all.products
-  endif
 -%}
 
 {%- if products.size > 0 -%}
