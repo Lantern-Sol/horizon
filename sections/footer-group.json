@@ -54,6 +54,8 @@
       "settings": {
         "heading": "Stay in the Loop",
         "description": "Join our mailing list to keep up to date with everything Sana Packaging",
+        "image": "shopify://shop_images/newsletter-cta-bg-desktop.jpg",
+        "image_mobile": "shopify://shop_images/newsletter-cta-bg-mobile.jpg",
         "overlap": 0,
         "section_width": "page-width",
         "background_color": "#ffffff",
