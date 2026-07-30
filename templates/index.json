@@ -9,6 +9,473 @@
  */
 {
   "sections": {
+    "section_about": {
+      "type": "section",
+      "settings": {
+        "content_direction": "row",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "space-between",
+        "vertical_alignment": "center",
+        "gap": 48,
+        "use_mobile_gap": true,
+        "mobile_gap": 48,
+        "section_width": "page-width",
+        "section_height": "",
+        "background_media": "none",
+        "border": "none",
+        "padding-block-start": 100,
+        "padding-block-end": 100,
+        "padding-inline-start": 30,
+        "padding-inline-end": 30,
+        "use_mobile_padding": true,
+        "padding-block-start-mobile": 48,
+        "padding-block-end-mobile": 48,
+        "padding-inline-start-mobile": 4,
+        "padding-inline-end-mobile": 4
+      },
+      "blocks": {
+        "about_content": {
+          "type": "group",
+          "name": "Content",
+          "settings": {
+            "content_direction": "column",
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 16,
+            "width": "custom",
+            "custom_width": 44,
+            "width_mobile": "fill",
+            "height": "fit"
+          },
+          "blocks": {
+            "about_heading": {
+              "type": "text",
+              "name": "Heading",
+              "settings": {
+                "text": "<h2>Meet your Cannabis Packaging Partner</h2>",
+                "width": "100%",
+                "max_width": "none",
+                "alignment": "left",
+                "type_preset": "h1",
+                "type_preset_mobile": "custom",
+                "mobile_font_size": "2.25rem",
+                "mobile_custom_line_height": 1.1,
+                "text_color": "#064c4d"
+              }
+            },
+            "about_description": {
+              "type": "text",
+              "name": "Description",
+              "settings": {
+                "text": "<p>Sana Packaging is a team of dedicated experts that knows you and your business. We make your cannabis packaging decisions easy.</p>",
+                "width": "100%",
+                "max_width": "none",
+                "alignment": "left",
+                "type_preset": "custom",
+                "font": "var(--font-body--family)",
+                "font_size": "1.125rem",
+                "line_height": "custom",
+                "custom_line_height": 1.5,
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "#6c8283"
+              }
+            },
+            "about_list": {
+              "type": "group",
+              "name": "Checklist",
+              "settings": {
+                "content_direction": "row",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "flex-start",
+                "gap": 16,
+                "use_mobile_gap": true,
+                "mobile_gap": 12,
+                "width": "fill",
+                "width_mobile": "fill",
+                "height": "fit",
+                "padding-block-start": 16,
+                "padding-block-end": 32,
+                "use_mobile_padding": true,
+                "padding-block-start-mobile": 16,
+                "padding-block-end-mobile": 24
+              },
+              "blocks": {
+                "list_col_1": {
+                  "type": "group",
+                  "name": "Column 1",
+                  "settings": {
+                    "content_direction": "column",
+                    "horizontal_alignment_flex_direction_column": "flex-start",
+                    "gap": 16,
+                    "use_mobile_gap": true,
+                    "mobile_gap": 12,
+                    "width": "fill",
+                    "width_mobile": "fill",
+                    "height": "fit"
+                  },
+                  "blocks": {
+                    "item_1": {
+                      "type": "group",
+                      "name": "Item",
+                      "settings": {
+                        "content_direction": "row",
+                        "vertical_on_mobile": false,
+                        "horizontal_alignment": "flex-start",
+                        "vertical_alignment": "center",
+                        "gap": 12,
+                        "width": "fill",
+                        "width_mobile": "fill",
+                        "height": "fit"
+                      },
+                      "blocks": {
+                        "item_1_icon": {
+                          "type": "icon",
+                          "name": "Check icon",
+                          "settings": {
+                            "icon": "none",
+                            "image_upload": "shopify://shop_images/sana-checkmark-circle.svg",
+                            "width": 32,
+                            "width-mobile": 32
+                          }
+                        },
+                        "item_1_text": {
+                          "type": "text",
+                          "name": "Label",
+                          "settings": {
+                            "text": "<p>On-hand Inventory</p>",
+                            "width": "fit-content",
+                            "alignment": "left",
+                            "type_preset": "custom",
+                            "font": "var(--font-body--family)",
+                            "enable_custom_font_weight": true,
+                            "weight": "600",
+                            "font_size": "1.125rem",
+                            "line_height": "custom",
+                            "custom_line_height": 1.3,
+                            "letter_spacing": "normal",
+                            "case": "none",
+                            "text_color": "#064c4d"
+                          }
+                        }
+                      },
+                      "block_order": ["item_1_icon", "item_1_text"]
+                    },
+                    "item_2": {
+                      "type": "group",
+                      "name": "Item",
+                      "settings": {
+                        "content_direction": "row",
+                        "vertical_on_mobile": false,
+                        "horizontal_alignment": "flex-start",
+                        "vertical_alignment": "center",
+                        "gap": 12,
+                        "width": "fill",
+                        "width_mobile": "fill",
+                        "height": "fit"
+                      },
+                      "blocks": {
+                        "item_2_icon": {
+                          "type": "icon",
+                          "name": "Check icon",
+                          "settings": {
+                            "icon": "none",
+                            "image_upload": "shopify://shop_images/sana-checkmark-circle.svg",
+                            "width": 32,
+                            "width-mobile": 32
+                          }
+                        },
+                        "item_2_text": {
+                          "type": "text",
+                          "name": "Label",
+                          "settings": {
+                            "text": "<p>Low MOQs</p>",
+                            "width": "fit-content",
+                            "alignment": "left",
+                            "type_preset": "custom",
+                            "font": "var(--font-body--family)",
+                            "enable_custom_font_weight": true,
+                            "weight": "600",
+                            "font_size": "1.125rem",
+                            "line_height": "custom",
+                            "custom_line_height": 1.3,
+                            "letter_spacing": "normal",
+                            "case": "none",
+                            "text_color": "#064c4d"
+                          }
+                        }
+                      },
+                      "block_order": ["item_2_icon", "item_2_text"]
+                    },
+                    "item_3": {
+                      "type": "group",
+                      "name": "Item",
+                      "settings": {
+                        "content_direction": "row",
+                        "vertical_on_mobile": false,
+                        "horizontal_alignment": "flex-start",
+                        "vertical_alignment": "center",
+                        "gap": 12,
+                        "width": "fill",
+                        "width_mobile": "fill",
+                        "height": "fit"
+                      },
+                      "blocks": {
+                        "item_3_icon": {
+                          "type": "icon",
+                          "name": "Check icon",
+                          "settings": {
+                            "icon": "none",
+                            "image_upload": "shopify://shop_images/sana-checkmark-circle.svg",
+                            "width": 32,
+                            "width-mobile": 32
+                          }
+                        },
+                        "item_3_text": {
+                          "type": "text",
+                          "name": "Label",
+                          "settings": {
+                            "text": "<p>Customization Services</p>",
+                            "width": "fit-content",
+                            "alignment": "left",
+                            "type_preset": "custom",
+                            "font": "var(--font-body--family)",
+                            "enable_custom_font_weight": true,
+                            "weight": "600",
+                            "font_size": "1.125rem",
+                            "line_height": "custom",
+                            "custom_line_height": 1.3,
+                            "letter_spacing": "normal",
+                            "case": "none",
+                            "text_color": "#064c4d"
+                          }
+                        }
+                      },
+                      "block_order": ["item_3_icon", "item_3_text"]
+                    }
+                  },
+                  "block_order": ["item_1", "item_2", "item_3"]
+                },
+                "list_col_2": {
+                  "type": "group",
+                  "name": "Column 2",
+                  "settings": {
+                    "content_direction": "column",
+                    "horizontal_alignment_flex_direction_column": "flex-start",
+                    "gap": 16,
+                    "use_mobile_gap": true,
+                    "mobile_gap": 12,
+                    "width": "fill",
+                    "width_mobile": "fill",
+                    "height": "fit"
+                  },
+                  "blocks": {
+                    "item_4": {
+                      "type": "group",
+                      "name": "Item",
+                      "settings": {
+                        "content_direction": "row",
+                        "vertical_on_mobile": false,
+                        "horizontal_alignment": "flex-start",
+                        "vertical_alignment": "center",
+                        "gap": 12,
+                        "width": "fill",
+                        "width_mobile": "fill",
+                        "height": "fit"
+                      },
+                      "blocks": {
+                        "item_4_icon": {
+                          "type": "icon",
+                          "name": "Check icon",
+                          "settings": {
+                            "icon": "none",
+                            "image_upload": "shopify://shop_images/sana-checkmark-circle.svg",
+                            "width": 32,
+                            "width-mobile": 32
+                          }
+                        },
+                        "item_4_text": {
+                          "type": "text",
+                          "name": "Label",
+                          "settings": {
+                            "text": "<p>Quick Turnaround Times</p>",
+                            "width": "fit-content",
+                            "alignment": "left",
+                            "type_preset": "custom",
+                            "font": "var(--font-body--family)",
+                            "enable_custom_font_weight": true,
+                            "weight": "600",
+                            "font_size": "1.125rem",
+                            "line_height": "custom",
+                            "custom_line_height": 1.3,
+                            "letter_spacing": "normal",
+                            "case": "none",
+                            "text_color": "#064c4d"
+                          }
+                        }
+                      },
+                      "block_order": ["item_4_icon", "item_4_text"]
+                    },
+                    "item_5": {
+                      "type": "group",
+                      "name": "Item",
+                      "settings": {
+                        "content_direction": "row",
+                        "vertical_on_mobile": false,
+                        "horizontal_alignment": "flex-start",
+                        "vertical_alignment": "center",
+                        "gap": 12,
+                        "width": "fill",
+                        "width_mobile": "fill",
+                        "height": "fit"
+                      },
+                      "blocks": {
+                        "item_5_icon": {
+                          "type": "icon",
+                          "name": "Check icon",
+                          "settings": {
+                            "icon": "none",
+                            "image_upload": "shopify://shop_images/sana-checkmark-circle.svg",
+                            "width": 32,
+                            "width-mobile": 32
+                          }
+                        },
+                        "item_5_text": {
+                          "type": "text",
+                          "name": "Label",
+                          "settings": {
+                            "text": "<p>Transparent Pricing</p>",
+                            "width": "fit-content",
+                            "alignment": "left",
+                            "type_preset": "custom",
+                            "font": "var(--font-body--family)",
+                            "enable_custom_font_weight": true,
+                            "weight": "600",
+                            "font_size": "1.125rem",
+                            "line_height": "custom",
+                            "custom_line_height": 1.3,
+                            "letter_spacing": "normal",
+                            "case": "none",
+                            "text_color": "#064c4d"
+                          }
+                        }
+                      },
+                      "block_order": ["item_5_icon", "item_5_text"]
+                    },
+                    "item_6": {
+                      "type": "group",
+                      "name": "Item",
+                      "settings": {
+                        "content_direction": "row",
+                        "vertical_on_mobile": false,
+                        "horizontal_alignment": "flex-start",
+                        "vertical_alignment": "center",
+                        "gap": 12,
+                        "width": "fill",
+                        "width_mobile": "fill",
+                        "height": "fit"
+                      },
+                      "blocks": {
+                        "item_6_icon": {
+                          "type": "icon",
+                          "name": "Check icon",
+                          "settings": {
+                            "icon": "none",
+                            "image_upload": "shopify://shop_images/sana-checkmark-circle.svg",
+                            "width": 32,
+                            "width-mobile": 32
+                          }
+                        },
+                        "item_6_text": {
+                          "type": "text",
+                          "name": "Label",
+                          "settings": {
+                            "text": "<p>Customer Service</p>",
+                            "width": "fit-content",
+                            "alignment": "left",
+                            "type_preset": "custom",
+                            "font": "var(--font-body--family)",
+                            "enable_custom_font_weight": true,
+                            "weight": "600",
+                            "font_size": "1.125rem",
+                            "line_height": "custom",
+                            "custom_line_height": 1.3,
+                            "letter_spacing": "normal",
+                            "case": "none",
+                            "text_color": "#064c4d"
+                          }
+                        }
+                      },
+                      "block_order": ["item_6_icon", "item_6_text"]
+                    }
+                  },
+                  "block_order": ["item_4", "item_5", "item_6"]
+                }
+              },
+              "block_order": ["list_col_1", "list_col_2"]
+            },
+            "about_button": {
+              "type": "button",
+              "name": "Button",
+              "settings": {
+                "label": "Learn More",
+                "link": "shopify://pages/about-us",
+                "open_in_new_tab": false,
+                "style_class": "button",
+                "pill": true,
+                "show_arrow_icon": true,
+                "width": "fit-content",
+                "width_mobile": "fit-content"
+              }
+            }
+          },
+          "block_order": ["about_heading", "about_description", "about_list", "about_button"]
+        },
+        "about_media": {
+          "type": "group",
+          "name": "Media",
+          "settings": {
+            "content_direction": "column",
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 0,
+            "width": "custom",
+            "custom_width": 51,
+            "width_mobile": "fill",
+            "height": "fit"
+          },
+          "blocks": {
+            "about_image": {
+              "type": "image",
+              "name": "Image",
+              "settings": {
+                "image": "shopify://shop_images/sana-about-photo.png",
+                "image_ratio": "custom",
+                "custom_ratio": "648 / 477",
+                "image_fit": "cover",
+                "width": "fill",
+                "width_mobile": "fill",
+                "border": "none",
+                "border_radius": 24,
+                "notch_corner": "top-right",
+                "notch_width": 104,
+                "notch_height": 46,
+                "notch_radius": 16,
+                "notch_width_mobile": 70,
+                "notch_height_mobile": 38,
+                "notch_icon": "shopify://shop_images/sana-wave-mark.svg",
+                "notch_icon_width": 66,
+                "notch_icon_width_mobile": 54
+              }
+            }
+          },
+          "block_order": ["about_image"]
+        }
+      },
+      "block_order": ["about_content", "about_media"]
+    },
     "hero_slideshow_new": {
       "type": "slideshow",
       "blocks": {
@@ -2280,6 +2747,7 @@
   },
   "order": [
     "hero_slideshow_new",
+    "section_about",
     "section_cBzJLe",
     "marquee_UKtMBV",
     "hero_jVaWmY",
