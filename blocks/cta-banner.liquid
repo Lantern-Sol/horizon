@@ -1,0 +1,725 @@
+{%- doc -%}
+  A full-bleed CTA card: a photograph under an angled colour scrim, with the Sana iconmark
+  pinned to the top of the card and the heading plus button pinned to the bottom.
+
+  The card owns its own outer spacing and content cap rather than leaning on the section's
+  padding settings, which top out at 100px — the design calls for 120px above the card.
+  Drop it into a section set to full width so those numbers land as drawn.
+{%- enddoc -%}
+
+{%- liquid
+  assign s = block.settings
+
+  assign has_link = false
+  if s.button_link != blank
+    assign has_link = true
+  endif
+
+  assign show_mark = false
+  if s.show_mark and s.mark_color != blank
+    assign show_mark = true
+  endif
+-%}
+
+<div
+  class="cta-banner-wrapper"
+  style="
+    --cta-space-above: {{ s.space_above }}px;
+    --cta-space-below: {{ s.space_below }}px;
+    --cta-space-above-mobile: {{ s.space_above_mobile }}px;
+    --cta-space-below-mobile: {{ s.space_below_mobile }}px;
+    --cta-page-margin: {{ s.page_margin }}px;
+    --cta-page-margin-mobile: {{ s.page_margin_mobile }}px;
+    --cta-max-width: {{ s.max_width }}px;
+    --cta-min-height: {{ s.card_min_height }}px;
+    --cta-aspect-mobile: {{ s.card_aspect_mobile }};
+    --cta-radius: {{ s.card_radius }}px;
+    --cta-radius-mobile: {{ s.card_radius_mobile }}px;
+    --cta-padding: {{ s.card_padding }}px;
+    --cta-padding-mobile: {{ s.card_padding_mobile }}px;
+    --cta-gap: {{ s.content_gap }}px;
+    --cta-gap-mobile: {{ s.content_gap_mobile }}px;
+    --cta-scrim-color: {{ s.overlay_color }};
+    --cta-scrim-angle: {{ s.overlay_angle }}deg;
+    --cta-scrim-start: {{ s.overlay_start }}%;
+    --cta-scrim-end: {{ s.overlay_end }}%;
+    --cta-scrim-end-opacity: {{ s.overlay_end_opacity }}%;
+    --cta-scrim-angle-mobile: {{ s.overlay_angle_mobile }}deg;
+    --cta-scrim-start-mobile: {{ s.overlay_start_mobile }}%;
+    --cta-scrim-end-mobile: {{ s.overlay_end_mobile }}%;
+    --cta-text-color: {{ s.text_color }};
+    --cta-heading-size: {{ s.heading_size }}px;
+    --cta-heading-size-mobile: {{ s.heading_size_mobile }}px;
+    --cta-heading-max-width: {{ s.heading_max_width }}px;
+    --cta-mark-color: {{ s.mark_color }};
+    --cta-mark-width: {{ s.mark_width }}px;
+    --cta-mark-icon: url('{{ 'sana-iconmark.svg' | asset_url }}');
+    --cta-button-bg: {{ s.button_bg_color }};
+    --cta-button-text: {{ s.button_text_color }};
+    --cta-button-border: {{ s.button_border_color }};
+    --cta-arrow-icon: url('{{ 'icon-arrow-top-right.svg' | asset_url }}');
+  "
+  {{ block.shopify_attributes }}
+>
+  <div class="cta-banner">
+    {%- if s.image != blank -%}
+      <div class="cta-banner__media">
+        {{
+          s.image
+          | image_url: width: 2560
+          | image_tag:
+            class: 'cta-banner__image cta-banner__image--desktop',
+            loading: 'lazy',
+            widths: '640, 960, 1280, 1920, 2560',
+            sizes: '100vw',
+            alt: s.image.alt
+        }}
+        {%- if s.image_mobile != blank -%}
+          {{
+            s.image_mobile
+            | image_url: width: 1200
+            | image_tag:
+              class: 'cta-banner__image cta-banner__image--mobile',
+              loading: 'lazy',
+              widths: '375, 540, 750, 1100, 1200',
+              sizes: '100vw',
+              alt: s.image_mobile.alt
+          }}
+        {%- endif -%}
+      </div>
+    {%- else -%}
+      <div class="cta-banner__media cta-banner__media--placeholder">
+        {{ 'lifestyle-1' | placeholder_svg_tag: 'cta-banner__image' }}
+      </div>
+    {%- endif -%}
+
+    <!--
+      Scrim: solid behind the copy, easing to a light wash rather than to nothing, so the
+      photograph stays tinted across the whole card instead of reading as two halves.
+    -->
+    <div class="cta-banner__scrim" aria-hidden="true"></div>
+
+    {%- if show_mark -%}
+      <span class="cta-banner__mark" aria-hidden="true">
+        {%- if s.mark_image != blank -%}
+          {{
+            s.mark_image
+            | image_url: width: 320
+            | image_tag: class: 'cta-banner__mark-image', loading: 'lazy', widths: '80, 160, 320'
+          }}
+        {%- endif -%}
+      </span>
+    {%- endif -%}
+
+    <div class="cta-banner__content">
+      {%- if s.heading != blank -%}
+        <h2 class="cta-banner__heading">{{ s.heading }}</h2>
+      {%- endif -%}
+
+      {%- if s.button_label != blank -%}
+        <{% if has_link %}a href="{{ s.button_link }}"{% else %}span{% endif %}
+          class="cta-banner__button{% if s.show_arrow %} cta-banner__button--arrow{% endif %}"
+          {% if has_link and s.open_in_new_tab %}
+            target="_blank"
+            rel="noopener"
+          {% endif %}
+        >
+          {{- s.button_label -}}
+        </{% if has_link %}a{% else %}span{% endif %}>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  /*
+    A section lays its blocks out with `align-items: <its alignment setting>`, which in column
+    flow sizes each child to its own content rather than to the row — so the banner collapsed to
+    the width of its heading. Horizon's built-in blocks opt out through the `size-style` class,
+    driven by a `width: fill` setting; this block has no width to expose, so it claims the row
+    outright. `align-self` is what actually beats the container, and it is declared on the
+    wrapper Shopify renders around a block as well, since that is the real flex item.
+  */
+  .cta-banner-wrapper,
+  .shopify-block:has(> .cta-banner-wrapper) {
+    align-self: stretch;
+    width: 100%;
+  }
+
+  .cta-banner-wrapper {
+    box-sizing: border-box;
+    padding-block-start: var(--cta-space-above, 120px);
+    padding-block-end: var(--cta-space-below, 0px);
+    padding-inline: var(--cta-page-margin, 80px);
+  }
+
+  .cta-banner {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--cta-gap, 32px);
+    max-width: var(--cta-max-width, 1280px);
+    min-height: var(--cta-min-height, 400px);
+    margin-inline: auto;
+    padding: var(--cta-padding, 48px);
+    border-radius: var(--cta-radius, 30px);
+    overflow: hidden;
+    isolation: isolate;
+    color: var(--cta-text-color, #ffffff);
+  }
+
+  .cta-banner__media {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .cta-banner__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Only swap artwork when a mobile-specific image is actually supplied. */
+  .cta-banner__image--mobile {
+    display: none;
+  }
+
+  .cta-banner__scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background-image: linear-gradient(
+      var(--cta-scrim-angle, 80deg),
+      var(--cta-scrim-color) var(--cta-scrim-start, 17%),
+      color-mix(in srgb, var(--cta-scrim-color) var(--cta-scrim-end-opacity, 20%), transparent)
+        var(--cta-scrim-end, 60%)
+    );
+  }
+
+  .cta-banner__mark {
+    position: relative;
+    z-index: 2;
+    display: block;
+    width: var(--cta-mark-width, 43px);
+    /* Matches the artwork's own proportions so the width setting is the only dimension to tune. */
+    aspect-ratio: 43 / 28;
+    flex-shrink: 0;
+    background-color: var(--cta-mark-color, #ffffff);
+    mask: var(--cta-mark-icon) center / contain no-repeat;
+  }
+
+  /* An uploaded mark replaces the built-in glyph, so the colour mask must not tint it. */
+  .cta-banner__mark:has(.cta-banner__mark-image) {
+    background-color: transparent;
+    mask: none;
+  }
+
+  .cta-banner__mark-image {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .cta-banner__content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--cta-gap, 32px);
+    max-width: 100%;
+    /* Keeps the copy on the floor of the card even when the mark is switched off and
+       there is no second child for `space-between` to push against. */
+    margin-block-start: auto;
+  }
+
+  /* Scoped one level deeper so a `.section h2` rule in the theme's base stylesheet cannot
+     outrank the design's type scale. */
+  .cta-banner .cta-banner__heading {
+    margin: 0;
+    max-width: var(--cta-heading-max-width, 380px);
+    font-size: var(--cta-heading-size, 40px);
+    font-weight: 700;
+    line-height: 1.15;
+    color: inherit;
+  }
+
+  .cta-banner__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 28px;
+    border: 1px solid var(--cta-button-border, #ffffff);
+    border-radius: 80px;
+    background-color: var(--cta-button-bg);
+    color: var(--cta-button-text, #ffffff);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: normal;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  a.cta-banner__button:hover {
+    background-color: var(--cta-button-border, #ffffff);
+    color: var(--cta-scrim-color);
+  }
+
+  .cta-banner__button--arrow::after {
+    content: '';
+    flex-shrink: 0;
+    width: 15px;
+    height: 15px;
+    background-color: currentcolor;
+    mask: var(--cta-arrow-icon) center / contain no-repeat;
+    transition: transform 0.25s ease;
+  }
+
+  a.cta-banner__button--arrow:hover::after {
+    transform: translate(2px, -2px);
+  }
+
+  @media screen and (max-width: 749px) {
+    .cta-banner-wrapper {
+      padding-block-start: var(--cta-space-above-mobile, 48px);
+      padding-block-end: var(--cta-space-below-mobile, 0px);
+      padding-inline: var(--cta-page-margin-mobile, 16px);
+    }
+
+    /*
+      Mobile trades the fixed height for an aspect ratio, so the card keeps its shape across
+      handset widths. It still grows if the copy needs more room than the ratio allows.
+    */
+    .cta-banner {
+      min-height: 0;
+      aspect-ratio: var(--cta-aspect-mobile, 1);
+      gap: var(--cta-gap-mobile, 24px);
+      padding: var(--cta-padding-mobile, 32px);
+      border-radius: var(--cta-radius-mobile, 20px);
+    }
+
+    .cta-banner__scrim {
+      background-image: linear-gradient(
+        var(--cta-scrim-angle-mobile, 70deg),
+        var(--cta-scrim-color) var(--cta-scrim-start-mobile, 32%),
+        color-mix(in srgb, var(--cta-scrim-color) var(--cta-scrim-end-opacity, 20%), transparent)
+          var(--cta-scrim-end-mobile, 75%)
+      );
+    }
+
+    .cta-banner__content {
+      gap: var(--cta-gap-mobile, 24px);
+      width: 100%;
+    }
+
+    .cta-banner .cta-banner__heading {
+      max-width: none;
+      font-size: var(--cta-heading-size-mobile, 32px);
+    }
+
+    .cta-banner__media:has(.cta-banner__image--mobile) .cta-banner__image--desktop {
+      display: none;
+    }
+
+    .cta-banner__image--mobile {
+      display: block;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "CTA banner",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Background image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "Background image (mobile)",
+      "info": "Optional. Falls back to the desktop image."
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "No Silly Business, No Hidden Fees, & No B.S. Ever"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 24,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Heading size (mobile)",
+      "min": 20,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "heading_max_width",
+      "label": "Heading width",
+      "info": "Controls where the heading wraps on desktop.",
+      "min": 200,
+      "max": 800,
+      "step": 10,
+      "unit": "px",
+      "default": 380
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Contact Us"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_in_new_tab",
+      "label": "Open in new tab",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrow",
+      "label": "Show arrow icon",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Button background",
+      "default": "#ffffff29"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_border_color",
+      "label": "Button border",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Iconmark"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_mark",
+      "label": "Show iconmark",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "mark_image",
+      "label": "Custom mark",
+      "info": "Optional. Replaces the built-in Sana iconmark and ignores the colour below."
+    },
+    {
+      "type": "color",
+      "id": "mark_color",
+      "label": "Mark color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "mark_width",
+      "label": "Mark width",
+      "min": 20,
+      "max": 120,
+      "step": 1,
+      "unit": "px",
+      "default": 43
+    },
+    {
+      "type": "header",
+      "content": "Image Scrim"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Scrim color",
+      "default": "#064c4d"
+    },
+    {
+      "type": "range",
+      "id": "overlay_end_opacity",
+      "label": "Scrim fade-to opacity",
+      "info": "How much tint is left at the far end of the scrim.",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "overlay_angle",
+      "label": "Scrim angle",
+      "min": -180,
+      "max": 180,
+      "step": 5,
+      "unit": "deg",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "overlay_start",
+      "label": "Scrim solid until",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 17
+    },
+    {
+      "type": "range",
+      "id": "overlay_end",
+      "label": "Scrim faded by",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "overlay_angle_mobile",
+      "label": "Scrim angle (mobile)",
+      "min": -180,
+      "max": 180,
+      "step": 5,
+      "unit": "deg",
+      "default": 70
+    },
+    {
+      "type": "range",
+      "id": "overlay_start_mobile",
+      "label": "Scrim solid until (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "overlay_end_mobile",
+      "label": "Scrim faded by (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 75
+    },
+    {
+      "type": "header",
+      "content": "Card"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Maximum width",
+      "min": 600,
+      "max": 1600,
+      "step": 10,
+      "unit": "px",
+      "default": 1280
+    },
+    {
+      "type": "range",
+      "id": "card_min_height",
+      "label": "Minimum height",
+      "min": 200,
+      "max": 700,
+      "step": 10,
+      "unit": "px",
+      "default": 400
+    },
+    {
+      "type": "select",
+      "id": "card_aspect_mobile",
+      "label": "Shape (mobile)",
+      "options": [
+        { "value": "1", "label": "Square" },
+        { "value": "4 / 5", "label": "Portrait (4:5)" },
+        { "value": "3 / 4", "label": "Portrait (3:4)" },
+        { "value": "auto", "label": "Fit content" }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Corner radius",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "card_radius_mobile",
+      "label": "Corner radius (mobile)",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Card padding",
+      "min": 0,
+      "max": 96,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "card_padding_mobile",
+      "label": "Card padding (mobile)",
+      "min": 0,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "content_gap",
+      "label": "Content gap",
+      "min": 0,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "content_gap_mobile",
+      "label": "Content gap (mobile)",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "space_above",
+      "label": "Space above",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 120
+    },
+    {
+      "type": "range",
+      "id": "space_below",
+      "label": "Space below",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "page_margin",
+      "label": "Side margin",
+      "min": 0,
+      "max": 160,
+      "step": 2,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "space_above_mobile",
+      "label": "Space above (mobile)",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "space_below_mobile",
+      "label": "Space below (mobile)",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "page_margin_mobile",
+      "label": "Side margin (mobile)",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    }
+  ],
+  "presets": [
+    {
+      "name": "CTA banner",
+      "category": "t:categories.storytelling"
+    }
+  ]
+}
+{% endschema %}
