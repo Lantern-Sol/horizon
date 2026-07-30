@@ -1,0 +1,538 @@
+{%- liquid
+  assign product_ref = product | default: closest.product
+
+  assign si_heading      = product_ref.metafields.custom.sustainability_heading      | metafield_tag
+  assign si_body         = product_ref.metafields.custom.sustainability_body         | metafield_tag
+  assign si_btn_label    = product_ref.metafields.custom.sustainability_button_label
+  assign si_btn_url      = product_ref.metafields.custom.sustainability_button_url
+  assign si_stat_value   = product_ref.metafields.custom.sustainability_stat_value
+  assign si_stat_label   = product_ref.metafields.custom.sustainability_stat_label   | metafield_tag
+  assign si_img_stat     = product_ref.metafields.custom.sustainability_image_stat.value
+  assign si_img_small    = product_ref.metafields.custom.sustainability_image_small.value
+  assign si_img_large    = product_ref.metafields.custom.sustainability_image_large.value
+  assign si_badge_text   = product_ref.metafields.custom.sustainability_badge_text
+
+  # Only render when heading metafield is populated
+  assign si_active = false
+  unless product_ref.metafields.custom.sustainability_heading == blank
+    assign si_active = true
+  endunless
+-%}
+
+{%- if si_active -%}
+
+{% liquid
+  if section.settings.background_color != blank
+    render 'contrast-override', background_color: section.settings.background_color, section_id: section.id
+  endif
+%}
+
+<div class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %} sustainability-impact-bg"></div>
+
+<section
+  class="sustainability-impact section section--page-width spacing-style{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+  aria-label="{{ 'sections.sustainability_impact.aria_label' | t | default: 'Sustainability Impact' }}"
+  data-section-id="{{ section.id }}"
+  data-section-type="sustainability-impact"
+  style="{% render 'spacing-style', settings: section.settings %}"
+>
+  <div class="sustainability-impact__inner">
+
+    {%- comment -%} ── LEFT COLUMN: heading · body · CTA {%- endcomment -%}
+    <div class="sustainability-impact__left">
+      {%- if si_heading != blank -%}
+        <h2 class="sustainability-impact__heading">
+          {{- si_heading -}}
+        </h2>
+      {%- endif -%}
+
+      {%- if si_body != blank -%}
+        <div class="sustainability-impact__body rte">
+          {{- si_body -}}
+        </div>
+      {%- endif -%}
+
+      {%- if si_btn_label != blank -%}
+        <a
+          href="{{ si_btn_url | default: '#' }}"
+          class="sustainability-impact__cta button button-secondary"
+          {% if section.settings.open_in_new_tab %}
+            target="_blank"
+            rel="noopener noreferrer"
+          {% endif %}
+        >
+          {{- si_btn_label -}}
+          <span class="sustainability-impact__cta-arrow" aria-hidden="true">&#x2197;</span>
+        </a>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} ── RIGHT COLUMN: 3-card mosaic {%- endcomment -%}
+    <div class="sustainability-impact__right">
+
+      {%- comment -%} Card 1 — stat card with image background {%- endcomment -%}
+      <article class="sustainability-impact__card sustainability-impact__card--stat">
+        {%- if si_img_stat != blank -%}
+          <div class="sustainability-impact__card-media">
+            {{
+              si_img_stat
+              | image_url: width: 800
+              | image_tag:
+                loading: 'lazy',
+                widths: '400, 600, 800',
+                sizes: '(min-width: 750px) 400px, 50vw',
+                alt: si_img_stat.alt | default: si_stat_value,
+                class: 'sustainability-impact__card-img'
+            }}
+          </div>
+        {%- endif -%}
+        <div class="sustainability-impact__stat-overlay">
+          {%- if si_stat_value != blank -%}
+            <p class="sustainability-impact__stat-value">{{- si_stat_value -}}</p>
+          {%- endif -%}
+          {%- if si_stat_label != blank -%}
+            <div class="sustainability-impact__stat-label rte">{{- si_stat_label -}}</div>
+          {%- endif -%}
+        </div>
+      </article>
+
+      {%- comment -%} Card 2 — small supporting image {%- endcomment -%}
+      {%- if si_img_small != blank -%}
+        <article class="sustainability-impact__card sustainability-impact__card--small">
+          <div class="sustainability-impact__card-media">
+            {{
+              si_img_small
+              | image_url: width: 600
+              | image_tag:
+                loading: 'lazy',
+                widths: '300, 450, 600',
+                sizes: '(min-width: 750px) 300px, 50vw',
+                alt: si_img_small.alt | default: '',
+                class: 'sustainability-impact__card-img'
+            }}
+          </div>
+        </article>
+      {%- endif -%}
+
+      {%- comment -%} Card 3 — large image with badge text overlay {%- endcomment -%}
+      {%- if si_img_large != blank -%}
+        <article class="sustainability-impact__card sustainability-impact__card--large">
+          <div class="sustainability-impact__card-media">
+            {{
+              si_img_large
+              | image_url: width: 1000
+              | image_tag:
+                loading: 'lazy',
+                widths: '500, 750, 1000',
+                sizes: '(min-width: 750px) 50vw, 100vw',
+                alt: si_img_large.alt | default: '',
+                class: 'sustainability-impact__card-img'
+            }}
+          </div>
+          {%- if si_badge_text != blank -%}
+            <div class="sustainability-impact__badge" aria-label="{{ si_badge_text }}">
+              <span class="sustainability-impact__badge-text">{{- si_badge_text -}}</span>
+            </div>
+          {%- endif -%}
+        </article>
+      {%- endif -%}
+
+    </div>
+    {%- comment -%} /.sustainability-impact__right {%- endcomment -%}
+
+  </div>
+  {%- comment -%} /.sustainability-impact__inner {%- endcomment -%}
+</section>
+
+{%- endif -%}
+
+{% stylesheet %}
+
+  /* ─────────────────────────────────────────────────
+     Background: warm sand, matching the Figma design.
+     Falls back to the brand sand-100 token when no
+     custom colour is set in section settings.
+     ───────────────────────────────────────────────── */
+  .sustainability-impact-bg {
+    background-color: var(--sustainability-bg, var(--color-sand-100, #f3ebe1));
+  }
+
+  .sustainability-impact {
+    --sustainability-bg: var(--color-sand-100, #f3ebe1);
+    --sustainability-heading-color: var(--color-teal-800, #064c4d);
+    --sustainability-body-color: var(--color-teal-800, #064c4d);
+    --sustainability-cta-color: var(--color-teal-800, #064c4d);
+    --sustainability-stat-value-size: clamp(2.5rem, 6vw, 4.5rem);
+    --sustainability-card-radius: 1rem;
+
+    background-color: var(--sustainability-bg);
+    /* Override the default section grid so we can use our own inner layout */
+    display: block;
+    padding-block: max(48px, calc(var(--spacing-scale, 1) * 4rem));
+  }
+
+  /* ─────────────────────────────────────────────────
+     Inner wrapper — two-column grid on desktop
+     ───────────────────────────────────────────────── */
+  .sustainability-impact__inner {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    width: 100%;
+    max-width: var(--page-width, 1200px);
+    margin-inline: auto;
+    padding-inline: var(--page-margin, 1.5rem);
+    box-sizing: border-box;
+  }
+
+  @media screen and (min-width: 750px) {
+    .sustainability-impact__inner {
+      grid-template-columns: 3fr 5fr;
+      gap: clamp(1.5rem, 4vw, 3rem);
+      align-items: center;
+    }
+  }
+
+  /* ─────────────────────────────────────────────────
+     Left column
+     ───────────────────────────────────────────────── */
+  .sustainability-impact__left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+  }
+
+  .sustainability-impact__heading {
+    font-family: var(--font-h2--family, var(--font-primary--family));
+    font-size: var(--font-h2--size, clamp(1.75rem, 4vw, 3rem));
+    font-weight: var(--font-h2--weight, 700);
+    line-height: var(--font-h2--line-height, 1.1);
+    letter-spacing: var(--font-h2--letter-spacing, -0.02em);
+    text-transform: var(--font-h2--case, none);
+    color: var(--sustainability-heading-color);
+    margin: 0;
+  }
+
+  .sustainability-impact__body {
+    color: var(--sustainability-body-color);
+    font-size: var(--font-paragraph--size, 1rem);
+    line-height: var(--font-paragraph--line-height, 1.6);
+    margin: 0;
+    max-width: 38ch;
+  }
+
+  .sustainability-impact__body p {
+    margin: 0;
+  }
+
+  .sustainability-impact__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    margin-top: 0.25rem;
+  }
+
+  .sustainability-impact__cta-arrow {
+    font-size: 1em;
+    line-height: 1;
+    display: inline-block;
+  }
+
+  /* ─────────────────────────────────────────────────
+     Right column — mosaic grid
+     ───────────────────────────────────────────────── */
+  .sustainability-impact__right {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 0.75rem;
+  }
+
+  /* Stat card occupies top-left cell */
+  .sustainability-impact__card--stat {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+  }
+
+  /* Small image occupies bottom-left cell */
+  .sustainability-impact__card--small {
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+  }
+
+  /* Large image spans the full right column (both rows) */
+  .sustainability-impact__card--large {
+    grid-column: 2 / 3;
+    grid-row: 1 / 3;
+  }
+
+  /* ─────────────────────────────────────────────────
+     Card base
+     ───────────────────────────────────────────────── */
+  .sustainability-impact__card {
+    border-radius: var(--sustainability-card-radius);
+    overflow: hidden;
+    position: relative;
+    background-color: var(--color-sea-grey-100, #e1f4f3);
+  }
+
+  .sustainability-impact__card-media {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 160px;
+  }
+
+  .sustainability-impact__card-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Taller minimum height on large card */
+  .sustainability-impact__card--large .sustainability-impact__card-media {
+    min-height: 340px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .sustainability-impact__card-media {
+      min-height: 190px;
+    }
+
+    .sustainability-impact__card--large .sustainability-impact__card-media {
+      min-height: 100%;
+    }
+  }
+
+  /* ─────────────────────────────────────────────────
+     Stat card overlay
+     ───────────────────────────────────────────────── */
+  .sustainability-impact__stat-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 1rem;
+    background: linear-gradient(
+      to top,
+      hsl(171deg 97% 16% / 0.8) 0%,
+      hsl(171deg 97% 16% / 0.45) 50%,
+      hsl(171deg 97% 16% / 0.1) 100%
+    );
+    color: #ffffff;
+    border-radius: inherit;
+  }
+
+  /* When there's no image, give the overlay a solid background */
+  .sustainability-impact__card--stat:not(:has(.sustainability-impact__card-img)) .sustainability-impact__stat-overlay {
+    background: var(--color-teal-700, #146b68);
+    position: static;
+    height: 100%;
+    min-height: 160px;
+  }
+
+  .sustainability-impact__stat-value {
+    font-family: var(--font-h1--family, var(--font-primary--family));
+    font-size: var(--sustainability-stat-value-size);
+    font-weight: var(--font-h1--weight, 700);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin: 0 0 0.25rem;
+    color: #ffffff;
+  }
+
+  .sustainability-impact__stat-label {
+    font-size: var(--font-paragraph-small--size, 0.875rem);
+    line-height: 1.4;
+    color: #ffffff;
+    opacity: 0.92;
+  }
+
+  .sustainability-impact__stat-label p {
+    margin: 0;
+  }
+
+  /* ─────────────────────────────────────────────────
+     Badge overlay on large image
+     ───────────────────────────────────────────────── */
+  .sustainability-impact__badge {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    width: 5.5rem;
+    height: 5.5rem;
+    border-radius: 50%;
+    background-color: var(--color-sand-100, #f3ebe1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.625rem;
+    box-sizing: border-box;
+    border: 2px solid hsl(0 0% 100% / 0.6);
+    box-shadow: 0 2px 12px hsl(0 0% 0% / 0.18);
+  }
+
+  .sustainability-impact__badge-text {
+    font-family: var(--font-body--family);
+    font-size: 0.6rem;
+    font-weight: 600;
+    line-height: 1.3;
+    text-align: center;
+    color: var(--color-teal-800, #064c4d);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    display: block;
+  }
+
+  @media screen and (min-width: 750px) {
+    .sustainability-impact__badge {
+      width: 6.5rem;
+      height: 6.5rem;
+    }
+
+    .sustainability-impact__badge-text {
+      font-size: 0.65rem;
+    }
+  }
+
+  /* ─────────────────────────────────────────────────
+     Mobile overrides — single column stack
+     ───────────────────────────────────────────────── */
+  @media screen and (max-width: 749px) {
+    .sustainability-impact {
+      padding-block: 2.5rem;
+    }
+
+    .sustainability-impact__right {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto;
+    }
+
+    /* On mobile, stat and small images are side-by-side in a 2-col row,
+       and the large image spans full width below */
+    .sustainability-impact__card--stat {
+      grid-column: 1 / 2;
+      grid-row: 1 / 2;
+    }
+
+    .sustainability-impact__card--small {
+      grid-column: 2 / 3;
+      grid-row: 1 / 2;
+    }
+
+    .sustainability-impact__card--large {
+      grid-column: 1 / 3;
+      grid-row: 2 / 3;
+    }
+
+    .sustainability-impact__card--large .sustainability-impact__card-media {
+      min-height: 220px;
+    }
+
+    .sustainability-impact__stat-value {
+      font-size: clamp(1.75rem, 8vw, 2.5rem);
+    }
+
+    .sustainability-impact__body {
+      max-width: none;
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: no-preference) {
+    .sustainability-impact__card {
+      transition: transform 0.25s var(--ease-out-quad, ease-out);
+    }
+
+    .sustainability-impact__card:hover {
+      transform: translateY(-3px);
+    }
+  }
+
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Sustainability Impact",
+  "tag": "div",
+  "class": "section-wrapper",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section"
+    },
+    {
+      "type": "paragraph",
+      "content": "Content is pulled from product metafields in the 'custom' namespace. The section is hidden when the 'sustainability_heading' metafield is blank."
+    },
+    {
+      "type": "checkbox",
+      "id": "open_in_new_tab",
+      "label": "Open button link in new tab",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background colour",
+      "placeholder": "Default (warm sand)"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "Left",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "Right",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Sustainability Impact",
+      "category": "Product"
+    }
+  ]
+}
+{% endschema %}
