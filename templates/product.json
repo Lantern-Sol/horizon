@@ -483,6 +483,7 @@
             },
             "price_gLWgA6": {
               "type": "price",
+              "disabled": true,
               "settings": {
                 "show_sale_price_first": true,
                 "show_installments": false,
