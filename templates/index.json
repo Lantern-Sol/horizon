@@ -1831,6 +1831,7 @@
               "type": "image",
               "name": "Image",
               "settings": {
+                "image": "shopify://shop_images/meet-canabis.webp",
                 "link": "",
                 "hide_on_mobile": false,
                 "hide_on_desktop": false,
@@ -1853,6 +1854,7 @@
                 "notch_radius": 16,
                 "notch_width_mobile": 70,
                 "notch_height_mobile": 38,
+                "notch_icon": "shopify://shop_images/Frame_1216259592.svg",
                 "notch_icon_width": 66,
                 "notch_icon_width_mobile": 54,
                 "padding-block-start": 0,
