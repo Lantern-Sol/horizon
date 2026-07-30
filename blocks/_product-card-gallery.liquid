@@ -57,7 +57,45 @@
         </div>
       {%- endif -%}
     </div>
-    {%- if block.settings.show_overlay_quick_add and settings.quick_add or block.settings.show_overlay_quick_add and settings.mobile_quick_add -%}
+    {%- liquid
+      assign show_quick_add = false
+      if block.settings.show_overlay_quick_add and settings.quick_add
+        assign show_quick_add = true
+      elsif block.settings.show_overlay_quick_add and settings.mobile_quick_add
+        assign show_quick_add = true
+      endif
+
+      assign show_view_product = false
+      if block.settings.show_view_product and product.selected_or_first_available_variant.url != blank
+        assign show_view_product = true
+      endif
+    -%}
+    {%- if show_view_product -%}
+      {% comment %}
+        Quick-add normally pins itself to the bottom-right of the media. When a second action is
+        present the two share a centered row instead, laid out by .card-media-actions below.
+      {% endcomment %}
+      <div
+        class="card-media-actions"
+        style="--card-media-actions-plus: url('{{ 'icon-plus.svg' | asset_url }}'); --card-media-actions-arrow: url('{{ 'icon-arrow-top-right.svg' | asset_url }}');"
+      >
+        {%- if show_quick_add -%}
+          {% comment %} show_icon: false — the design's trailing glyph is a plus, not the cart icon. {% endcomment %}
+          {% render 'quick-add',
+            product: product,
+            section_id: section.id,
+            show_icon: false,
+            add_to_cart_text: block.settings.add_to_cart_label
+          %}
+        {%- endif -%}
+        <a
+          class="button-secondary card-media-actions__view"
+          href="{{ product.selected_or_first_available_variant.url }}"
+        >
+          {{ block.settings.view_product_label }}
+        </a>
+      </div>
+    {%- elsif show_quick_add -%}
       {% render 'quick-add', product: product, section_id: section.id %}
     {%- endif -%}
   {% endunless %}
@@ -129,6 +167,148 @@
   slideshow-slide.product-media-container.product-media-container--image {
     background-color: var(--color-background, transparent);
   }
+
+  /* Figma anchors the action row to the bottom of the media with 32px padding. */
+  .card-media-actions {
+    position: absolute;
+    inset-inline: 0;
+    bottom: var(--padding-4xl);
+    z-index: var(--layer-raised);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.875rem;
+    padding-inline: var(--padding-4xl);
+    pointer-events: none;
+  }
+
+  /* Release quick-add from its bottom-right anchor so both actions share the row.
+     Mirrors blocks/product-quick-add.liquid, minus its full-width stretch. */
+  /* quick-add's wrappers are custom elements that default to `display: inline`, so in a
+     flex row they collapse to 0 width and the button overflows on top of the sibling
+     action instead of sitting beside it. Make the whole chain shrink-to-fit. */
+  .card-media-actions .quick-add,
+  .card-media-actions .quick-add__product-form-component,
+  .card-media-actions .quick-add__product-form-component .shopify-product-form {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: auto;
+    height: auto;
+  }
+
+  /* The form declares `container-type: inline-size`, which contains its inline axis so its
+     content cannot size it — fine when it fills an `inset: 0` parent, but it collapses to 0
+     in this shrink-to-fit row. That also made base.css's `@container (max-width: 70px)`
+     rule (nearest container = this form) hide the button whenever the gallery was hovered. */
+  .card-media-actions .quick-add__product-form-component .shopify-product-form {
+    container-type: normal;
+  }
+
+  .card-media-actions .quick-add {
+    position: static;
+    inset: auto;
+    pointer-events: auto;
+  }
+
+  /* Shared pill geometry = Figma UI/Button/Small. Deliberately sets no `display`:
+     the quick-add button's own `--quick-add-display` is what keeps it desktop-only. */
+  .card-media-actions .quick-add__button.quick-add__button,
+  .card-media-actions__view.card-media-actions__view {
+    height: auto;
+    min-height: 0;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding-block: 10px;
+    padding-inline: 20px;
+    border: none;
+    border-radius: 80px;
+    font-size: var(--font-button-sm--size);
+    font-weight: var(--font-button--weight);
+    line-height: var(--font-button--line-height);
+    letter-spacing: var(--font-button--letter-spacing);
+    white-space: nowrap;
+  }
+
+  /* Primary action: solid fill, and the label stays visible. base.css collapses it to
+     a 0fr grid track until the button itself is hovered, which the design does not do. */
+  .card-media-actions .quick-add__button.quick-add__button {
+    position: static;
+    right: auto;
+    bottom: auto;
+    background: var(--button-background-color);
+    color: var(--button-color);
+    backdrop-filter: none;
+  }
+
+  .card-media-actions .quick-add__button .add-to-cart-text {
+    background: transparent;
+    height: auto;
+    border-radius: 0;
+  }
+
+  .card-media-actions .quick-add__button .add-to-cart-text__content {
+    grid-template-columns: 1fr;
+  }
+
+  .card-media-actions .quick-add__button .add-to-cart-text__content span span {
+    opacity: 1;
+    translate: 0 0;
+    filter: blur(0);
+    padding-right: 0;
+  }
+
+  .card-media-actions .quick-add__button.quick-add__button:is(:hover, :focus-visible) {
+    scale: 1;
+  }
+
+  /* Trailing glyphs: plus on the primary, arrow on the secondary. */
+  .card-media-actions .quick-add__button.quick-add__button::after,
+  .card-media-actions__view.card-media-actions__view::after {
+    content: '';
+    flex-shrink: 0;
+    background-color: currentcolor;
+  }
+
+  /* Both glyphs sit in a small box inside a much larger viewBox (the arrow's path spans only
+     7..17 of 24, the plus's 2.75..11.25 of 14). `contain` would scale the whole canvas down and
+     render a hairline, so instead the mask keeps its natural size and the box crops to it —
+     the same technique snippets/button-custom-styles.liquid uses for its arrow. */
+  .card-media-actions .quick-add__button.quick-add__button::after {
+    width: 10px;
+    height: 10px;
+    mask: var(--card-media-actions-plus) center / 14px 14px no-repeat;
+  }
+
+  .card-media-actions__view.card-media-actions__view::after {
+    width: 10px;
+    height: 10px;
+    mask: var(--card-media-actions-arrow) center / 24px 24px no-repeat;
+  }
+
+  /* The mobile frames show no overlay at all, so the secondary action is desktop-only —
+     the same breakpoint at which quick-add reveals itself. Without this it was the only
+     button rendering below 750px. */
+  .card-media-actions__view.card-media-actions__view {
+    display: none;
+  }
+
+  @media screen and (min-width: 750px) {
+    .card-media-actions__view.card-media-actions__view {
+      display: inline-flex;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--hover-transition-duration) var(--hover-transition-timing);
+    }
+
+    product-card:is(:hover, :focus-within) .card-media-actions__view.card-media-actions__view {
+      opacity: 1;
+      pointer-events: all;
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}
@@ -178,6 +358,28 @@
       "label": "Show quick-add over media",
       "info": "Turn off if you're using the separate Quick add block elsewhere on the card. Requires the theme-wide Quick add setting to be enabled.",
       "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_product",
+      "label": "Show view product link over media",
+      "info": "Adds a secondary link beside the quick-add button. Both are revealed together on hover and share a centered row at the bottom of the media.",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "view_product_label",
+      "label": "View product label",
+      "default": "View Product",
+      "visible_if": "{{ block.settings.show_view_product }}"
+    },
+    {
+      "type": "text",
+      "id": "add_to_cart_label",
+      "label": "Add to cart label",
+      "info": "Leave blank to use the theme's default label.",
+      "default": "Add to Cart",
+      "visible_if": "{{ block.settings.show_view_product }}"
     },
     {
       "type": "header",

@@ -7,11 +7,14 @@
   @param {boolean} [inherit_color_scheme] - If true, omit the color class so the component inherits its parent's scheme.
   @param {string} [style_class] - Button style class: 'button' (primary) or 'button-secondary'. Defaults to 'button'.
   @param {boolean} [show_icon] - Whether to render the cart icon. Defaults to true.
+  @param {string} [add_to_cart_text] - Overrides the Add button label. Defaults to the `actions.add` translation.
 {%- enddoc -%}
 
 {% liquid
   assign product_form_id = 'QuickAdd-ProductForm-' | append: product.id | append: '-' | append: block.id
-  assign add_to_cart_text = 'actions.add' | t
+  if add_to_cart_text == blank
+    assign add_to_cart_text = 'actions.add' | t
+  endif
   assign choose_options_text = 'actions.choose' | t
 
   if inherit_color_scheme
