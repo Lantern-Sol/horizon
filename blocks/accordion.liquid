@@ -7,8 +7,18 @@
 %}
 
 <div
-  class="accordion accordion--{{ block.id }} accordion--{{ block_settings.icon }} border-style spacing-style{% if block_settings.background_color != blank or block_settings.text_color != blank %} color-custom-{{ block.id }}{% endif %}{% if block_settings.background_color != blank %} accordion--custom-background{% endif %}{% if block_settings.dividers %} accordion--dividers{% endif %}"
+  class="accordion accordion--{{ block.id }} accordion--{{ block_settings.icon }} border-style spacing-style{% if block_settings.background_color != blank or block_settings.text_color != blank %} color-custom-{{ block.id }}{% endif %}{% if block_settings.background_color != blank %} accordion--custom-background{% endif %}{% if block_settings.dividers %} accordion--dividers{% endif %}{% if block_settings.row_style == 'cards' %} accordion--cards{% endif %}"
   style="
+    {%- if block_settings.row_style == 'cards' -%}
+      --accordion-row-background: {{ block_settings.row_background_color | default: 'transparent' }};
+      --accordion-row-radius: {{ block_settings.row_corner_radius }}px;
+      --accordion-row-padding: {{ block_settings.row_padding }}px;
+      --accordion-row-padding-mobile: {{ block_settings.row_padding_mobile }}px;
+      --accordion-row-gap: {{ block_settings.row_gap }}px;
+      --accordion-row-inner-gap: {{ block_settings.row_inner_gap }}px;
+      --accordion-icon-size: {{ block_settings.icon_chip_size }}px;
+      --accordion-icon-background: {{ block_settings.icon_chip_color | default: 'transparent' }};
+    {%- endif -%}
     --summary-font-family: var(--font-{{ block_settings.type_preset }}--family);
      --summary-font-style: var(--font-{{ block_settings.type_preset }}--style);
      --summary-font-weight: bold;
@@ -25,6 +35,72 @@
 </div>
 
 {% render 'accordion-styles' %}
+
+{% stylesheet %}
+  /* Card rows: each row becomes its own surface instead of one divided list. */
+  .accordion--cards {
+    display: flex;
+    flex-direction: column;
+    gap: var(--accordion-row-gap);
+  }
+
+  .accordion--cards accordion-custom {
+    display: block;
+    padding: var(--accordion-row-padding);
+    border-radius: var(--accordion-row-radius);
+    background-color: var(--accordion-row-background);
+  }
+
+  /* The list style draws rules between rows, which would double up on the card edges.
+     accordion-styles.liquid's between-row selectors tie on specificity and win on source
+     order, so the class is repeated here to outrank them. */
+  .accordion--cards.accordion--cards.accordion--dividers accordion-custom .details,
+  .accordion--cards.accordion--cards.accordion--dividers accordion-custom:first-child .details,
+  .accordion--cards.accordion--cards.accordion--dividers accordion-custom:last-child .details {
+    border-block: none;
+  }
+
+  /* The summary carries its own block padding for the list style; under cards the card
+     already supplies that, so it would double up. Class repeated to outrank the source rule. */
+  .accordion--cards.accordion--cards .details__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--accordion-row-inner-gap);
+    padding-block: 0;
+  }
+
+  /* Under cards, "dividers" means the rule between the question and its answer. */
+  .accordion--cards.accordion--dividers .details[open] .details-content {
+    margin-block-start: var(--accordion-row-inner-gap);
+    padding-block-start: var(--accordion-row-inner-gap);
+    border-block-start: 1px solid var(--color-border);
+  }
+
+  .accordion--cards .details__header :is(.icon-caret, .icon-plus) {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: var(--accordion-icon-size);
+    height: var(--accordion-icon-size);
+    border-radius: calc(var(--accordion-icon-size) / 4);
+    background-color: var(--accordion-icon-background);
+  }
+
+  /* Both glyphs are always in the markup and accordion-styles hides the unused one; the
+     chip rule above is more specific and would otherwise reveal both. */
+  .accordion--cards.accordion--caret .details__header .icon-plus,
+  .accordion--cards.accordion--plus .details__header .icon-caret {
+    display: none;
+  }
+
+  @media screen and (max-width: 749px) {
+    .accordion--cards accordion-custom {
+      padding: var(--accordion-row-padding-mobile);
+    }
+  }
+{% endstylesheet %}
 
 {% schema %}
 {
@@ -52,6 +128,103 @@
         }
       ],
       "default": "caret"
+    },
+    {
+      "type": "select",
+      "id": "row_style",
+      "label": "Row style",
+      "info": "Cards give each row its own background and corner radius instead of one divided list.",
+      "options": [
+        {
+          "value": "list",
+          "label": "List"
+        },
+        {
+          "value": "cards",
+          "label": "Cards"
+        }
+      ],
+      "default": "list"
+    },
+    {
+      "type": "color",
+      "id": "row_background_color",
+      "label": "Row background",
+      "default": "#ffffff",
+      "visible_if": "{{ block.settings.row_style == 'cards' }}"
+    },
+    {
+      "type": "range",
+      "id": "row_corner_radius",
+      "label": "Row corner radius",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 20,
+      "visible_if": "{{ block.settings.row_style == 'cards' }}"
+    },
+    {
+      "type": "range",
+      "id": "row_padding",
+      "label": "Row padding",
+      "min": 0,
+      "max": 80,
+      "step": 1,
+      "unit": "px",
+      "default": 32,
+      "visible_if": "{{ block.settings.row_style == 'cards' }}"
+    },
+    {
+      "type": "range",
+      "id": "row_padding_mobile",
+      "label": "Row padding (mobile)",
+      "min": 0,
+      "max": 80,
+      "step": 1,
+      "unit": "px",
+      "default": 24,
+      "visible_if": "{{ block.settings.row_style == 'cards' }}"
+    },
+    {
+      "type": "range",
+      "id": "row_gap",
+      "label": "Gap between rows",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 16,
+      "visible_if": "{{ block.settings.row_style == 'cards' }}"
+    },
+    {
+      "type": "range",
+      "id": "row_inner_gap",
+      "label": "Gap between question and answer",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 24,
+      "visible_if": "{{ block.settings.row_style == 'cards' }}"
+    },
+    {
+      "type": "color",
+      "id": "icon_chip_color",
+      "label": "Icon background",
+      "placeholder": "t:settings.default",
+      "visible_if": "{{ block.settings.row_style == 'cards' }}"
+    },
+    {
+      "type": "range",
+      "id": "icon_chip_size",
+      "label": "Icon size",
+      "min": 24,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "default": 44,
+      "visible_if": "{{ block.settings.row_style == 'cards' }}"
     },
     {
       "type": "checkbox",
