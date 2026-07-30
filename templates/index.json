@@ -485,6 +485,8 @@
         "hero_slide_3": {
           "type": "_hero-slide",
           "settings": {
+            "image": "shopify://shop_images/4e68bea858306e7ab654b2692d53dbb995f7f3b3.webp",
+            "mobile_image": "shopify://shop_images/4e68bea858306e7ab654b2692d53dbb995f7f3b3.webp",
             "show_overlay": true,
             "content_direction": "column",
             "vertical_on_mobile": true,
