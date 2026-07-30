@@ -3216,14 +3216,16 @@
           "type": "review",
           "settings": {
             "quote": "Incredible customer service and high-quality sustainable stencils. They helped us organize all of our pavement markings layouts effortlessly.",
-            "brand_name": "Bask"
+            "logo": "shopify://shop_images/cna.webp",
+            "brand_name": "CNA"
           }
         },
         "review_zgaUnt": {
           "type": "review",
           "settings": {
             "quote": "The stencils are extremely durable and simple to align. Perfect outcome on every job. We highly recommend their custom products.",
-            "brand_name": "Krucial"
+            "logo": "shopify://shop_images/redwood.webp",
+            "brand_name": "RedWood"
           }
         }
       },
