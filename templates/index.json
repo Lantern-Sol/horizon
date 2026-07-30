@@ -3208,7 +3208,7 @@
           "type": "review",
           "settings": {
             "quote": "Nobody is doing more for the cannabis industry when it comes to eco-science packaging. Redwood Roots is proud to work with a company with our same values.",
-            "logo": "shopify://shop_images/bask.webp",
+            "logo": "shopify://shop_images/silynice.webp",
             "brand_name": "Redwood Roots"
           }
         },
@@ -3227,12 +3227,30 @@
             "logo": "shopify://shop_images/redwood.webp",
             "brand_name": "RedWood"
           }
+        },
+        "review_QWA9in": {
+          "type": "review",
+          "settings": {
+            "quote": "The stencils are extremely durable and simple to align. Perfect outcome on every job. We highly recommend their custom products.",
+            "logo": "shopify://shop_images/redwood.webp",
+            "brand_name": "RedWood"
+          }
+        },
+        "review_RGrfQL": {
+          "type": "review",
+          "settings": {
+            "quote": "The stencils are extremely durable and simple to align. Perfect outcome on every job. We highly recommend their custom products.",
+            "logo": "shopify://shop_images/redwood.webp",
+            "brand_name": "RedWood"
+          }
         }
       },
       "block_order": [
         "review_TNaafe",
         "review_WWb6xh",
-        "review_zgaUnt"
+        "review_zgaUnt",
+        "review_QWA9in",
+        "review_RGrfQL"
       ],
       "name": "Reviews Logo Slider",
       "settings": {
