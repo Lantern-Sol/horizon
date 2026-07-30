@@ -246,6 +246,17 @@
     margin-block: var(--font-paragraph--spacing);
   }
 
+  /* base.css propagates the .hN presets onto .text-block children explicitly, but the
+     design-system presets (.display-stat, .text-label*, .text-body-lg) style only the
+     element they sit on. Hand them down so the rendered richtext picks them up. Element
+     styles like `em { font-style: italic }` still win, so inline emphasis survives. */
+  .text-block:is(.display-stat, .text-label, .text-label-lg, .text-body-lg) > *,
+  .text-block:is(.display-stat, .text-label, .text-label-lg, .text-body-lg)
+    :is(h1, h2, h3, h4, h5, h6, p) {
+    font: inherit;
+    letter-spacing: inherit;
+  }
+
   .text-block > *:first-child {
     margin-block-start: 0;
   }

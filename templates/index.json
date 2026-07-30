@@ -2872,6 +2872,287 @@
         "padding-inline-start-mobile": 0,
         "padding-inline-end-mobile": 0
       }
+    },
+    "section_sana_impact": {
+      "type": "section",
+      "name": "Sana’s Impact",
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment_flex_direction_column": "center",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 0,
+        "section_width": "page-width",
+        "padding-block-start": 100,
+        "padding-block-end": 100,
+        "use_mobile_padding": true,
+        "padding-block-start-mobile": 48,
+        "padding-block-end-mobile": 48
+      },
+      "blocks": {
+        "impact_container": {
+          "type": "group",
+          "settings": {
+            "content_direction": "row",
+            "vertical_on_mobile": true,
+            "reverse_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "gap": 8,
+            "use_mobile_gap": true,
+            "mobile_gap": 32,
+            "width": "fill",
+            "height": "fit",
+            "padding-inline-start": 94,
+            "padding-inline-end": 94,
+            "use_mobile_padding": true,
+            "padding-inline-start-mobile": 0,
+            "padding-inline-end-mobile": 0,
+            "padding-block-start": 20,
+            "padding-block-end": 20,
+            "padding-block-start-mobile": 0,
+            "padding-block-end-mobile": 0
+          },
+          "blocks": {
+            "impact_media": {
+              "type": "group",
+              "settings": {
+                "content_direction": "column",
+                "horizontal_alignment_flex_direction_column": "center",
+                "vertical_alignment_flex_direction_column": "center",
+                "gap": 19,
+                "width": "fill",
+                "height": "fit",
+                "padding-inline-start": 13,
+                "padding-inline-end": 13
+              },
+              "blocks": {
+                "impact_card": {
+                  "type": "offset-media-card",
+                  "settings": {
+                    "media_align": "right",
+                    "media_width": 51,
+                    "media_width_mobile": 49,
+                    "media_aspect_ratio": "3 / 2",
+                    "media_radius": 20,
+                    "media_radius_mobile": 12,
+                    "media_shadow": true,
+                    "media_shadow_color": "#1e939b38",
+                    "stage_overhang": 63,
+                    "stage_overhang_mobile": 58,
+                    "card_width": 82,
+                    "card_width_mobile": 100,
+                    "card_min_height": 300,
+                    "card_min_height_mobile": 234,
+                    "card_gap": 10,
+                    "card_padding": 32,
+                    "card_padding_mobile": 20,
+                    "card_radius": 24,
+                    "card_radius_mobile": 16,
+                    "border_width": 1,
+                    "border_color": "#b3f7e5",
+                    "use_gradient": true,
+                    "gradient_start_color": "#b3f7e5",
+                    "gradient_end_color": "#f0fdfa",
+                    "gradient_angle": -20,
+                    "gradient_start_position": 6,
+                    "gradient_end_position": 75,
+                    "glyph_icon": "recycle",
+                    "glyph_align": "left",
+                    "glyph_color": "#42a899",
+                    "glyph_width": 88,
+                    "glyph_width_mobile": 64,
+                    "glyph_offset_y": 16
+                  },
+                  "blocks": {
+                    "impact_stat_label": {
+                      "type": "text",
+                      "settings": {
+                        "text": "<p>We’ve reclaimed</p>",
+                        "width": "100%",
+                        "max_width": "normal",
+                        "alignment": "left",
+                        "type_preset": "text-label",
+                        "text_color": "#064c4d"
+                      },
+                      "blocks": {}
+                    },
+                    "impact_stat_value": {
+                      "type": "text",
+                      "settings": {
+                        "text": "<p>750K lbs</p>",
+                        "width": "100%",
+                        "max_width": "normal",
+                        "alignment": "left",
+                        "type_preset": "display-stat",
+                        "text_color": "#064c4d"
+                      },
+                      "blocks": {}
+                    },
+                    "impact_stat_sub": {
+                      "type": "text",
+                      "settings": {
+                        "text": "<p>of Ocean-Bound Plastic</p>",
+                        "width": "100%",
+                        "max_width": "normal",
+                        "alignment": "left",
+                        "type_preset": "text-label-lg",
+                        "text_color": "#42a899"
+                      },
+                      "blocks": {}
+                    }
+                  },
+                  "block_order": [
+                    "impact_stat_label",
+                    "impact_stat_value",
+                    "impact_stat_sub"
+                  ]
+                },
+                "impact_disclaimer": {
+                  "type": "group",
+                  "settings": {
+                    "content_direction": "row",
+                    "horizontal_alignment": "center",
+                    "vertical_alignment": "center",
+                    "gap": 14,
+                    "width": "fit-content",
+                    "height": "fit",
+                    "background_color": "#f7f1eb",
+                    "border_radius": 10,
+                    "padding-block-start": 8,
+                    "padding-block-end": 8,
+                    "padding-inline-start": 10,
+                    "padding-inline-end": 10,
+                    "vertical_on_mobile": false
+                  },
+                  "blocks": {
+                    "impact_disc_icon": {
+                      "type": "icon",
+                      "settings": {
+                        "icon": "arrow",
+                        "width": 12,
+                        "width-mobile": 12,
+                        "icon_color": "#a4937e"
+                      },
+                      "blocks": {}
+                    },
+                    "impact_disc_text": {
+                      "type": "text",
+                      "settings": {
+                        "text": "<p><em>An average car weighs 4,000 lbs</em></p>",
+                        "width": "fit-content",
+                        "max_width": "normal",
+                        "alignment": "left",
+                        "type_preset": "custom",
+                        "text_color": "#a4937e",
+                        "font_size": "0.875rem",
+                        "line_height": "custom",
+                        "custom_line_height": 1.3
+                      },
+                      "blocks": {}
+                    }
+                  },
+                  "block_order": [
+                    "impact_disc_icon",
+                    "impact_disc_text"
+                  ]
+                }
+              },
+              "block_order": [
+                "impact_card",
+                "impact_disclaimer"
+              ]
+            },
+            "impact_text": {
+              "type": "group",
+              "settings": {
+                "content_direction": "column",
+                "horizontal_alignment_flex_direction_column": "flex-start",
+                "vertical_alignment_flex_direction_column": "center",
+                "gap": 48,
+                "use_mobile_gap": true,
+                "mobile_gap": 32,
+                "width": "fill",
+                "height": "fit",
+                "padding-inline-start": 70,
+                "padding-inline-end": 70,
+                "use_mobile_padding": true,
+                "padding-inline-start-mobile": 0,
+                "padding-inline-end-mobile": 0
+              },
+              "blocks": {
+                "impact_heading_group": {
+                  "type": "group",
+                  "settings": {
+                    "content_direction": "column",
+                    "horizontal_alignment_flex_direction_column": "flex-start",
+                    "gap": 16,
+                    "width": "fill",
+                    "height": "fit"
+                  },
+                  "blocks": {
+                    "impact_heading": {
+                      "type": "text",
+                      "settings": {
+                        "text": "<h2>Sana’s Impact</h2>",
+                        "width": "100%",
+                        "max_width": "normal",
+                        "alignment": "left",
+                        "type_preset": "h1",
+                        "text_color": "#064c4d"
+                      },
+                      "blocks": {}
+                    },
+                    "impact_body": {
+                      "type": "text",
+                      "settings": {
+                        "text": "<p>Our approach is simple. We source materials responsibly, optimize packaging design to reduce waste, and create packaging that is easier to recover and reuse at end of life.</p>",
+                        "width": "100%",
+                        "max_width": "normal",
+                        "alignment": "left",
+                        "type_preset": "text-body-lg",
+                        "text_color": "#6c8283"
+                      },
+                      "blocks": {}
+                    }
+                  },
+                  "block_order": [
+                    "impact_heading",
+                    "impact_body"
+                  ]
+                },
+                "impact_cta": {
+                  "type": "button",
+                  "settings": {
+                    "label": "Learn More",
+                    "link": "shopify://pages/about-us",
+                    "open_in_new_tab": false,
+                    "style_class": "button",
+                    "pill": true,
+                    "show_arrow_icon": true,
+                    "width": "fit-content",
+                    "custom_width": 100,
+                    "width_mobile": "fit-content",
+                    "custom_width_mobile": 100
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "impact_heading_group",
+                "impact_cta"
+              ]
+            }
+          },
+          "block_order": [
+            "impact_media",
+            "impact_text"
+          ]
+        }
+      },
+      "block_order": [
+        "impact_container"
+      ]
     }
   },
   "order": [
@@ -2881,6 +3162,7 @@
     "product_list_fa6P9H",
     "custom_packaging_grid_4WJYtx",
     "reviews_logo_slider_9hhV4x",
-    "section_iYFX6L"
+    "section_iYFX6L",
+    "section_sana_impact"
   ]
 }
