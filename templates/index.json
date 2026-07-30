@@ -1969,7 +1969,7 @@
             "type_preset_mobile": "rte",
             "mobile_font_size": "1rem",
             "mobile_custom_line_height": 1.5,
-            "text_color": "#2B8B83",
+            "text_color": "#2b8b83",
             "background": false,
             "background_color": "#00000026",
             "corner_radius": 0,
@@ -1989,10 +1989,13 @@
       "block_order": [
         "text_YhrVgG"
       ],
+      "custom_css": [
+        ".text-block {opacity: 0.4;}"
+      ],
       "name": "t:names.marquee_section",
       "settings": {
         "movement_direction": "normal",
-        "background_color": "#D6FAF2",
+        "background_color": "#d6faf2",
         "padding-block-start": 61,
         "padding-block-end": 61,
         "gap_between_elements": 24
