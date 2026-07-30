@@ -11,19 +11,21 @@
   "sections": {
     "hero_slideshow_new": {
       "type": "slideshow",
-      "settings": {
-        "slideshow_style": "hero",
-        "display_mode": "full_frame",
-        "section_width": "full-width",
-        "icons_style": "none",
-        "slideshow_controls_style": "dots",
-        "autoplay": true,
-        "autoplay_speed": 5,
-        "padding-block-end": 32
-      },
       "blocks": {
         "hero_slide_1": {
           "type": "_hero-slide",
+          "settings": {
+            "image": "shopify://shop_images/4e68bea858306e7ab654b2692d53dbb995f7f3b3.webp",
+            "mobile_image": "shopify://shop_images/4e68bea858306e7ab654b2692d53dbb995f7f3b3.webp",
+            "show_overlay": true,
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "flex-end",
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "flex-end",
+            "gap": 24
+          },
           "blocks": {
             "content_1": {
               "type": "group",
@@ -33,11 +35,48 @@
                 "vertical_on_mobile": true,
                 "horizontal_alignment": "space-between",
                 "vertical_alignment": "flex-end",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "flex-start",
+                "vertical_alignment_flex_direction_column": "center",
+                "use_mobile_alignment": false,
+                "mobile_horizontal_alignment": "flex-start",
+                "mobile_vertical_alignment": "center",
+                "mobile_horizontal_alignment_flex_direction_column": "flex-start",
+                "mobile_vertical_alignment_flex_direction_column": "center",
                 "gap": 32,
                 "use_mobile_gap": true,
                 "mobile_gap": 24,
                 "width": "fill",
-                "width_mobile": "fill"
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fit",
+                "custom_height": 100,
+                "background_media": "none",
+                "background_color": "",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0,
+                "link": "",
+                "open_in_new_tab": false,
+                "placeholder": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0,
+                "use_mobile_padding": false,
+                "padding-block-start-mobile": 0,
+                "padding-block-end-mobile": 0,
+                "padding-inline-start-mobile": 0,
+                "padding-inline-end-mobile": 0
               },
               "blocks": {
                 "text_content_1": {
@@ -45,12 +84,51 @@
                   "name": "t:names.group",
                   "settings": {
                     "content_direction": "column",
+                    "vertical_on_mobile": true,
+                    "horizontal_alignment": "flex-start",
+                    "vertical_alignment": "center",
+                    "align_baseline": false,
+                    "horizontal_alignment_flex_direction_column": "flex-start",
+                    "vertical_alignment_flex_direction_column": "center",
+                    "use_mobile_alignment": false,
+                    "mobile_horizontal_alignment": "flex-start",
+                    "mobile_vertical_alignment": "center",
+                    "mobile_horizontal_alignment_flex_direction_column": "flex-start",
+                    "mobile_vertical_alignment_flex_direction_column": "center",
                     "gap": 16,
                     "use_mobile_gap": true,
                     "mobile_gap": 8,
                     "width": "custom",
                     "custom_width": 65,
-                    "width_mobile": "fill"
+                    "width_mobile": "fill",
+                    "custom_width_mobile": 100,
+                    "height": "fit",
+                    "custom_height": 100,
+                    "background_media": "none",
+                    "background_color": "",
+                    "video_position": "cover",
+                    "background_image_position": "cover",
+                    "toggle_overlay": false,
+                    "overlay_color": "#00000026",
+                    "overlay_style": "solid",
+                    "gradient_direction": "to top",
+                    "border": "none",
+                    "border_width": 1,
+                    "border_opacity": 100,
+                    "border_color": "",
+                    "border_radius": 0,
+                    "link": "",
+                    "open_in_new_tab": false,
+                    "placeholder": "",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0,
+                    "use_mobile_padding": false,
+                    "padding-block-start-mobile": 0,
+                    "padding-block-end-mobile": 0,
+                    "padding-inline-start-mobile": 0,
+                    "padding-inline-end-mobile": 0
                   },
                   "blocks": {
                     "heading_1": {
@@ -58,8 +136,13 @@
                       "name": "t:names.heading",
                       "settings": {
                         "text": "<h2>Full-Service<br/>Cannabis Packaging</h2>",
+                        "mobile_text": "",
                         "width": "100%",
                         "max_width": "none",
+                        "alignment": "left",
+                        "height_mode": "auto",
+                        "desktop_height": "",
+                        "mobile_height": "",
                         "type_preset": "custom",
                         "font": "var(--font-heading--family)",
                         "enable_custom_font_weight": true,
@@ -67,52 +150,117 @@
                         "font_size": "4rem",
                         "line_height": "custom",
                         "custom_line_height": 1,
+                        "letter_spacing": "normal",
+                        "case": "none",
+                        "wrap": "pretty",
                         "type_preset_mobile": "custom",
                         "mobile_font_size": "2.5rem",
                         "mobile_custom_line_height": 1.1,
-                        "text_color": "#ffffff"
-                      }
+                        "text_color": "#ffffff",
+                        "background": false,
+                        "background_color": "#00000026",
+                        "corner_radius": 0,
+                        "padding-block-start": 0,
+                        "padding-block-end": 0,
+                        "padding-inline-start": 0,
+                        "padding-inline-end": 0,
+                        "use_mobile_padding": false,
+                        "padding-block-start-mobile": 0,
+                        "padding-block-end-mobile": 0,
+                        "padding-inline-start-mobile": 0,
+                        "padding-inline-end-mobile": 0
+                      },
+                      "blocks": {}
                     },
                     "subheading_1": {
                       "type": "text",
                       "settings": {
                         "text": "<p>Quick turnaround, endless customization, no hidden fees</p>",
+                        "mobile_text": "",
                         "width": "100%",
                         "max_width": "none",
+                        "alignment": "left",
+                        "height_mode": "auto",
+                        "desktop_height": "",
+                        "mobile_height": "",
                         "type_preset": "custom",
                         "font": "var(--font-body--family)",
+                        "enable_custom_font_weight": false,
+                        "weight": "400",
                         "font_size": "1.5rem",
                         "line_height": "custom",
                         "custom_line_height": 1.3,
+                        "letter_spacing": "normal",
+                        "case": "none",
+                        "wrap": "pretty",
                         "type_preset_mobile": "custom",
                         "mobile_font_size": "1.125rem",
                         "mobile_custom_line_height": 1.5,
-                        "text_color": "#ffffff"
-                      }
+                        "text_color": "#ffffff",
+                        "background": false,
+                        "background_color": "#00000026",
+                        "corner_radius": 0,
+                        "padding-block-start": 0,
+                        "padding-block-end": 0,
+                        "padding-inline-start": 0,
+                        "padding-inline-end": 0,
+                        "use_mobile_padding": false,
+                        "padding-block-start-mobile": 0,
+                        "padding-block-end-mobile": 0,
+                        "padding-inline-start-mobile": 0,
+                        "padding-inline-end-mobile": 0
+                      },
+                      "blocks": {}
                     }
                   },
-                  "block_order": ["heading_1", "subheading_1"]
+                  "block_order": [
+                    "heading_1",
+                    "subheading_1"
+                  ]
                 },
                 "button_1": {
                   "type": "button",
                   "settings": {
                     "label": "Request Samples",
+                    "link": "",
+                    "open_in_new_tab": false,
                     "style_class": "button-custom",
                     "custom_button_background": "#ffffff29",
                     "custom_button_text": "#ffffff",
                     "custom_button_border": "#ffffff",
+                    "link_text_color": "",
+                    "width": "fit-content",
+                    "custom_width": 100,
                     "width_mobile": "custom",
                     "custom_width_mobile": 100
-                  }
+                  },
+                  "blocks": {}
                 }
               },
-              "block_order": ["text_content_1", "button_1"]
+              "block_order": [
+                "text_content_1",
+                "button_1"
+              ]
             }
           },
-          "block_order": ["content_1"]
+          "block_order": [
+            "content_1"
+          ]
         },
         "hero_slide_2": {
           "type": "_hero-slide",
+          "settings": {
+            "image": "shopify://shop_images/4e68bea858306e7ab654b2692d53dbb995f7f3b3.webp",
+            "mobile_image": "shopify://shop_images/4e68bea858306e7ab654b2692d53dbb995f7f3b3.webp",
+            "show_overlay": true,
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "flex-end",
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "flex-end",
+            "gap": 24
+          },
           "blocks": {
             "content_2": {
               "type": "group",
@@ -122,11 +270,48 @@
                 "vertical_on_mobile": true,
                 "horizontal_alignment": "space-between",
                 "vertical_alignment": "flex-end",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "flex-start",
+                "vertical_alignment_flex_direction_column": "center",
+                "use_mobile_alignment": false,
+                "mobile_horizontal_alignment": "flex-start",
+                "mobile_vertical_alignment": "center",
+                "mobile_horizontal_alignment_flex_direction_column": "flex-start",
+                "mobile_vertical_alignment_flex_direction_column": "center",
                 "gap": 32,
                 "use_mobile_gap": true,
                 "mobile_gap": 24,
                 "width": "fill",
-                "width_mobile": "fill"
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fit",
+                "custom_height": 100,
+                "background_media": "none",
+                "background_color": "",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0,
+                "link": "",
+                "open_in_new_tab": false,
+                "placeholder": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0,
+                "use_mobile_padding": false,
+                "padding-block-start-mobile": 0,
+                "padding-block-end-mobile": 0,
+                "padding-inline-start-mobile": 0,
+                "padding-inline-end-mobile": 0
               },
               "blocks": {
                 "text_content_2": {
@@ -134,12 +319,51 @@
                   "name": "t:names.group",
                   "settings": {
                     "content_direction": "column",
+                    "vertical_on_mobile": true,
+                    "horizontal_alignment": "flex-start",
+                    "vertical_alignment": "center",
+                    "align_baseline": false,
+                    "horizontal_alignment_flex_direction_column": "flex-start",
+                    "vertical_alignment_flex_direction_column": "center",
+                    "use_mobile_alignment": false,
+                    "mobile_horizontal_alignment": "flex-start",
+                    "mobile_vertical_alignment": "center",
+                    "mobile_horizontal_alignment_flex_direction_column": "flex-start",
+                    "mobile_vertical_alignment_flex_direction_column": "center",
                     "gap": 16,
                     "use_mobile_gap": true,
                     "mobile_gap": 8,
                     "width": "custom",
                     "custom_width": 65,
-                    "width_mobile": "fill"
+                    "width_mobile": "fill",
+                    "custom_width_mobile": 100,
+                    "height": "fit",
+                    "custom_height": 100,
+                    "background_media": "none",
+                    "background_color": "",
+                    "video_position": "cover",
+                    "background_image_position": "cover",
+                    "toggle_overlay": false,
+                    "overlay_color": "#00000026",
+                    "overlay_style": "solid",
+                    "gradient_direction": "to top",
+                    "border": "none",
+                    "border_width": 1,
+                    "border_opacity": 100,
+                    "border_color": "",
+                    "border_radius": 0,
+                    "link": "",
+                    "open_in_new_tab": false,
+                    "placeholder": "",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0,
+                    "use_mobile_padding": false,
+                    "padding-block-start-mobile": 0,
+                    "padding-block-end-mobile": 0,
+                    "padding-inline-start-mobile": 0,
+                    "padding-inline-end-mobile": 0
                   },
                   "blocks": {
                     "heading_2": {
@@ -147,8 +371,13 @@
                       "name": "t:names.heading",
                       "settings": {
                         "text": "<h2>Full-Service<br/>Cannabis Packaging</h2>",
+                        "mobile_text": "",
                         "width": "100%",
                         "max_width": "none",
+                        "alignment": "left",
+                        "height_mode": "auto",
+                        "desktop_height": "",
+                        "mobile_height": "",
                         "type_preset": "custom",
                         "font": "var(--font-heading--family)",
                         "enable_custom_font_weight": true,
@@ -156,52 +385,115 @@
                         "font_size": "4rem",
                         "line_height": "custom",
                         "custom_line_height": 1,
+                        "letter_spacing": "normal",
+                        "case": "none",
+                        "wrap": "pretty",
                         "type_preset_mobile": "custom",
                         "mobile_font_size": "2.5rem",
                         "mobile_custom_line_height": 1.1,
-                        "text_color": "#ffffff"
-                      }
+                        "text_color": "#ffffff",
+                        "background": false,
+                        "background_color": "#00000026",
+                        "corner_radius": 0,
+                        "padding-block-start": 0,
+                        "padding-block-end": 0,
+                        "padding-inline-start": 0,
+                        "padding-inline-end": 0,
+                        "use_mobile_padding": false,
+                        "padding-block-start-mobile": 0,
+                        "padding-block-end-mobile": 0,
+                        "padding-inline-start-mobile": 0,
+                        "padding-inline-end-mobile": 0
+                      },
+                      "blocks": {}
                     },
                     "subheading_2": {
                       "type": "text",
                       "settings": {
                         "text": "<p>Quick turnaround, endless customization, no hidden fees</p>",
+                        "mobile_text": "",
                         "width": "100%",
                         "max_width": "none",
+                        "alignment": "left",
+                        "height_mode": "auto",
+                        "desktop_height": "",
+                        "mobile_height": "",
                         "type_preset": "custom",
                         "font": "var(--font-body--family)",
+                        "enable_custom_font_weight": false,
+                        "weight": "400",
                         "font_size": "1.5rem",
                         "line_height": "custom",
                         "custom_line_height": 1.3,
+                        "letter_spacing": "normal",
+                        "case": "none",
+                        "wrap": "pretty",
                         "type_preset_mobile": "custom",
                         "mobile_font_size": "1.125rem",
                         "mobile_custom_line_height": 1.5,
-                        "text_color": "#ffffff"
-                      }
+                        "text_color": "#ffffff",
+                        "background": false,
+                        "background_color": "#00000026",
+                        "corner_radius": 0,
+                        "padding-block-start": 0,
+                        "padding-block-end": 0,
+                        "padding-inline-start": 0,
+                        "padding-inline-end": 0,
+                        "use_mobile_padding": false,
+                        "padding-block-start-mobile": 0,
+                        "padding-block-end-mobile": 0,
+                        "padding-inline-start-mobile": 0,
+                        "padding-inline-end-mobile": 0
+                      },
+                      "blocks": {}
                     }
                   },
-                  "block_order": ["heading_2", "subheading_2"]
+                  "block_order": [
+                    "heading_2",
+                    "subheading_2"
+                  ]
                 },
                 "button_2": {
                   "type": "button",
                   "settings": {
                     "label": "Request Samples",
+                    "link": "",
+                    "open_in_new_tab": false,
                     "style_class": "button-custom",
                     "custom_button_background": "#ffffff29",
                     "custom_button_text": "#ffffff",
                     "custom_button_border": "#ffffff",
+                    "link_text_color": "",
+                    "width": "fit-content",
+                    "custom_width": 100,
                     "width_mobile": "custom",
                     "custom_width_mobile": 100
-                  }
+                  },
+                  "blocks": {}
                 }
               },
-              "block_order": ["text_content_2", "button_2"]
+              "block_order": [
+                "text_content_2",
+                "button_2"
+              ]
             }
           },
-          "block_order": ["content_2"]
+          "block_order": [
+            "content_2"
+          ]
         },
         "hero_slide_3": {
           "type": "_hero-slide",
+          "settings": {
+            "show_overlay": true,
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "flex-end",
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "flex-end",
+            "gap": 24
+          },
           "blocks": {
             "content_3": {
               "type": "group",
@@ -211,11 +503,48 @@
                 "vertical_on_mobile": true,
                 "horizontal_alignment": "space-between",
                 "vertical_alignment": "flex-end",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "flex-start",
+                "vertical_alignment_flex_direction_column": "center",
+                "use_mobile_alignment": false,
+                "mobile_horizontal_alignment": "flex-start",
+                "mobile_vertical_alignment": "center",
+                "mobile_horizontal_alignment_flex_direction_column": "flex-start",
+                "mobile_vertical_alignment_flex_direction_column": "center",
                 "gap": 32,
                 "use_mobile_gap": true,
                 "mobile_gap": 24,
                 "width": "fill",
-                "width_mobile": "fill"
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fit",
+                "custom_height": 100,
+                "background_media": "none",
+                "background_color": "",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0,
+                "link": "",
+                "open_in_new_tab": false,
+                "placeholder": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0,
+                "use_mobile_padding": false,
+                "padding-block-start-mobile": 0,
+                "padding-block-end-mobile": 0,
+                "padding-inline-start-mobile": 0,
+                "padding-inline-end-mobile": 0
               },
               "blocks": {
                 "text_content_3": {
@@ -223,12 +552,51 @@
                   "name": "t:names.group",
                   "settings": {
                     "content_direction": "column",
+                    "vertical_on_mobile": true,
+                    "horizontal_alignment": "flex-start",
+                    "vertical_alignment": "center",
+                    "align_baseline": false,
+                    "horizontal_alignment_flex_direction_column": "flex-start",
+                    "vertical_alignment_flex_direction_column": "center",
+                    "use_mobile_alignment": false,
+                    "mobile_horizontal_alignment": "flex-start",
+                    "mobile_vertical_alignment": "center",
+                    "mobile_horizontal_alignment_flex_direction_column": "flex-start",
+                    "mobile_vertical_alignment_flex_direction_column": "center",
                     "gap": 16,
                     "use_mobile_gap": true,
                     "mobile_gap": 8,
                     "width": "custom",
                     "custom_width": 65,
-                    "width_mobile": "fill"
+                    "width_mobile": "fill",
+                    "custom_width_mobile": 100,
+                    "height": "fit",
+                    "custom_height": 100,
+                    "background_media": "none",
+                    "background_color": "",
+                    "video_position": "cover",
+                    "background_image_position": "cover",
+                    "toggle_overlay": false,
+                    "overlay_color": "#00000026",
+                    "overlay_style": "solid",
+                    "gradient_direction": "to top",
+                    "border": "none",
+                    "border_width": 1,
+                    "border_opacity": 100,
+                    "border_color": "",
+                    "border_radius": 0,
+                    "link": "",
+                    "open_in_new_tab": false,
+                    "placeholder": "",
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0,
+                    "use_mobile_padding": false,
+                    "padding-block-start-mobile": 0,
+                    "padding-block-end-mobile": 0,
+                    "padding-inline-start-mobile": 0,
+                    "padding-inline-end-mobile": 0
                   },
                   "blocks": {
                     "heading_3": {
@@ -236,8 +604,13 @@
                       "name": "t:names.heading",
                       "settings": {
                         "text": "<h2>Full-Service<br/>Cannabis Packaging</h2>",
+                        "mobile_text": "",
                         "width": "100%",
                         "max_width": "none",
+                        "alignment": "left",
+                        "height_mode": "auto",
+                        "desktop_height": "",
+                        "mobile_height": "",
                         "type_preset": "custom",
                         "font": "var(--font-heading--family)",
                         "enable_custom_font_weight": true,
@@ -245,52 +618,140 @@
                         "font_size": "4rem",
                         "line_height": "custom",
                         "custom_line_height": 1,
+                        "letter_spacing": "normal",
+                        "case": "none",
+                        "wrap": "pretty",
                         "type_preset_mobile": "custom",
                         "mobile_font_size": "2.5rem",
                         "mobile_custom_line_height": 1.1,
-                        "text_color": "#ffffff"
-                      }
+                        "text_color": "#ffffff",
+                        "background": false,
+                        "background_color": "#00000026",
+                        "corner_radius": 0,
+                        "padding-block-start": 0,
+                        "padding-block-end": 0,
+                        "padding-inline-start": 0,
+                        "padding-inline-end": 0,
+                        "use_mobile_padding": false,
+                        "padding-block-start-mobile": 0,
+                        "padding-block-end-mobile": 0,
+                        "padding-inline-start-mobile": 0,
+                        "padding-inline-end-mobile": 0
+                      },
+                      "blocks": {}
                     },
                     "subheading_3": {
                       "type": "text",
                       "settings": {
                         "text": "<p>Quick turnaround, endless customization, no hidden fees</p>",
+                        "mobile_text": "",
                         "width": "100%",
                         "max_width": "none",
+                        "alignment": "left",
+                        "height_mode": "auto",
+                        "desktop_height": "",
+                        "mobile_height": "",
                         "type_preset": "custom",
                         "font": "var(--font-body--family)",
+                        "enable_custom_font_weight": false,
+                        "weight": "400",
                         "font_size": "1.5rem",
                         "line_height": "custom",
                         "custom_line_height": 1.3,
+                        "letter_spacing": "normal",
+                        "case": "none",
+                        "wrap": "pretty",
                         "type_preset_mobile": "custom",
                         "mobile_font_size": "1.125rem",
                         "mobile_custom_line_height": 1.5,
-                        "text_color": "#ffffff"
-                      }
+                        "text_color": "#ffffff",
+                        "background": false,
+                        "background_color": "#00000026",
+                        "corner_radius": 0,
+                        "padding-block-start": 0,
+                        "padding-block-end": 0,
+                        "padding-inline-start": 0,
+                        "padding-inline-end": 0,
+                        "use_mobile_padding": false,
+                        "padding-block-start-mobile": 0,
+                        "padding-block-end-mobile": 0,
+                        "padding-inline-start-mobile": 0,
+                        "padding-inline-end-mobile": 0
+                      },
+                      "blocks": {}
                     }
                   },
-                  "block_order": ["heading_3", "subheading_3"]
+                  "block_order": [
+                    "heading_3",
+                    "subheading_3"
+                  ]
                 },
                 "button_3": {
                   "type": "button",
                   "settings": {
                     "label": "Request Samples",
+                    "link": "",
+                    "open_in_new_tab": false,
                     "style_class": "button-custom",
                     "custom_button_background": "#ffffff29",
                     "custom_button_text": "#ffffff",
                     "custom_button_border": "#ffffff",
+                    "link_text_color": "",
+                    "width": "fit-content",
+                    "custom_width": 100,
                     "width_mobile": "custom",
                     "custom_width_mobile": 100
-                  }
+                  },
+                  "blocks": {}
                 }
               },
-              "block_order": ["text_content_3", "button_3"]
+              "block_order": [
+                "text_content_3",
+                "button_3"
+              ]
             }
           },
-          "block_order": ["content_3"]
+          "block_order": [
+            "content_3"
+          ]
         }
       },
-      "block_order": ["hero_slide_1", "hero_slide_2", "hero_slide_3"]
+      "block_order": [
+        "hero_slide_1",
+        "hero_slide_2",
+        "hero_slide_3"
+      ],
+      "settings": {
+        "slideshow_style": "hero",
+        "hero_slide_height": 586,
+        "hero_slide_height_mobile": 517,
+        "hero_slide_margin": 55,
+        "hero_slide_gap": 24,
+        "display_mode": "full_frame",
+        "section_width": "full-width",
+        "full_frame_on_mobile": false,
+        "slideshow_gap": 12,
+        "corner_radius": 0,
+        "slide_height": "medium",
+        "content_position": "on-media",
+        "background_color": "",
+        "icons_style": "none",
+        "custom_icon_width": 30,
+        "slides_to_show": 1,
+        "mobile_slides_to_show": 1,
+        "slides_to_scroll": 1,
+        "mobile_slides_to_scroll": 1,
+        "show_arrows_desktop": true,
+        "show_arrows_mobile": true,
+        "arrows_position": "center",
+        "mobile_arrows_position": "center",
+        "icons_shape": "none",
+        "slideshow_controls_style": "dots",
+        "autoplay": true,
+        "autoplay_speed": 5,
+        "padding-block-start": 0,
+        "padding-block-end": 32
+      }
     },
     "slideshow_gfWLi8": {
       "type": "slideshow",
@@ -617,6 +1078,11 @@
       ],
       "name": "t:names.slideshow_inset",
       "settings": {
+        "slideshow_style": "default",
+        "hero_slide_height": 586,
+        "hero_slide_height_mobile": 517,
+        "hero_slide_margin": 55,
+        "hero_slide_gap": 24,
         "display_mode": "with_hints",
         "section_width": "full-width",
         "full_frame_on_mobile": true,
