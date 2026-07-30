@@ -2211,7 +2211,7 @@
       "name": "t:names.featured_collection",
       "settings": {
         "collection": "all",
-        "layout_type": "grid",
+        "layout_type": "carousel",
         "carousel_on_mobile": true,
         "max_products": 3,
         "columns": 3,
