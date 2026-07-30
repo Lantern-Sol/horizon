@@ -1,0 +1,206 @@
+{%- liquid
+  assign block_settings = block.settings
+  assign product_ref = closest.product
+
+  # Read specs from a JSON metafield (array of {label, value} objects)
+  # Namespace: custom | Key: product_specs_table
+  assign specs_raw = product_ref.metafields.custom.product_specs_table.value
+
+  # Fallback: nothing to render when no specs are set
+  assign has_specs = false
+  unless specs_raw == blank or specs_raw == empty
+    assign has_specs = true
+  endunless
+
+  assign doc_url   = product_ref.metafields.custom.product_specs_doc_url
+  assign doc_label = product_ref.metafields.custom.product_specs_doc_label | default: block_settings.doc_label
+-%}
+
+{%- if has_specs or request.visual_preview_mode -%}
+
+<div
+  class="product-specs-table spacing-style"
+  style="{% render 'spacing-style', settings: block_settings %}"
+  {{ block.shopify_attributes }}
+>
+  <table class="product-specs-table__table" role="table">
+    <tbody>
+      {%- if has_specs -%}
+        {%- for row in specs_raw -%}
+          <tr class="product-specs-table__row">
+            <th class="product-specs-table__label" scope="row">
+              {{- row.label | escape -}}
+            </th>
+            <td class="product-specs-table__value">
+              {{- row.value | escape -}}
+            </td>
+          </tr>
+        {%- endfor -%}
+      {%- else -%}
+        {%- comment -%} Theme-editor placeholder rows {%- endcomment -%}
+        {%- assign placeholder_rows = 'Locking mechanism,Case Quantity,Pallet Quantity,Material,Manufacturing' | split: ',' -%}
+        {%- assign placeholder_vals = 'pop-top,1,000 units,36,000 units (36 cases),PCR polypropylene (#5 recyclable),made in the USA' | split: ',' -%}
+        {%- for label in placeholder_rows -%}
+          <tr class="product-specs-table__row">
+            <th class="product-specs-table__label" scope="row">{{- label -}}</th>
+            <td class="product-specs-table__value">{{- placeholder_vals[forloop.index0] -}}</td>
+          </tr>
+        {%- endfor -%}
+      {%- endif -%}
+    </tbody>
+  </table>
+
+  {%- if doc_url != blank or block_settings.show_doc_link -%}
+    <a
+      href="{{ doc_url | default: '#' }}"
+      class="product-specs-table__doc-link"
+      {% if block_settings.doc_new_tab %}
+        target="_blank"
+        rel="noopener noreferrer"
+      {% endif %}
+    >
+      {{- doc_label | default: 'View Full Product Specs & Technical Drawings' -}}
+      <span class="product-specs-table__doc-icon" aria-hidden="true">
+        {{- 'icon-download.svg' | inline_asset_content -}}
+      </span>
+    </a>
+  {%- endif -%}
+</div>
+
+{% endif %}
+
+{% stylesheet %}
+  .product-specs-table {
+    width: 100%;
+  }
+
+  .product-specs-table__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-paragraph-small--size, 0.875rem);
+    line-height: var(--font-paragraph--line-height, 1.5);
+    color: var(--color-foreground);
+    table-layout: fixed;
+  }
+
+  .product-specs-table__row {
+    border-bottom: 1px solid rgb(var(--color-foreground-rgb) / 0.1);
+  }
+
+  .product-specs-table__row:first-child {
+    border-top: 1px solid rgb(var(--color-foreground-rgb) / 0.1);
+  }
+
+  .product-specs-table__label,
+  .product-specs-table__value {
+    padding: 0.5rem 0.75rem 0.5rem 0;
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  .product-specs-table__label {
+    width: 40%;
+    font-weight: var(--font-weight-normal, 400);
+    color: rgb(var(--color-foreground-rgb) / 0.65);
+    padding-right: 1rem;
+  }
+
+  .product-specs-table__value {
+    width: 60%;
+    font-weight: var(--font-weight-normal, 400);
+  }
+
+  /* Download link */
+  .product-specs-table__doc-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    margin-top: 0.875rem;
+    font-size: var(--font-paragraph-small--size, 0.875rem);
+    color: var(--color-foreground);
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 2px;
+    transition: text-decoration-color 0.2s ease;
+  }
+
+  .product-specs-table__doc-link:hover {
+    text-decoration-color: currentColor;
+  }
+
+  .product-specs-table__doc-icon {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .product-specs-table__doc-icon svg {
+    width: 1em;
+    height: 1em;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Product Specs Table",
+  "tag": null,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Specs rows are driven by the 'product_specs_table' metafield (custom namespace, JSON type — array of {label, value} objects). The download link uses 'product_specs_doc_url' and 'product_specs_doc_label' metafields."
+    },
+    {
+      "type": "header",
+      "content": "Download link"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_doc_link",
+      "label": "Show document link",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "doc_label",
+      "label": "Link text (fallback)",
+      "default": "View Full Product Specs & Technical Drawings"
+    },
+    {
+      "type": "checkbox",
+      "id": "doc_new_tab",
+      "label": "Open in new tab",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Specs Table",
+      "category": "Product"
+    }
+  ]
+}
+{% endschema %}
