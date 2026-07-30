@@ -3031,6 +3031,7 @@
                     "gradient_start_position": 6,
                     "gradient_end_position": 75,
                     "glyph_icon": "recycle",
+                    "glyph_image": "shopify://shop_images/Layer_1.svg",
                     "glyph_align": "left",
                     "glyph_color": "#42a899",
                     "glyph_width": 88,
