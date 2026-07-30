@@ -23,6 +23,33 @@
   {% endstyle %}
 {% endif %}
 
+{% if block_settings.pill or block_settings.show_arrow_icon %}
+  {% style %}
+    {% if block_settings.pill %}
+      .{{ block_settings.style_class }}.{{ block_settings.style_class }}--{{ block_id }} {
+        border-radius: 80px;
+      }
+    {% endif %}
+    {% if block_settings.show_arrow_icon %}
+      .{{ block_settings.style_class }}.{{ block_settings.style_class }}--{{ block_id }} {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .{{ block_settings.style_class }}.{{ block_settings.style_class }}--{{ block_id }}::after {
+        content: '';
+        flex-shrink: 0;
+        width: 15px;
+        height: 15px;
+        background-color: currentcolor;
+        mask: url('{{ 'icon-arrow-top-right.svg' | asset_url }}') center / 24px 24px no-repeat;
+      }
+    {% endif %}
+  {% endstyle %}
+{% endif %}
+
 {% if block_settings.style_class == 'button-custom' %}
   {%- assign effective_background_color = block_settings.custom_button_background
     | default: settings.palette_primary_button_background

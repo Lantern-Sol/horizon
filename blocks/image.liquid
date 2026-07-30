@@ -16,10 +16,15 @@
   if ratio == 0 or ratio == null
     assign ratio = 1
   endif
+
+  assign has_notch = false
+  if block_settings.notch_corner != blank and block_settings.notch_corner != 'none'
+    assign has_notch = true
+  endif
 %}
 
 {% capture class %}
-  image-block image-block--{{ block.id }} image-block--height-{{ block_settings.height }} spacing-style size-style{% if block_settings.hide_on_mobile %} hidden--mobile{% endif %}{% if block_settings.hide_on_desktop %} hidden--desktop{% endif %}
+  image-block image-block--{{ block.id }} image-block--height-{{ block_settings.height }} spacing-style size-style{% if has_notch %} image-block--notched image-block--notch-{{ block_settings.notch_corner }}{% endif %}{% if block_settings.hide_on_mobile %} hidden--mobile{% endif %}{% if block_settings.hide_on_desktop %} hidden--desktop{% endif %}
 {% endcapture %}
 
 {% capture style %}
@@ -59,7 +64,35 @@
       {{ 'detailed-apparel-1' | placeholder_svg_tag: 'image-block__placeholder' }}
     </div>
   {%- endif -%}
+  {%- if has_notch and block_settings.notch_icon != blank -%}
+    <span class="image-block__notch-icon">
+      {{
+        block_settings.notch_icon
+        | image_url: width: 320
+        | image_tag: loading: 'lazy', widths: '80, 160, 320', sizes: '160px', alt: block_settings.notch_icon.alt
+      }}
+    </span>
+  {%- endif -%}
 {% endcapture %}
+
+{% if has_notch %}
+  {% style %}
+    .image-block--{{ block.id }} {
+      --notch-w: {{ block_settings.notch_width | default: 104 }}px;
+      --notch-h: {{ block_settings.notch_height | default: 46 }}px;
+      --notch-r: {{ block_settings.notch_radius | default: 16 }}px;
+      --notch-icon-w: {{ block_settings.notch_icon_width | default: 66 }}px;
+    }
+
+    @media screen and (max-width: 749px) {
+      .image-block--{{ block.id }} {
+        --notch-w: {{ block_settings.notch_width_mobile | default: 70 }}px;
+        --notch-h: {{ block_settings.notch_height_mobile | default: 38 }}px;
+        --notch-icon-w: {{ block_settings.notch_icon_width_mobile | default: 54 }}px;
+      }
+    }
+  {% endstyle %}
+{% endif %}
 
 {% if block_settings.link == blank %}
   <div
@@ -110,6 +143,43 @@
   .image-block__image {
     object-fit: var(--object-fit, cover);
     aspect-ratio: var(--ratio);
+  }
+
+  /*
+   * Corner notch: cuts a rounded tab out of the image's top-right corner via
+   * mask compositing (union of two rounded rectangles plus an inverted-radius
+   * fillet at the inner corner). Sized by --notch-w/--notch-h/--notch-r, set
+   * per block instance. An optional icon centers inside the cut-out.
+   */
+  .image-block--notched {
+    position: relative;
+  }
+
+  .image-block--notch-top-right :is(.image-block__image, .placeholder-image) {
+    mask:
+      linear-gradient(#000 0 0) 0 0 / calc(100% - var(--notch-w) - var(--notch-r)) 100% no-repeat,
+      linear-gradient(#000 0 0) 0 var(--notch-r) / calc(100% - var(--notch-w)) calc(100% - var(--notch-r)) no-repeat,
+      radial-gradient(circle var(--notch-r) at 0 100%, #000 calc(100% - 0.5px), transparent 100%) calc(100% - var(--notch-w)) 0 / var(--notch-r) var(--notch-r) no-repeat,
+      linear-gradient(#000 0 0) 0 var(--notch-h) / calc(100% - var(--notch-r)) calc(100% - var(--notch-h)) no-repeat,
+      linear-gradient(#000 0 0) 0 calc(var(--notch-h) + var(--notch-r)) / 100% calc(100% - var(--notch-h) - var(--notch-r)) no-repeat,
+      radial-gradient(circle var(--notch-r) at 0 100%, #000 calc(100% - 0.5px), transparent 100%) 100% var(--notch-h) / var(--notch-r) var(--notch-r) no-repeat,
+      radial-gradient(circle var(--notch-r) at 100% 0, transparent calc(100% - 0.5px), #000 100%) calc(100% - var(--notch-w) + var(--notch-r)) calc(var(--notch-h) - var(--notch-r)) / var(--notch-r) var(--notch-r) no-repeat;
+  }
+
+  .image-block--notch-top-right .image-block__notch-icon {
+    position: absolute;
+    top: 0;
+    inset-inline-end: 0;
+    width: var(--notch-w);
+    height: var(--notch-h);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .image-block__notch-icon img {
+    width: var(--notch-icon-w);
+    height: auto;
   }
 {% endstylesheet %}
 
@@ -342,6 +412,103 @@
       "step": 1,
       "unit": "px",
       "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Corner notch"
+    },
+    {
+      "type": "select",
+      "id": "notch_corner",
+      "label": "Notch cut-out",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "top-right", "label": "Top right" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "range",
+      "id": "notch_width",
+      "label": "Notch width",
+      "min": 24,
+      "max": 220,
+      "step": 2,
+      "unit": "px",
+      "default": 104,
+      "visible_if": "{{ block.settings.notch_corner != 'none' }}"
+    },
+    {
+      "type": "range",
+      "id": "notch_height",
+      "label": "Notch height",
+      "min": 16,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 46,
+      "visible_if": "{{ block.settings.notch_corner != 'none' }}"
+    },
+    {
+      "type": "range",
+      "id": "notch_radius",
+      "label": "Notch corner radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16,
+      "visible_if": "{{ block.settings.notch_corner != 'none' }}"
+    },
+    {
+      "type": "range",
+      "id": "notch_width_mobile",
+      "label": "Notch width (mobile)",
+      "min": 24,
+      "max": 220,
+      "step": 2,
+      "unit": "px",
+      "default": 70,
+      "visible_if": "{{ block.settings.notch_corner != 'none' }}"
+    },
+    {
+      "type": "range",
+      "id": "notch_height_mobile",
+      "label": "Notch height (mobile)",
+      "min": 16,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 38,
+      "visible_if": "{{ block.settings.notch_corner != 'none' }}"
+    },
+    {
+      "type": "image_picker",
+      "id": "notch_icon",
+      "label": "Notch icon",
+      "visible_if": "{{ block.settings.notch_corner != 'none' }}"
+    },
+    {
+      "type": "range",
+      "id": "notch_icon_width",
+      "label": "Notch icon width",
+      "min": 16,
+      "max": 160,
+      "step": 2,
+      "unit": "px",
+      "default": 66,
+      "visible_if": "{{ block.settings.notch_corner != 'none' }}"
+    },
+    {
+      "type": "range",
+      "id": "notch_icon_width_mobile",
+      "label": "Notch icon width (mobile)",
+      "min": 16,
+      "max": 160,
+      "step": 2,
+      "unit": "px",
+      "default": 54,
+      "visible_if": "{{ block.settings.notch_corner != 'none' }}"
     },
     {
       "type": "header",
