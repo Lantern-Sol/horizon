@@ -526,9 +526,9 @@
       "settings": {
         "product": "{{ closest.product }}",
         "recommendation_type": "related",
-        "layout_type": "grid",
+        "layout_type": "carousel",
         "carousel_on_mobile": false,
-        "max_products": 4,
+        "max_products": 7,
         "columns": 4,
         "mobile_columns": "2",
         "columns_gap": 12,
