@@ -21,6 +21,9 @@
   style="
     {% render 'spacing-style', settings: section.settings %}
     {% render 'gap-style', value: section.settings.gap %}
+    {% if section.settings.use_mobile_gap %}
+      {% render 'gap-style', name: 'mobile-gap', value: section.settings.mobile_gap %}
+    {% endif %}
   "
 >
   <div class="section-resource-list__header">
@@ -83,6 +86,16 @@
     {%- content_for 'blocks' -%}
   </div>
 </div>
+
+{% stylesheet %}
+  /* base.css sets `.section-resource-list { row-gap: var(--gap) }` with equal specificity and
+     later source order, so the doubled class is what makes the mobile value win. */
+  @media screen and (max-width: 749px) {
+    .section-resource-list.section-resource-list {
+      row-gap: var(--mobile-gap, var(--gap));
+    }
+  }
+{% endstylesheet %}
 
 {% schema %}
 {
@@ -176,6 +189,10 @@
       "id": "mobile_card_size",
       "label": "t:settings.mobile_columns",
       "options": [
+        {
+          "value": "80cqw",
+          "label": "1 (wide)"
+        },
         {
           "value": "60cqw",
           "label": "t:options.one_number"
@@ -316,6 +333,23 @@
       "default": 12
     },
     {
+      "type": "checkbox",
+      "id": "use_mobile_gap",
+      "label": "Use mobile gap",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "mobile_gap",
+      "label": "Mobile gap",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 12,
+      "visible_if": "{{ section.settings.use_mobile_gap }}"
+    },
+    {
       "type": "color",
       "id": "background_color",
       "label": "t:settings.background_color",
@@ -330,8 +364,8 @@
       "id": "padding-block-start",
       "label": "t:settings.top",
       "min": 0,
-      "max": 100,
-      "step": 1,
+      "max": 200,
+      "step": 2,
       "unit": "px",
       "default": 0
     },
@@ -340,10 +374,42 @@
       "id": "padding-block-end",
       "label": "t:settings.bottom",
       "min": 0,
-      "max": 100,
-      "step": 1,
+      "max": 200,
+      "step": 2,
       "unit": "px",
       "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Mobile padding"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_mobile_padding",
+      "label": "Use mobile padding",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start-mobile",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 200,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ section.settings.use_mobile_padding }}"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end-mobile",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 200,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ section.settings.use_mobile_padding }}"
     }
   ],
   "presets": [
