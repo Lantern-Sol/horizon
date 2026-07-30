@@ -3232,7 +3232,7 @@
           "type": "review",
           "settings": {
             "quote": "The stencils are extremely durable and simple to align. Perfect outcome on every job. We highly recommend their custom products.",
-            "logo": "shopify://shop_images/redwood.webp",
+            "logo": "shopify://shop_images/redwood_48b7fe07-bc01-44d1-8cdb-84c4f5b1b573.webp",
             "brand_name": "RedWood"
           }
         },
@@ -3240,7 +3240,15 @@
           "type": "review",
           "settings": {
             "quote": "The stencils are extremely durable and simple to align. Perfect outcome on every job. We highly recommend their custom products.",
-            "logo": "shopify://shop_images/redwood.webp",
+            "logo": "shopify://shop_images/ocean.webp",
+            "brand_name": "RedWood"
+          }
+        },
+        "review_gghVjL": {
+          "type": "review",
+          "settings": {
+            "quote": "The stencils are extremely durable and simple to align. Perfect outcome on every job. We highly recommend their custom products.",
+            "logo": "shopify://shop_images/krucial.webp",
             "brand_name": "RedWood"
           }
         }
@@ -3250,7 +3258,8 @@
         "review_WWb6xh",
         "review_zgaUnt",
         "review_QWA9in",
-        "review_RGrfQL"
+        "review_RGrfQL",
+        "review_gghVjL"
       ],
       "name": "Reviews Logo Slider",
       "settings": {
