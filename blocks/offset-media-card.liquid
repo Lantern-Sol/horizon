@@ -1,0 +1,623 @@
+{%- doc -%}
+  A card whose content comes from nested theme blocks, with an image that overhangs its top
+  edge and an optional decorative glyph pinned to the opposite side. Flex layout cannot
+  overlap siblings, so the two decorations are positioned against the card while the card
+  itself stays in normal flow — that way its height still grows with its content.
+
+  Stage height resolves to `overhang + card height`, so the overhang setting is what
+  controls how far the image sits above the card.
+{%- enddoc -%}
+
+{%- liquid
+  assign s = block.settings
+
+  if s.use_gradient
+    capture card_background
+      echo 'linear-gradient('
+      echo s.gradient_angle
+      echo 'deg, '
+      echo s.gradient_start_color
+      echo ' '
+      echo s.gradient_start_position
+      echo '%, '
+      echo s.gradient_end_color
+      echo ' '
+      echo s.gradient_end_position
+      echo '%)'
+    endcapture
+  else
+    assign card_background = s.background_color | default: 'transparent'
+  endif
+
+  assign has_glyph = false
+  if s.glyph_icon != 'none' or s.glyph_image != blank
+    assign has_glyph = true
+  endif
+-%}
+
+<div
+  class="offset-media-card"
+  style="
+    --omc-overhang: {{ s.stage_overhang }}px;
+    --omc-overhang-mobile: {{ s.stage_overhang_mobile }}px;
+    --omc-card-width: {{ s.card_width }}%;
+    --omc-card-width-mobile: {{ s.card_width_mobile }}%;
+    --omc-card-min-height: {{ s.card_min_height }}px;
+    --omc-card-min-height-mobile: {{ s.card_min_height_mobile }}px;
+    --omc-card-radius: {{ s.card_radius }}px;
+    --omc-card-radius-mobile: {{ s.card_radius_mobile }}px;
+    --omc-card-padding: {{ s.card_padding }}px;
+    --omc-card-padding-mobile: {{ s.card_padding_mobile }}px;
+    --omc-card-gap: {{ s.card_gap }}px;
+    --omc-card-background: {{ card_background }};
+    --omc-border-width: {{ s.border_width }}px;
+    --omc-border-color: {{ s.border_color | default: 'transparent' }};
+    --omc-media-width: {{ s.media_width }}%;
+    --omc-media-width-mobile: {{ s.media_width_mobile }}%;
+    --omc-media-ratio: {{ s.media_aspect_ratio }};
+    --omc-media-radius: {{ s.media_radius }}px;
+    --omc-media-radius-mobile: {{ s.media_radius_mobile }}px;
+    {% if s.media_shadow %}--omc-media-shadow: 0 25px 50px {{ s.media_shadow_color }};{% endif %}
+    --omc-glyph-offset-y: {{ s.glyph_offset_y }}px;
+    --omc-glyph-width: {{ s.glyph_width }}px;
+    --omc-glyph-width-mobile: {{ s.glyph_width_mobile }}px;
+    {% if s.glyph_color != blank %}--omc-glyph-color: {{ s.glyph_color }};{% endif %}
+  "
+  {{ block.shopify_attributes }}
+>
+  {%- comment -%}
+    DOM order sets the paint order for these positioned siblings: card, then image, then
+    glyph on top. That matches the Figma layer order.
+  {%- endcomment -%}
+  <div class="offset-media-card__stage">
+    <div class="offset-media-card__card">
+      {%- content_for 'blocks' -%}
+    </div>
+
+    {%- if s.image != blank -%}
+      <div class="offset-media-card__media offset-media-card__media--{{ s.media_align }}">
+        {{
+          s.image
+          | image_url: width: 900
+          | image_tag:
+            loading: 'lazy',
+            widths: '200, 300, 460, 690, 900',
+            sizes: '(min-width: 750px) 25vw, 50vw',
+            alt: s.image.alt,
+            class: 'offset-media-card__img'
+        }}
+      </div>
+    {%- endif -%}
+
+    {%- if has_glyph -%}
+      <div class="offset-media-card__glyph offset-media-card__glyph--{{ s.glyph_align }}">
+        {%- render 'icon-or-image',
+          icon: s.glyph_icon,
+          image_upload: s.glyph_image,
+          width: s.glyph_width,
+          mobile_width: s.glyph_width_mobile,
+          class_name: 'offset-media-card__glyph-media'
+        -%}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .offset-media-card {
+    width: 100%;
+  }
+
+  /* The overhang lives here as padding, not as a top margin on the card: a margin on the
+     first in-flow child collapses straight through this box, which left the card flush with
+     the stage top and the stage short by the overhang. Padding cannot collapse. The image is
+     absolutely positioned, so its `top: 0` still resolves to the top of this padding box. */
+  .offset-media-card__stage {
+    position: relative;
+    width: 100%;
+    padding-block-start: var(--omc-overhang);
+  }
+
+  /* The card stays in flow so its height tracks its nested blocks. */
+  .offset-media-card__card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: var(--omc-card-gap);
+    width: var(--omc-card-width);
+    min-height: var(--omc-card-min-height);
+    margin-inline: auto;
+    padding: var(--omc-card-padding);
+    border: var(--omc-border-width) solid var(--omc-border-color);
+    border-radius: var(--omc-card-radius);
+    background: var(--omc-card-background);
+  }
+
+  .offset-media-card__media {
+    position: absolute;
+    inset-block-start: 0;
+    width: var(--omc-media-width);
+    aspect-ratio: var(--omc-media-ratio);
+    border-radius: var(--omc-media-radius);
+    box-shadow: var(--omc-media-shadow, none);
+    overflow: hidden;
+  }
+
+  .offset-media-card__media--right {
+    inset-inline-end: 0;
+  }
+
+  .offset-media-card__media--left {
+    inset-inline-start: 0;
+  }
+
+  .offset-media-card__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .offset-media-card__glyph {
+    position: absolute;
+    inset-block-start: calc(var(--omc-overhang) + var(--omc-glyph-offset-y));
+    display: flex;
+    color: var(--omc-glyph-color, currentcolor);
+  }
+
+  .offset-media-card__glyph--left {
+    inset-inline-start: 0;
+  }
+
+  .offset-media-card__glyph--right {
+    inset-inline-end: 0;
+  }
+
+  /* icon-or-image's SVG branch hard-codes width/height as HTML attributes and never sets
+     --width/--mobile-width (those exist only on its uploaded-image branch), so the mobile size
+     has to come from our own vars — and they must win over the attribute, hence CSS width. */
+  .offset-media-card__glyph-media {
+    display: block;
+    width: var(--omc-glyph-width);
+    height: auto;
+  }
+
+  @media screen and (max-width: 749px) {
+    .offset-media-card__stage {
+      padding-block-start: var(--omc-overhang-mobile);
+    }
+
+    .offset-media-card__card {
+      width: var(--omc-card-width-mobile);
+      min-height: var(--omc-card-min-height-mobile);
+      padding: var(--omc-card-padding-mobile);
+      border-radius: var(--omc-card-radius-mobile);
+    }
+
+    .offset-media-card__media {
+      width: var(--omc-media-width-mobile);
+      border-radius: var(--omc-media-radius-mobile);
+    }
+
+    .offset-media-card__glyph {
+      inset-block-start: calc(var(--omc-overhang-mobile) + var(--omc-glyph-offset-y));
+    }
+
+    .offset-media-card__glyph-media {
+      width: var(--omc-glyph-width-mobile);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Offset media card",
+  "tag": null,
+  "blocks": [
+    {
+      "type": "@theme"
+    },
+    {
+      "type": "@app"
+    }
+  ],
+  "settings": [
+    {
+      "type": "header",
+      "content": "Overhanging image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:settings.image"
+    },
+    {
+      "type": "select",
+      "id": "media_align",
+      "label": "Image position",
+      "options": [
+        {
+          "value": "right",
+          "label": "Right"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        }
+      ],
+      "default": "right"
+    },
+    {
+      "type": "range",
+      "id": "media_width",
+      "label": "Image width",
+      "min": 20,
+      "max": 90,
+      "step": 1,
+      "unit": "%",
+      "default": 51
+    },
+    {
+      "type": "range",
+      "id": "media_width_mobile",
+      "label": "Image width (mobile)",
+      "min": 20,
+      "max": 90,
+      "step": 1,
+      "unit": "%",
+      "default": 49
+    },
+    {
+      "type": "select",
+      "id": "media_aspect_ratio",
+      "label": "t:settings.aspect_ratio",
+      "options": [
+        {
+          "value": "3 / 2",
+          "label": "3:2"
+        },
+        {
+          "value": "16 / 9",
+          "label": "16:9"
+        },
+        {
+          "value": "4 / 3",
+          "label": "4:3"
+        },
+        {
+          "value": "1",
+          "label": "t:options.square"
+        },
+        {
+          "value": "4 / 5",
+          "label": "t:options.portrait"
+        }
+      ],
+      "default": "3 / 2"
+    },
+    {
+      "type": "range",
+      "id": "media_radius",
+      "label": "Image corner radius",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "media_radius_mobile",
+      "label": "Image corner radius (mobile)",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "checkbox",
+      "id": "media_shadow",
+      "label": "Image shadow",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "media_shadow_color",
+      "label": "Shadow color",
+      "alpha": true,
+      "default": "#1e939b38",
+      "visible_if": "{{ block.settings.media_shadow }}"
+    },
+    {
+      "type": "range",
+      "id": "stage_overhang",
+      "label": "Image overhang",
+      "info": "How far the image sits above the card.",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 63
+    },
+    {
+      "type": "range",
+      "id": "stage_overhang_mobile",
+      "label": "Image overhang (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 58
+    },
+    {
+      "type": "header",
+      "content": "Card"
+    },
+    {
+      "type": "range",
+      "id": "card_width",
+      "label": "t:settings.width",
+      "min": 40,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 82
+    },
+    {
+      "type": "range",
+      "id": "card_width_mobile",
+      "label": "Width (mobile)",
+      "min": 40,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 90
+    },
+    {
+      "type": "range",
+      "id": "card_min_height",
+      "label": "Minimum height",
+      "min": 0,
+      "max": 600,
+      "step": 6,
+      "unit": "px",
+      "default": 300
+    },
+    {
+      "type": "range",
+      "id": "card_min_height_mobile",
+      "label": "Minimum height (mobile)",
+      "min": 0,
+      "max": 600,
+      "step": 6,
+      "unit": "px",
+      "default": 234
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "label": "t:settings.gap",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "t:content.padding",
+      "min": 0,
+      "max": 80,
+      "step": 1,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "card_padding_mobile",
+      "label": "Padding (mobile)",
+      "min": 0,
+      "max": 80,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "t:settings.border_radius",
+      "min": 0,
+      "max": 80,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "card_radius_mobile",
+      "label": "Corner radius (mobile)",
+      "min": 0,
+      "max": 80,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "t:settings.thickness",
+      "min": 0,
+      "max": 8,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "t:settings.color",
+      "default": "#b3f7e5"
+    },
+    {
+      "type": "header",
+      "content": "Card background"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_gradient",
+      "label": "Use gradient",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:settings.background_color",
+      "placeholder": "t:settings.default",
+      "visible_if": "{{ block.settings.use_gradient == false }}"
+    },
+    {
+      "type": "color",
+      "id": "gradient_start_color",
+      "label": "Gradient start",
+      "default": "#b3f7e5",
+      "visible_if": "{{ block.settings.use_gradient }}"
+    },
+    {
+      "type": "color",
+      "id": "gradient_end_color",
+      "label": "Gradient end",
+      "default": "#f0fdfa",
+      "visible_if": "{{ block.settings.use_gradient }}"
+    },
+    {
+      "type": "range",
+      "id": "gradient_angle",
+      "label": "Gradient angle",
+      "min": -180,
+      "max": 180,
+      "step": 4,
+      "unit": "deg",
+      "default": -20,
+      "visible_if": "{{ block.settings.use_gradient }}"
+    },
+    {
+      "type": "range",
+      "id": "gradient_start_position",
+      "label": "Gradient start position",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 6,
+      "visible_if": "{{ block.settings.use_gradient }}"
+    },
+    {
+      "type": "range",
+      "id": "gradient_end_position",
+      "label": "Gradient end position",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 75,
+      "visible_if": "{{ block.settings.use_gradient }}"
+    },
+    {
+      "type": "header",
+      "content": "Decorative glyph"
+    },
+    {
+      "type": "select",
+      "id": "glyph_icon",
+      "label": "t:settings.icon",
+      "info": "Upload an image below to use custom artwork instead.",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:options.none"
+        },
+        {
+          "value": "recycle",
+          "label": "Recycle"
+        },
+        {
+          "value": "leaf",
+          "label": "Leaf"
+        },
+        {
+          "value": "plant",
+          "label": "Plant"
+        }
+      ],
+      "default": "recycle"
+    },
+    {
+      "type": "image_picker",
+      "id": "glyph_image",
+      "label": "Glyph image"
+    },
+    {
+      "type": "select",
+      "id": "glyph_align",
+      "label": "Glyph position",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "color",
+      "id": "glyph_color",
+      "label": "Glyph color",
+      "placeholder": "t:settings.default",
+      "default": "#42a899"
+    },
+    {
+      "type": "range",
+      "id": "glyph_width",
+      "label": "Glyph width",
+      "min": 0,
+      "max": 200,
+      "step": 2,
+      "unit": "px",
+      "default": 88
+    },
+    {
+      "type": "range",
+      "id": "glyph_width_mobile",
+      "label": "Glyph width (mobile)",
+      "min": 0,
+      "max": 200,
+      "step": 2,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "glyph_offset_y",
+      "label": "Glyph vertical offset",
+      "info": "Measured down from the top edge of the card.",
+      "min": -50,
+      "max": 150,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    }
+  ],
+  "presets": [
+    {
+      "name": "Offset media card"
+    }
+  ]
+}
+{% endschema %}
