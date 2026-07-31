@@ -2398,6 +2398,7 @@
         "cta_banner": {
           "type": "cta-banner",
           "settings": {
+            "video": "shopify://files/videos/5d336168776868a0004df7f0_Website2-transcode.mp4",
             "image": "shopify://shop_images/bg_banner.webp",
             "heading": "No Silly Business, No Hidden Fees, & No B.S. Ever",
             "heading_size": 40,
