@@ -51,6 +51,7 @@
       "block_order": [
         "email_form"
       ],
+      "disabled": true,
       "settings": {
         "heading": "Stay in the Loop",
         "description": "Join our mailing list to keep up to date with everything Sana Packaging",
