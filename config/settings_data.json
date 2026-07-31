@@ -75,6 +75,7 @@
     "cart_price_font": "subheading",
     "show_cart_note": false,
     "show_add_discount_code": true,
+    "cart_upsell_enabled": false,
     "icon_stroke": "default",
     "palette_input_border": "{{ settings.color_palette.color3 }}",
     "input_border_width": 1,
@@ -84,6 +85,11 @@
     "currency_code_enabled_product_cards": false,
     "currency_code_enabled_cart_items": false,
     "product_card_carousel": false,
+    "search_default_menu_first": "main-menu",
+    "search_default_menu_first_heading": "Popular Products",
+    "search_default_menu_second": "footer",
+    "search_default_menu_second_heading": "Info",
+    "search_default_show_products": false,
     "empty_state_collection": "cannabis-automation-equipment",
     "product_corner_radius": 0,
     "card_corner_radius": 4,
@@ -106,12 +112,7 @@
       "color1": "#064c4d",
       "color2": "#f3ebe1",
       "color3": "#bfe3e3"
-    },
-    "search_default_menu_first": "main-menu",
-    "search_default_menu_first_heading": "Popular Products",
-    "search_default_menu_second": "footer",
-    "search_default_menu_second_heading": "Info",
-    "search_default_show_products": false
+    }
   },
   "presets": {
     "Default": {
