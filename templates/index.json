@@ -2370,6 +2370,7 @@
         "overlay_angle": 70,
         "overlay_angle_mobile": 0,
         "button_bg_color": "#064c4d",
+        "button_bg_hover_color": "#2b8b83",
         "button_text_color": "#ffffff",
         "wave_icon_color": "#5bc5ad",
         "card_bg_color": "#ffffff",

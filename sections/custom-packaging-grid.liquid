@@ -23,6 +23,7 @@
     --featured-title-size: {{ section.settings.featured_title_size }}px;
     --featured-title-size-mobile: {{ section.settings.featured_title_size_mobile }}px;
     --button-bg-color: {{ section.settings.button_bg_color }};
+    --button-bg-hover-color: {{ section.settings.button_bg_hover_color }};
     --button-text-color: {{ section.settings.button_text_color }};
     --card-bg-color: {{ section.settings.card_bg_color }};
     --card-text-color: {{ card_text_color }};
@@ -335,8 +336,22 @@
     transition: transform 0.25s ease;
   }
 
-  .custom-packaging-grid__featured-btn:hover::after {
-    transform: translate(2px, -2px);
+  /*
+   * Hover: the pill lifts one step up the teal ramp, and the arrow swings from its rest diagonal
+   * round to the horizontal. The rest glyph points up-right, so 45deg clockwise lands it due east —
+   * one asset rotated rather than a second arrow swapped in, which is what lets it animate.
+   *
+   * Hover-capable pointers only: a tap on touch leaves :hover stuck on, which would strand the
+   * mobile outline variant in the filled state until something else is tapped.
+   */
+  @media (hover: hover) {
+    .custom-packaging-grid__featured-btn:hover {
+      background-color: var(--button-bg-hover-color);
+    }
+
+    .custom-packaging-grid__featured-btn:hover::after {
+      transform: translate(2px, 0) rotate(45deg);
+    }
   }
 
   /*
@@ -365,6 +380,11 @@
     .custom-packaging-grid__featured-btn {
       opacity: 1;
       transform: none;
+      transition: none;
+    }
+
+    /* The arrow still turns to horizontal on hover — it just snaps rather than swinging. */
+    .custom-packaging-grid__featured-btn::after {
       transition: none;
     }
   }
@@ -641,6 +661,13 @@
       "label": "Button Background",
       "info": "On mobile the button switches to an outline using the text colour.",
       "default": "#064c4d"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_hover_color",
+      "label": "Button Background (Hover)",
+      "info": "One step up the teal ramp from the resting background.",
+      "default": "#2b8b83"
     },
     {
       "type": "color",
