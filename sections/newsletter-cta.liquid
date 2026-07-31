@@ -1,6 +1,7 @@
 {% comment %}
-  Sana 2026 newsletter CTA — the rounded gradient card that sits between the page
-  content and the footer, pulling up over the previous section.
+  Sana 2026 newsletter CTA — the rounded gradient card, optionally pulling up
+  over the previous section. Designed for the footer group but usable on any
+  template or section group except the header.
   Figma: Section/CTA/Newletter 169:952 (desktop)
          Section/CTA/Newletter 227:939 (mobile)
 
@@ -240,8 +241,8 @@
       "type": "@app"
     }
   ],
-  "enabled_on": {
-    "groups": ["footer"]
+  "disabled_on": {
+    "groups": ["header"]
   },
   "settings": [
     {
@@ -357,7 +358,7 @@
   "presets": [
     {
       "name": "Newsletter CTA",
-      "category": "t:categories.footer",
+      "category": "t:categories.forms",
       "blocks": {
         "email-form": {
           "type": "email-signup",

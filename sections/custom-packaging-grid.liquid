@@ -213,12 +213,24 @@
         var(--notch-r) no-repeat;
   }
 
+  /*
+   * The photograph rests slightly over-scaled so it can ease back to its natural size on hover —
+   * a zoom-out. It never drops below scale(1), so the masked surface is always fully covered.
+   */
   .custom-packaging-grid__featured-img {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transform: scale(1.08);
+    transform-origin: center;
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .custom-packaging-grid__featured-card:hover .custom-packaging-grid__featured-img,
+  .custom-packaging-grid__featured-card:focus-within .custom-packaging-grid__featured-img {
+    transform: scale(1);
   }
 
   .custom-packaging-grid__featured-scrim {
@@ -307,18 +319,54 @@
     transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
   }
 
+  /*
+   * icon-arrow-top-right.svg draws a 12px glyph inside a padded 24px viewBox, so sizing the mask
+   * with `contain` shrank the arrow to ~42% of the box (a hairline ~0.8px stroke). Pinning the mask
+   * to its native 24px and letting the 15px box crop the padding renders the arrow at its intended
+   * 12px / 2px stroke — the same treatment the shared button arrow uses in button-custom-styles.
+   */
   .custom-packaging-grid__featured-btn::after {
     content: '';
     flex-shrink: 0;
-    width: 10px;
-    height: 10px;
+    width: 15px;
+    height: 15px;
     background-color: currentcolor;
-    mask: var(--arrow-icon) center / contain no-repeat;
+    mask: var(--arrow-icon) center / 24px 24px no-repeat;
     transition: transform 0.25s ease;
   }
 
   .custom-packaging-grid__featured-btn:hover::after {
     transform: translate(2px, -2px);
+  }
+
+  /*
+   * Hover-capable pointers only: the CTA is parked off toward the bottom-right corner and slides
+   * back into place with the card. Touch devices have no hover, so the button stays put there —
+   * hiding it would make the link unreachable.
+   */
+  @media (hover: hover) and (pointer: fine) {
+    .custom-packaging-grid__featured-btn {
+      opacity: 0;
+      transform: translate(32px, 32px) scale(0.92);
+      transition: opacity 0.3s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+        background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+    }
+
+    /* :focus-within keeps the CTA reachable by keyboard, where there is no hover to trigger it. */
+    .custom-packaging-grid__featured-card:hover .custom-packaging-grid__featured-btn,
+    .custom-packaging-grid__featured-card:focus-within .custom-packaging-grid__featured-btn {
+      opacity: 1;
+      transform: translate(0, 0) scale(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .custom-packaging-grid__featured-img,
+    .custom-packaging-grid__featured-btn {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
   }
 
   /* Info cards */

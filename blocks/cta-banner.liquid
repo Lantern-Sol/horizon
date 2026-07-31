@@ -19,6 +19,28 @@
   if s.show_mark and s.mark_color != blank
     assign show_mark = true
   endif
+
+  assign has_video = false
+  if s.video != blank or s.video_mobile != blank
+    assign has_video = true
+  endif
+
+  # The still always renders, video or not: on its own it is the background, and under a video it
+  # is the poster frame — visible while the file buffers and left standing if playback never starts
+  # (reduced motion, a decode error, a browser that blocks autoplay). A video's own preview frame
+  # stands in when no image was picked, so a video-only block is never left with an empty card.
+  assign poster = s.image
+  if poster == blank
+    assign poster = s.video.preview_image
+  endif
+  if poster == blank
+    assign poster = s.video_mobile.preview_image
+  endif
+
+  assign poster_mobile = s.image_mobile
+  if poster_mobile == blank
+    assign poster_mobile = s.video_mobile.preview_image
+  endif
 -%}
 
 <div
@@ -62,29 +84,76 @@
   {{ block.shopify_attributes }}
 >
   <div class="cta-banner">
-    {%- if s.image != blank -%}
+    {%- if poster != blank or has_video -%}
       <div class="cta-banner__media">
-        {{
-          s.image
-          | image_url: width: 2560
-          | image_tag:
-            class: 'cta-banner__image cta-banner__image--desktop',
-            loading: 'lazy',
-            widths: '640, 960, 1280, 1920, 2560',
-            sizes: '100vw',
-            alt: s.image.alt
-        }}
-        {%- if s.image_mobile != blank -%}
+        {%- if poster != blank -%}
           {{
-            s.image_mobile
+            poster
+            | image_url: width: 2560
+            | image_tag:
+              class: 'cta-banner__image cta-banner__image--desktop',
+              loading: 'lazy',
+              widths: '640, 960, 1280, 1920, 2560',
+              sizes: '100vw',
+              alt: poster.alt
+          }}
+        {%- endif -%}
+        {%- if poster_mobile != blank -%}
+          {{
+            poster_mobile
             | image_url: width: 1200
             | image_tag:
               class: 'cta-banner__image cta-banner__image--mobile',
               loading: 'lazy',
               widths: '375, 540, 750, 1100, 1200',
               sizes: '100vw',
-              alt: s.image_mobile.alt
+              alt: poster_mobile.alt
           }}
+        {%- endif -%}
+
+        <!--
+          Muted + looping + no controls: this is wallpaper, not media the visitor operates. It sits
+          over the still, so anything that stops it from painting leaves the poster in place.
+        -->
+        {%- if s.video != blank -%}
+          {{
+            s.video
+            | video_tag:
+              poster: nil,
+              autoplay: true,
+              loop: true,
+              controls: false,
+              muted: true,
+              class: 'cta-banner__video cta-banner__video--desktop'
+          }}
+        {%- endif -%}
+        {%- if s.video_mobile != blank -%}
+          {{
+            s.video_mobile
+            | video_tag:
+              poster: nil,
+              autoplay: true,
+              loop: true,
+              controls: false,
+              muted: true,
+              class: 'cta-banner__video cta-banner__video--mobile'
+          }}
+        {%- endif -%}
+
+        {%- if has_video -%}
+          <script>
+            /* CSS hides the video for visitors who ask for reduced motion, but hidden autoplay
+               still streams the file. Clearing the attribute before playback begins stops it. */
+            (function (script) {
+              if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+              script.parentElement.querySelectorAll('video').forEach(function (video) {
+                video.autoplay = false;
+                video.removeAttribute('autoplay');
+                video.pause();
+              });
+            })(document.currentScript);
+          </script>
         {%- endif -%}
       </div>
     {%- else -%}
@@ -185,6 +254,20 @@
 
   /* Only swap artwork when a mobile-specific image is actually supplied. */
   .cta-banner__image--mobile {
+    display: none;
+  }
+
+  /* Stacked over the still rather than replacing it, so the poster covers the buffering gap. */
+  .cta-banner__video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .cta-banner__video--mobile {
     display: none;
   }
 
@@ -331,6 +414,25 @@
     .cta-banner__image--mobile {
       display: block;
     }
+
+    .cta-banner__media:has(.cta-banner__video--mobile) .cta-banner__video--desktop {
+      display: none;
+    }
+
+    .cta-banner__video--mobile {
+      display: block;
+    }
+  }
+
+  /*
+    Last in the file so it outranks the mobile swap above, which would otherwise re-show the
+    mobile video. The poster is already carrying the card, so the video simply drops out.
+  */
+  @media (prefers-reduced-motion: reduce) {
+    .cta-banner__video,
+    .cta-banner__video--mobile {
+      display: none;
+    }
   }
 {% endstylesheet %}
 
@@ -339,9 +441,26 @@
   "name": "CTA banner",
   "settings": [
     {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "video",
+      "id": "video",
+      "label": "Background video",
+      "info": "Optional. Plays muted on a loop with no controls. Leave empty to use the image below."
+    },
+    {
+      "type": "video",
+      "id": "video_mobile",
+      "label": "Background video (mobile)",
+      "info": "Optional. Falls back to the desktop video."
+    },
+    {
       "type": "image_picker",
       "id": "image",
-      "label": "Background image"
+      "label": "Background image",
+      "info": "Used on its own, and as the poster frame behind the video. The video's own first frame stands in when this is empty."
     },
     {
       "type": "image_picker",

@@ -70,10 +70,14 @@
             -%}
           {% endif %}
 
+          {%- comment -%}
+            Collections, pages and articles render as stacked links rather than
+            cards — see snippets/predictive-search-resource-list.liquid.
+          {%- endcomment -%}
           {% if predictive_search.resources.collections.size > 0 %}
             {% assign resource_title = 'content.search_results_resource_collections' | t %}
 
-            {% render 'predictive-search-resource-carousel',
+            {% render 'predictive-search-resource-list',
               title: resource_title,
               resource_type: 'collection',
               resources: predictive_search.resources.collections
@@ -83,7 +87,7 @@
           {% if predictive_search.resources.pages.size > 0 %}
             {% assign resource_title = 'content.search_results_resource_pages' | t %}
 
-            {% render 'predictive-search-resource-carousel',
+            {% render 'predictive-search-resource-list',
               title: resource_title,
               resource_type: 'page',
               resources: predictive_search.resources.pages
@@ -93,7 +97,7 @@
           {% if predictive_search.resources.articles.size > 0 %}
             {% assign resource_title = 'content.search_results_resource_articles' | t %}
 
-            {% render 'predictive-search-resource-carousel',
+            {% render 'predictive-search-resource-list',
               title: resource_title,
               resource_type: 'article',
               resources: predictive_search.resources.articles

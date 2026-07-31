@@ -164,7 +164,11 @@
     margin-block-end: 0;
   }
 
-  .footer-content .menu__item.paragraph {
+  /* The child selector covers richtext items (the Company address renders a
+     `<p>` inside the item), which base.css `.paragraph > *` would otherwise
+     reset to the foreground color and the default paragraph size. */
+  .footer-content .menu__item.paragraph,
+  .footer-content .menu__item.paragraph > * {
     font-size: 0.875rem; /* 14 */
     line-height: 1.5;
     color: var(--color-sea-grey-700);
