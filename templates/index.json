@@ -3635,7 +3635,7 @@
                 "row_padding_mobile": 24,
                 "row_gap": 16,
                 "row_inner_gap": 24,
-                "icon_chip_color": "#d6faf2",
+                "icon_chip_color": "",
                 "icon_chip_size": 44,
                 "dividers": true,
                 "divider_color": "#e1f4f3",
