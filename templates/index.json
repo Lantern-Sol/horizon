@@ -3656,7 +3656,7 @@
                 "accordion_row_CCe7gw": {
                   "type": "_accordion-row",
                   "settings": {
-                    "heading": "What is the return policy?",
+                    "heading": "What are your minimum order quantities?",
                     "open_by_default": false,
                     "icon": "none",
                     "width": 20
@@ -3665,7 +3665,7 @@
                     "text_4yziUR": {
                       "type": "text",
                       "settings": {
-                        "text": "<p>Our goal is for every customer to be totally satisfied with their purchase. If this isn't the case, let us know and we'll do our best to work with you to make it right.</p>",
+                        "text": "<p>Minimums vary by product and customization method. Most blank, in-stock products can be ordered by the case, while custom minimums depend on the product, printing method, quantity, and number of designs.</p>",
                         "mobile_text": "",
                         "width": "100%",
                         "max_width": "normal",
@@ -3714,7 +3714,7 @@
                 "accordion_row_8zRdEJ": {
                   "type": "_accordion-row",
                   "settings": {
-                    "heading": "Are any purchases final sale?",
+                    "heading": "What customization services do you offer?",
                     "open_by_default": false,
                     "icon": "none",
                     "width": 20
@@ -3723,7 +3723,7 @@
                     "text_pH3zhh": {
                       "type": "text",
                       "settings": {
-                        "text": "<p>We are unable to accept returns on certain items. These will be carefully marked before purchase.</p>",
+                        "text": "<p>We offer label printing, label application, direct printing on select products, in-mold labeling for select products, custom flexible pouches, custom paperboard displays, and artwork and dieline support. We can coordinate your packaging and customization together to reduce vendors, labor, and packaging touchpoints.</p>",
                         "mobile_text": "",
                         "width": "100%",
                         "max_width": "normal",
@@ -3773,7 +3773,7 @@
                   "type": "_accordion-row",
                   "name": "t:names.accordion_row",
                   "settings": {
-                    "heading": "When will I get my order?",
+                    "heading": "Can I request samples before placing an order?",
                     "open_by_default": false,
                     "icon": "none",
                     "width": 20
@@ -3783,7 +3783,7 @@
                       "type": "text",
                       "name": "t:names.text",
                       "settings": {
-                        "text": "<p>We will work quickly to ship your order as soon as possible. Once your order has shipped, you will receive an email with further information. Delivery times vary depending on your location.</p>",
+                        "text": "<p>Yes. Many of our packaging products are available as free samples. Tell us what you’re packaging and which sizes or materials you’re considering, and we’ll help you test the best-fit options.</p>",
                         "mobile_text": "",
                         "width": "100%",
                         "max_width": "normal",
@@ -3833,7 +3833,7 @@
                   "type": "_accordion-row",
                   "name": "t:names.accordion_row",
                   "settings": {
-                    "heading": "Where are your products manufactured?",
+                    "heading": "How quickly will my order ship?",
                     "open_by_default": false,
                     "icon": "none",
                     "width": 20
@@ -3843,7 +3843,7 @@
                       "type": "text",
                       "name": "t:names.text",
                       "settings": {
-                        "text": "<p>Our products are manufactured both locally and globally. We carefully select our manufacturing partners to ensure our products are high quality and a fair value.</p>",
+                        "text": "<p>Blank, in-stock products generally ship the next business day. Custom lead times begin after proof approval and depend on the product, customization method, quantity, and project specifications.</p>",
                         "mobile_text": "",
                         "width": "100%",
                         "max_width": "normal",
@@ -3893,7 +3893,7 @@
                   "type": "_accordion-row",
                   "name": "t:names.accordion_row",
                   "settings": {
-                    "heading": "How much does shipping cost?",
+                    "heading": "Can you help me choose the right packaging?",
                     "open_by_default": false,
                     "icon": "none",
                     "width": 20
@@ -3903,7 +3903,7 @@
                       "type": "text",
                       "name": "t:names.text",
                       "settings": {
-                        "text": "<p>Shipping is calculated based on your location and the items in your order. You will always know the shipping price before you purchase.</p>",
+                        "text": "<p>Absolutely. Tell us what you’re packaging, your product size, market, quantity, budget, and timeline. One of our packaging experts can recommend options and help you compare materials, sizes, compliance features, and customization methods.</p>",
                         "mobile_text": "",
                         "width": "100%",
                         "max_width": "normal",
