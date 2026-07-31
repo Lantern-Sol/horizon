@@ -77,7 +77,7 @@
       {% endcomment %}
       <div
         class="card-media-actions"
-        style="--card-media-actions-plus: url('{{ 'icon-plus.svg' | asset_url }}'); --card-media-actions-arrow: url('{{ 'icon-arrow-top-right.svg' | asset_url }}');"
+        style="--card-media-actions-plus: url('{{ 'icon-cart-plus.svg' | asset_url }}'); --card-media-actions-arrow: url('{{ 'icon-arrow-top-right-small.svg' | asset_url }}');"
       >
         {%- if show_quick_add -%}
           {% comment %} show_icon: false — the design's trailing glyph is a plus, not the cart icon. {% endcomment %}
@@ -235,8 +235,11 @@
 
   /* Primary action: solid fill, and the label stays visible. base.css collapses it to
      a 0fr grid track until the button itself is hovered, which the design does not do. */
+  /* `relative`, not `static`: the button has to stay the containing block for the absolutely
+     positioned `.add-to-cart__added` checkmark, otherwise the checkmark resolves against
+     .card-gallery and lands in the middle of the product image instead of the button. */
   .card-media-actions .quick-add__button.quick-add__button {
-    position: static;
+    position: relative;
     right: auto;
     bottom: auto;
     background: var(--button-background-color);
@@ -273,20 +276,27 @@
     background-color: currentcolor;
   }
 
-  /* Both glyphs sit in a small box inside a much larger viewBox (the arrow's path spans only
-     7..17 of 24, the plus's 2.75..11.25 of 14). `contain` would scale the whole canvas down and
-     render a hairline, so instead the mask keeps its natural size and the box crops to it —
-     the same technique snippets/button-custom-styles.liquid uses for its arrow. */
+  /* Both assets are cropped to their ink, so `contain` renders them 1:1 — no cropping and no
+     rescaled stroke. Sizes include the stroke that overhangs Figma's nominal box: the plus is
+     a 10px frame whose 1.5px stroke bleeds to 11.5px, the arrow an 8px frame bleeding to 10px.
+     (The general-purpose icon-plus.svg can't be used here: its stroke-width is a CSS variable,
+     which an SVG referenced through `url()` never sees, so it masks as a hairline.) */
   .card-media-actions .quick-add__button.quick-add__button::after {
-    width: 10px;
-    height: 10px;
-    mask: var(--card-media-actions-plus) center / 14px 14px no-repeat;
+    width: 11.5px;
+    height: 11.5px;
+    mask: var(--card-media-actions-plus) center / contain no-repeat;
+    transition: opacity var(--animation-speed) var(--animation-easing);
+  }
+
+  /* The plus would otherwise sit beside the checkmark burst while the label fades out. */
+  .card-media-actions .quick-add__button.quick-add__button[data-added='true']::after {
+    opacity: 0;
   }
 
   .card-media-actions__view.card-media-actions__view::after {
     width: 10px;
     height: 10px;
-    mask: var(--card-media-actions-arrow) center / 24px 24px no-repeat;
+    mask: var(--card-media-actions-arrow) center / contain no-repeat;
   }
 
   /* The mobile frames show no overlay at all, so the secondary action is desktop-only —
@@ -307,6 +317,48 @@
     product-card:is(:hover, :focus-within) .card-media-actions__view.card-media-actions__view {
       opacity: 1;
       pointer-events: all;
+    }
+
+    /* Both actions slide up into place as they fade in.
+
+       The rise is deliberately much shorter than the buttons are tall. A transform moves the hit
+       box along with the pixels, so a rise approaching the button height would leave the resting
+       and revealed rectangles barely overlapping, and any press spanning a state change could
+       land on the media behind it. At 12px against a ~38px button the two rectangles still share
+       two thirds of their height, so the pointer stays on target throughout. */
+    .card-media-actions {
+      translate: 0 0.75rem;
+      transition: translate var(--hover-transition-duration) var(--hover-transition-timing);
+    }
+
+    product-card:is(:hover, :focus-within) .card-media-actions {
+      translate: 0 0;
+    }
+
+    /* quick-add forces `pointer-events: all` on its button, so while hidden it was still a
+       clickable strip sitting over the product image. Match the view-product link and only
+       take clicks once revealed. Both the wrapper and the button need it: `pointer-events`
+       inherits, which covers the elements in between, but an explicit value on the button
+       would keep it hit-testable regardless of its ancestors.
+
+       This ties hit-testability to :hover, so anything that steals :hover mid-press would drop
+       the click. assets/slideshow.js opts this row out of drag-to-scroll for that reason — a
+       captured pointer moves :hover onto the capturing slideshow. */
+    .card-media-actions .quick-add,
+    .card-media-actions .quick-add__button.quick-add__button {
+      pointer-events: none;
+    }
+
+    product-card:is(:hover, :focus-within) .card-media-actions .quick-add,
+    product-card:is(:hover, :focus-within) .card-media-actions .quick-add__button.quick-add__button {
+      pointer-events: auto;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card-media-actions {
+      translate: none;
+      transition: none;
     }
   }
 {% endstylesheet %}

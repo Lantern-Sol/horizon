@@ -702,6 +702,16 @@ export class Slideshow extends Component {
       return;
     }
 
+    // The actions layered over a product card's media are click targets, not drag handles.
+    // Starting a drag here calls setPointerCapture below, and a captured pointer moves :hover
+    // off the element underneath and onto the capturing slideshow — so the card stops matching
+    // :hover, its action row retracts out from under the cursor mid-press, and the release lands
+    // on the media instead of the button. The click then resolves to a common ancestor and the
+    // add never submits. A single pixel of travel while the button is held is enough to trigger it.
+    if (event.target.closest('.card-media-actions')) {
+      return;
+    }
+
     event.preventDefault();
     // Store initial position but don't start handling yet
     const { axis } = this.#scroll;
