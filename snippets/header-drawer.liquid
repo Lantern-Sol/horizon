@@ -1599,6 +1599,10 @@
   .menu-drawer__submenu {
     background: var(--nav-drawer-background);
     color: var(--nav-drawer-foreground);
+
+    /* The panels only ever scroll vertically — sideways movement is always a
+       bleed (the wordmark) or a stray wide child, never navigation. */
+    overflow-x: clip;
   }
 
   /* Figma's drawer covers the whole viewport, header bar included. */
@@ -1917,16 +1921,20 @@
   }
 
   /* ---- Wordmark texture — Figma 2001:1979 ------------------------ */
+
+  /* The wordmark overhangs the drawer on three sides — 417x105 against a
+     393-wide frame, sitting 23px below the bottom edge so the letterforms are
+     cut off. The drawer is transformed while open, which makes it the
+     containing block for this fixed child, so an oversized box here would be
+     scrollable overflow rather than a bleed. The wrapper therefore fits the
+     drawer exactly and clips the oversized glyph inside it. */
   .menu-drawer .menu-drawer__watermark {
     position: fixed;
-    left: 50%;
-    translate: -50% 0;
-
-    /* Overhangs the drawer on three sides: 417x105 against a 393-wide frame,
-       sitting 23px below the bottom edge so the letterforms are cut off. */
-    bottom: -1.4375rem; /* -23 */
-    width: 26.0625rem; /* 417 */
-    height: 6.5625rem; /* 105 */
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 5.125rem; /* 105 - 23 */
+    overflow: clip;
     pointer-events: none;
     user-select: none;
 
@@ -1942,7 +1950,11 @@
   /* Beats the drawer's blanket icon sizing (.menu-drawer svg). */
   .menu-drawer .menu-drawer__watermark svg {
     display: block;
-    width: 100%;
-    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    translate: -50% 0;
+    width: 26.0625rem; /* 417 */
+    height: 6.5625rem; /* 105 */
   }
 {% endstylesheet %}
