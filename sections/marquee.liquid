@@ -82,6 +82,17 @@
     align-content: center;
   }
 
+  /*
+    Heading/paragraph presets hang a `margin-block: var(--font-hN--spacing)` on their
+    text ('snippets/text.liquid'). In a horizontal ticker that margin does nothing but
+    inflate the band, so it is zeroed here. The repeated `.text-block` outranks the
+    (0,2,1) `.text-block.hN > *` rule it has to beat, whichever order the two land in
+    the bundled stylesheet.
+  */
+  .marquee__repeated-items .text-block.text-block > * {
+    margin-block: 0;
+  }
+
   @media (prefers-reduced-motion: no-preference) {
     marquee-component:not([data-disabled]) .marquee__wrapper {
       animation: marquee-motion var(--marquee-speed) linear infinite var(--marquee-direction);
