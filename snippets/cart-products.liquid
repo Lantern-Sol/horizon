@@ -692,6 +692,13 @@
   }
 
   .cart-items__remove {
+    /* Carries the .button class for layout only — it renders as a bare icon/link,
+       so it opts out of the radial hover fill in base.css. --button-fill-under
+       goes with it: that's what the button paints beneath the fill on hover, and
+       left at the palette default it would flash a teal pill behind the label. */
+    --button-fill-display: none;
+    --button-fill-under: transparent;
+
     background-color: transparent;
     color: var(--color-foreground);
     width: var(--minimum-touch-target);

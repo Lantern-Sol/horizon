@@ -1957,6 +1957,22 @@
         "alpha": true
       },
       {
+        "type": "color",
+        "id": "palette_primary_button_hover_background",
+        "label": "Hover background",
+        "info": "Leave empty to derive it automatically from the background color.",
+        "default": "rgba(0,0,0,0)",
+        "alpha": true
+      },
+      {
+        "type": "color",
+        "id": "palette_primary_button_hover_text",
+        "label": "Hover text",
+        "info": "Leave empty to pick the highest-contrast palette color automatically.",
+        "default": "rgba(0,0,0,0)",
+        "alpha": true
+      },
+      {
         "type": "range",
         "id": "primary_button_border_width",
         "min": 0,
@@ -2202,6 +2218,10 @@
             "label": "Normal"
           },
           {
+            "value": "600",
+            "label": "Semi bold"
+          },
+          {
             "value": "700",
             "label": "Bold"
           }
@@ -2345,6 +2365,22 @@
         "id": "palette_secondary_button_border",
         "label": "t:settings.borders",
         "default": "{{ settings.color_palette.foreground }}",
+        "alpha": true
+      },
+      {
+        "type": "color",
+        "id": "palette_secondary_button_hover_background",
+        "label": "Hover background",
+        "info": "Leave empty to derive it automatically from the background color.",
+        "default": "rgba(0,0,0,0)",
+        "alpha": true
+      },
+      {
+        "type": "color",
+        "id": "palette_secondary_button_hover_text",
+        "label": "Hover text",
+        "info": "Leave empty to pick the highest-contrast palette color automatically.",
+        "default": "rgba(0,0,0,0)",
         "alpha": true
       },
       {

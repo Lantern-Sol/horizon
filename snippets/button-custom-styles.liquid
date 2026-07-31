@@ -45,6 +45,16 @@
         height: 15px;
         background-color: currentcolor;
         mask: url('{{ 'icon-arrow-top-right.svg' | asset_url }}') center / 24px 24px no-repeat;
+        transition: var(--button-arrow-transition);
+      }
+
+      {%- comment -%}
+        Shared trailing-arrow motion — see theme-styles-variables. This is the generic
+        show_arrow_icon path, so every current and future block that opts into the arrow
+        gets the swing without restating it.
+      {%- endcomment -%}
+      .{{ block_settings.style_class }}.{{ block_settings.style_class }}--{{ block_id }}:hover::after {
+        transform: var(--button-arrow-hover-transform);
       }
     {% endif %}
   {% endstyle %}
@@ -82,6 +92,19 @@
       --button-color: rgb({{ effective_text_color.rgba }});
       --button-border-color: rgb({{ effective_border_color.rgba }});
       --button-focus-outline-color: rgb({{ effective_focus_outline_color.rgb }});
+      {%- comment -%}
+        Feed the radial hover fill in base.css: it paints the resolved hover
+        colour over whatever --button-fill-under leaves beneath it. Same alpha
+        test resolve-custom-hover uses — a translucent fill has to clear the
+        idle colour out or the two composite into something too strong, while an
+        opaque one hides it and so wants it held steady.
+      {%- endcomment -%}
+      --button-fill-color: {{ effective_hover_bg }};
+      {%- if effective_background_color.alpha == 1 %}
+      --button-fill-under: rgb({{ effective_background_color.rgba }});
+      {%- else %}
+      --button-fill-under: transparent;
+      {%- endif %}
     }
     .button-custom--{{ block_id }}:hover {
       --button-background-color: {{ effective_hover_bg }};

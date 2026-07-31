@@ -1467,6 +1467,10 @@ button.shopify-payment-button__button--unbranded {
   font-style: var(--font-paragraph--style);
   font-size: var(--primary-button-mobile-font-size, --font-paragraph--size);
   font-weight: var(--primary-button-font-weight);
+  /* Figma UI/Button tracks at 2% across all three sizes (Button/Primary,
+     node 2001:1647). Not exposed as a theme setting — it's part of the type
+     style, not something merchants tune per store. */
+  letter-spacing: 0.02em;
   line-height: normal;
   margin-block: 0;
   transition: color var(--animation-speed) var(--animation-easing),
@@ -1548,6 +1552,9 @@ button.shopify-payment-button__button--unbranded {
   --button-border-color: var(--color-primary-button-border);
   --button-border-width: var(--style-border-width-primary);
   --button-focus-outline-color: var(--color-primary-button-focus-outline);
+  --button-fill-color: var(--color-primary-button-hover-background);
+  --button-fill-display: var(--primary-button-fill-display, block);
+  --button-fill-under: var(--primary-button-fill-under, var(--color-primary-button-background));
 }
 
 .button:hover,
@@ -1562,6 +1569,9 @@ button.shopify-payment-button__button--unbranded:hover:not([disabled]) {
   --button-background-color: var(--color-secondary-button-background);
   --button-border-color: var(--color-secondary-button-border);
   --button-border-width: var(--style-border-width-secondary);
+  --button-fill-color: var(--color-secondary-button-hover-background);
+  --button-fill-display: var(--secondary-button-fill-display, block);
+  --button-fill-under: var(--secondary-button-fill-under, var(--color-secondary-button-background));
 }
 
 .button-secondary:hover {
@@ -1576,6 +1586,9 @@ button.shopify-payment-button__button--unbranded:hover:not([disabled]) {
   --button-border-color: var(--color-primary-button-border);
   --button-border-width: var(--style-border-width-secondary);
   --button-focus-outline-color: var(--color-primary-button-focus-outline);
+  --button-fill-color: var(--color-primary-button-hover-background);
+  --button-fill-display: var(--primary-button-fill-display, block);
+  --button-fill-under: var(--primary-button-fill-under, var(--color-primary-button-background));
 
   font-family: var(--button-font-family-primary);
   text-transform: var(--button-text-case-primary);
@@ -1592,6 +1605,137 @@ button.shopify-payment-button__button--unbranded:hover:not([disabled]) {
 /* Needed to override the default Shopify styles */
 button.shopify-payment-button__button--unbranded:hover:not([disabled]) {
   background-color: var(--button-background-color);
+}
+
+/* Radial hover fill
+   ----------------
+   An ellipse-capped column rises from the bottom edge to cover the button on
+   hover, and on leave it keeps travelling the same way — sweeping up and out
+   through the top rather than retreating back down. Done with ::before rather than a markup
+   element so every existing button template keeps working untouched — ::after is
+   already spoken for by the arrow icon in button-custom-styles and the hero slide.
+
+   That one-way motion is why this scales rather than translates. A transition
+   always interpolates back along the property it came in on, so a translate that
+   enters from below can only exit downward. Scaling lets the two directions
+   differ: transform-origin is not transitioned, so it snaps from bottom (growing
+   upward on enter) to top (collapsing upward on leave) while scaleY animates.
+
+   The fill paints the button's configured hover background, so the resting and
+   settled colours are identical to before; only the motion between them changes.
+   --button-fill-under is what the button itself paints while the fill travels,
+   and it takes one of two values depending on whether the hover colour is opaque:
+
+   - Opaque hover colour: hold the idle colour. The fill hides it as it arrives,
+     so without the hold the uncovered part would cross-fade underneath the wipe
+     and muddy it.
+   - Translucent hover colour: fade to transparent instead. A see-through fill
+     stacked on the idle colour composites to something stronger than intended —
+     0.16 white under 0.31 white lands near 0.42 — so the layer beneath has to
+     clear out. It fades over --button-fill-speed rather than snapping, so the
+     two ends are exact and only the midpoint approximates.
+
+   color-palette and button-custom-styles pick between them from the same alpha
+   test resolve-custom-hover already uses.
+
+   Two classes are excluded throughout, via the :not() shared by every rule below:
+
+   - .button-unstyled shares the .button class on real elements (popup triggers,
+     facet toggles, close buttons) but renders as a bare link with nothing to wipe.
+   - .skip-to-content-link parks itself off-screen with `position: absolute;
+     left: -99999px`. The `position: relative` below outranks that, and a relatively
+     positioned element still occupies its space in flow, so the link would reserve
+     an empty band above the header while only appearing to be hidden.
+
+   --button-fill-display is the escape hatch for anything else that needs to sit
+   this out; see .cart-items__remove.
+
+   .button-fill is the way in for the other direction. Sections that style their
+   own CTA rather than reusing .button (the CTA banner, the Custom Packaging
+   banner) add it to opt into the effect. Those buttons have no
+   --button-background-color, which every default below falls back to, so an
+   opting-in section must set --button-fill-color and --button-fill-under itself;
+   the fallbacks would otherwise resolve to nothing and blank the background out
+   on hover. Set --button-fill-under next to the background-color it mirrors,
+   including inside any media query that changes it, so the two never drift.
+   --button-fill-speed and --button-fill-easing come from :root in
+   theme-styles-variables, so an opting-in button gets the timing for free. */
+:is(.button, .button-secondary, .button-custom, .button-fill):not(.button-unstyled, .skip-to-content-link),
+button.shopify-payment-button__button--unbranded {
+  position: relative;
+  overflow: hidden;
+  /* Keeps the z-index: -1 fill above the button's own background but below its
+     text, without escaping into the page's stacking context. */
+  isolation: isolate;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :is(.button, .button-secondary, .button-custom, .button-fill):not(.button-unstyled, .skip-to-content-link)::before,
+  button.shopify-payment-button__button--unbranded::before {
+    content: '';
+    display: var(--button-fill-display, block);
+    position: absolute;
+    z-index: -1;
+    /* Three button-heights tall, hung one height below the bottom edge, so the
+       box spans -100% to 200%. The 33.33% vertical radius makes an elliptical cap
+       exactly one button-height at each end: the top cap sits in -100%..0 and the
+       bottom cap in 100%..200%, leaving a flat middle third that covers the button
+       precisely at full scale. Both travelling edges are therefore curved.
+
+       Width stays at 100% deliberately. Overshooting it widens the ellipse without
+       deepening it, and the button then frames only the shallow middle of the arc —
+       which reads as a straight line. Matching the button's width keeps the arc's
+       full rise inside the visible area. */
+    inset-block-end: -100%;
+    inset-inline-start: 0;
+    width: 100%;
+    height: 300%;
+    border-radius: 50% / 33.33%;
+    background-color: var(--button-fill-color, var(--button-background-color));
+    transform: scaleY(var(--button-fill-scale, 0));
+    transform-origin: var(--button-fill-origin, top);
+    transition: transform var(--button-fill-speed) var(--button-fill-easing);
+    pointer-events: none;
+  }
+
+  /* Drive the motion from the button, not the pseudo — a value declared on
+     ::before itself would shadow anything set on the element, making these knobs
+     impossible to override from a section.
+
+     Flipping the origin to bottom here is what makes the fill grow upward out of
+     the bottom edge; dropping back to the default top on leave collapses it
+     upward and off the top. The swap is invisible because it happens at
+     scaleY(1), where the transform is the identity either way.
+
+     Holding background-color at --button-fill-under keeps the base colour still
+     underneath the travelling fill. */
+  :is(.button, .button-secondary, .button-custom, .button-fill):not(.button-unstyled, .skip-to-content-link):hover,
+  button.shopify-payment-button__button--unbranded:hover:not([disabled]) {
+    --button-fill-scale: 1;
+    --button-fill-origin: bottom;
+
+    background-color: var(--button-fill-under, var(--button-background-color));
+  }
+
+  /* A section that animates its CTA in as well (the Custom Packaging banner slides
+     and fades its pill on card hover) has to restate this list with its own
+     properties appended, at higher specificity than the (0,2,0) here — this
+     shorthand would otherwise drop the reveal's opacity and transform. */
+  :is(.button, .button-secondary, .button-custom, .button-fill):not(.button-unstyled, .skip-to-content-link),
+  button.shopify-payment-button__button--unbranded {
+    transition: color var(--button-fill-speed) var(--button-fill-easing),
+      box-shadow var(--animation-speed) var(--animation-easing),
+      background-color var(--button-fill-speed) var(--button-fill-easing),
+      outline var(--animation-speed) var(--animation-easing);
+  }
+
+  /* No fill on disabled buttons — they have no hover state to reveal. */
+  .button[aria-disabled='true']::before,
+  .button-secondary[aria-disabled='true']::before,
+  .button:disabled::before,
+  button.shopify-payment-button__button--unbranded[disabled]::before {
+    display: none;
+  }
 }
 
 .button-unstyled {

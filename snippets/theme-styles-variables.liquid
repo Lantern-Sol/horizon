@@ -645,6 +645,43 @@
     --animation-timing-fade-in: cubic-bezier(0.16, 1, 0.3, 1);
     --animation-timing-fade-out: cubic-bezier(0.4, 0, 0.2, 1);
 
+    /* Radial hover fill */
+    /*
+      Timing for the radial button fill in base.css; override on a section (or a single button)
+      to tune it. A quint-ish curve like cubic-bezier(0.3, 1, 0.3, 1) covers most of the distance
+      in the first few frames and reads as a snap however long you make it, so the glide comes
+      from the gentler cubic ease-out, not just duration.
+
+      These live on :root rather than on the .button rule they used to sit in because bespoke
+      section CTAs opt in with .button-fill alone. Undefined custom properties make the whole
+      `transition` declaration invalid at computed-value time — not ignored, but reset to
+      `all 0s` — which silently killed the fill on exactly the buttons that opted in.
+    */
+    --button-fill-speed: 0.75s;
+    --button-fill-easing: cubic-bezier(0.33, 1, 0.68, 1);
+
+    /* Trailing arrow glyph */
+    /*
+      Buttons that end in the up-right arrow (icon-arrow-top-right.svg and its small twin) all
+      share one hover motion: the glyph swings 45deg clockwise off its rest diagonal round to due
+      east, plus a 2px nudge in the new direction of travel. It is the one asset rotated rather
+      than a second arrow swapped in — that is what lets it animate at all, and it is why the
+      hover transform carries the rotation instead of only a translate.
+
+      Started life on the Custom Packaging banner CTA. Kept here so every arrow button reads the
+      same and a new section inherits it by referencing these two vars rather than re-deriving
+      the motion. Sites that draw the arrow at a different scale still share the timing.
+    */
+    --button-arrow-speed: 0.25s;
+    --button-arrow-easing: ease;
+    --button-arrow-hover-transform: translate(2px, 0) rotate(45deg);
+    --button-arrow-transition: transform var(--button-arrow-speed) var(--button-arrow-easing);
+
+    /* The arrow still turns to horizontal on hover — it just snaps rather than swinging. */
+    @media (prefers-reduced-motion: reduce) {
+      --button-arrow-speed: 0s;
+    }
+
     /* View transitions */
     /* View transition old */
     --view-transition-old-main-content: var(--animation-speed) var(--animation-easing) both fadeOut;

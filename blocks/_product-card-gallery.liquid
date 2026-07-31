@@ -297,6 +297,13 @@
     width: 10px;
     height: 10px;
     mask: var(--card-media-actions-arrow) center / contain no-repeat;
+    transition: var(--button-arrow-transition);
+  }
+
+  /* Shared trailing-arrow motion — see theme-styles-variables. Same swing as the full-size
+     arrow buttons; the glyph is smaller here but the timing and angle are the theme's. */
+  .card-media-actions__view.card-media-actions__view:hover::after {
+    transform: var(--button-arrow-hover-transform);
   }
 
   /* The mobile frames show no overlay at all, so the secondary action is desktop-only —

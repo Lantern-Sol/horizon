@@ -176,6 +176,12 @@
     height: 15px;
     background-color: currentcolor;
     mask: var(--hero-arrow-icon) center / 24px 24px no-repeat;
+    transition: var(--button-arrow-transition);
+  }
+
+  /* Shared trailing-arrow motion — see theme-styles-variables. */
+  .hero-slide .hero-slide__content a:is(.button, .button-secondary, .button-custom):hover::after {
+    transform: var(--button-arrow-hover-transform);
   }
 {% endstylesheet %}
 

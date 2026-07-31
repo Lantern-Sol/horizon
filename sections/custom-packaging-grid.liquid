@@ -90,7 +90,7 @@
               {% if section.settings.featured_link != blank %}
                 href="{{ section.settings.featured_link }}"
               {% endif %}
-              class="custom-packaging-grid__featured-btn"
+              class="custom-packaging-grid__featured-btn button-fill"
             >
               {{ section.settings.featured_link_text | escape }}
             </a>
@@ -318,6 +318,16 @@
     text-decoration: none;
     white-space: nowrap;
     transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+
+    /*
+     * .button-fill on the markup opts this pill into the shared radial hover fill in base.css.
+     * It has no --button-background-color for base.css's fallbacks to reach, so both knobs are
+     * set here: the fill paints the hover teal, and the resting teal is what the button holds
+     * underneath while that fill travels. The hover colour is opaque, so holding is right —
+     * cross-fading the base out beneath the wipe would muddy it.
+     */
+    --button-fill-color: var(--button-bg-hover-color);
+    --button-fill-under: var(--button-bg-color);
   }
 
   /*
@@ -333,24 +343,29 @@
     height: 15px;
     background-color: currentcolor;
     mask: var(--arrow-icon) center / 24px 24px no-repeat;
-    transition: transform 0.25s ease;
+    transition: var(--button-arrow-transition);
   }
 
   /*
-   * Hover: the pill lifts one step up the teal ramp, and the arrow swings from its rest diagonal
-   * round to the horizontal. The rest glyph points up-right, so 45deg clockwise lands it due east —
-   * one asset rotated rather than a second arrow swapped in, which is what lets it animate.
+   * Hover: the pill lifts one step up the teal ramp, and the arrow swings round to the horizontal.
+   * That swing is the shared trailing-arrow motion — defined once in theme-styles-variables and
+   * used by every arrow button in the theme, so it is referenced here rather than spelled out.
    *
    * Hover-capable pointers only: a tap on touch leaves :hover stuck on, which would strand the
    * mobile outline variant in the filled state until something else is tapped.
    */
   @media (hover: hover) {
+    /*
+     * The radial fill normally wins this declaration — its hover rule is a class more specific
+     * and repaints the background from --button-fill-under. This is the reduced-motion path,
+     * where base.css skips the fill entirely and the pill still needs its hover colour.
+     */
     .custom-packaging-grid__featured-btn:hover {
       background-color: var(--button-bg-hover-color);
     }
 
     .custom-packaging-grid__featured-btn:hover::after {
-      transform: translate(2px, 0) rotate(45deg);
+      transform: var(--button-arrow-hover-transform);
     }
   }
 
@@ -360,11 +375,18 @@
    * hiding it would make the link unreachable.
    */
   @media (hover: hover) and (pointer: fine) {
-    .custom-packaging-grid__featured-btn {
+    /*
+     * Trebled class for (0,3,0): base.css sets its own `transition` shorthand on everything
+     * carrying .button-fill at (0,2,0), and a shorthand replaces rather than merges — left at
+     * one class this rule loses the tie and the pill snaps into place instead of sliding. The
+     * fill's own colour timings are folded in below so nothing is lost in the other direction.
+     */
+    .custom-packaging-grid__featured-btn.custom-packaging-grid__featured-btn.custom-packaging-grid__featured-btn {
       opacity: 0;
       transform: translate(32px, 32px) scale(0.92);
       transition: opacity 0.3s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-        background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+        background-color var(--button-fill-speed) var(--button-fill-easing),
+        color var(--button-fill-speed) var(--button-fill-easing), border-color 0.25s ease;
     }
 
     /* :focus-within keeps the CTA reachable by keyboard, where there is no hover to trigger it. */
@@ -380,11 +402,6 @@
     .custom-packaging-grid__featured-btn {
       opacity: 1;
       transform: none;
-      transition: none;
-    }
-
-    /* The arrow still turns to horizontal on hover — it just snaps rather than swinging. */
-    .custom-packaging-grid__featured-btn::after {
       transition: none;
     }
   }
@@ -525,11 +542,15 @@
       font-size: var(--featured-title-size-mobile, 32px);
     }
 
-    /* Against a photograph the solid pill loses its edge, so mobile uses the outlined variant. */
+    /* Against a photograph the solid pill loses its edge, so mobile uses the outlined variant.
+       --button-fill-under tracks the background it sits behind, so the fill has the outline
+       wash beneath it here rather than the solid teal it holds on desktop. */
     .custom-packaging-grid__featured-btn {
       background-color: color-mix(in srgb, var(--button-text-color) 16%, transparent);
       border-color: var(--button-text-color);
       color: var(--button-text-color);
+
+      --button-fill-under: color-mix(in srgb, var(--button-text-color) 16%, transparent);
     }
 
     .custom-packaging-grid__info-card {

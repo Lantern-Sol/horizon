@@ -32,10 +32,18 @@
     assign effective_primary_button_focus_outline = settings.palette_primary_button_background
   endif
 
-  capture effective_primary_button_hover_background
-    render 'util-palette-hover-shift', color: settings.palette_primary_button_background
-  endcapture
-  if settings.palette_primary_button_background.alpha == 1
+  # An explicit hover background wins; a fully transparent one means "unset" and
+  # falls back to the automatic lighten/darken shift off the base colour.
+  assign primary_hover_source = settings.palette_primary_button_background
+  if settings.palette_primary_button_hover_background.alpha > 0
+    assign primary_hover_source = settings.palette_primary_button_hover_background
+    assign effective_primary_button_hover_background = primary_hover_source
+  else
+    capture effective_primary_button_hover_background
+      render 'util-palette-hover-shift', color: settings.palette_primary_button_background
+    endcapture
+  endif
+  if primary_hover_source.alpha == 1
     assign primary_hover_background_has_alpha = false
   else
     assign primary_hover_background_has_alpha = true
@@ -48,7 +56,9 @@
     assign primary_button_hover_contrast = palette_lightest
   endif
 
-  if primary_hover_background_has_alpha
+  if settings.palette_primary_button_hover_text.alpha > 0
+    assign effective_primary_button_hover_text = settings.palette_primary_button_hover_text
+  elsif primary_hover_background_has_alpha
     assign effective_primary_button_hover_text = settings.palette_primary_button_text
   else
     assign effective_primary_button_hover_text = primary_button_hover_contrast
@@ -65,10 +75,16 @@
 
 {% comment %} Secondary button hover effective values {% endcomment %}
 {% liquid
-  capture effective_secondary_button_hover_background
-    render 'util-palette-hover-shift', color: settings.palette_secondary_button_background
-  endcapture
-  if settings.palette_secondary_button_background.alpha == 1
+  assign secondary_hover_source = settings.palette_secondary_button_background
+  if settings.palette_secondary_button_hover_background.alpha > 0
+    assign secondary_hover_source = settings.palette_secondary_button_hover_background
+    assign effective_secondary_button_hover_background = secondary_hover_source
+  else
+    capture effective_secondary_button_hover_background
+      render 'util-palette-hover-shift', color: settings.palette_secondary_button_background
+    endcapture
+  endif
+  if secondary_hover_source.alpha == 1
     assign secondary_hover_background_has_alpha = false
   else
     assign secondary_hover_background_has_alpha = true
@@ -81,7 +97,9 @@
     assign secondary_button_hover_contrast = palette_lightest
   endif
 
-  if secondary_hover_background_has_alpha
+  if settings.palette_secondary_button_hover_text.alpha > 0
+    assign effective_secondary_button_hover_text = settings.palette_secondary_button_hover_text
+  elsif secondary_hover_background_has_alpha
     assign effective_secondary_button_hover_text = settings.palette_secondary_button_text
   else
     assign effective_secondary_button_hover_text = secondary_button_hover_contrast
@@ -184,6 +202,16 @@
     --color-primary-button-hover-text: rgb({{ effective_primary_button_hover_text.rgba }});
     --color-primary-button-hover-background: {{ effective_primary_button_hover_background }};
     --color-primary-button-hover-border: {{ effective_primary_button_hover_border }};
+    {%- comment -%}
+      What the button paints beneath the radial hover fill in base.css. A
+      translucent fill would composite over the idle colour and read too strong,
+      so it clears out; an opaque one hides it anyway, so it holds steady.
+    {%- endcomment -%}
+    {%- if primary_hover_background_has_alpha %}
+      --primary-button-fill-under: transparent;
+    {%- else %}
+      --primary-button-fill-under: var(--color-primary-button-background);
+    {%- endif %}
 
     --color-secondary-button-text: rgb({{ settings.palette_secondary_button_text.rgba }});
     --color-secondary-button-background: rgb({{ settings.palette_secondary_button_background.rgba }});
@@ -191,6 +219,11 @@
     --color-secondary-button-hover-text: rgb({{ effective_secondary_button_hover_text.rgba }});
     --color-secondary-button-hover-background: {{ effective_secondary_button_hover_background }};
     --color-secondary-button-hover-border: {{ effective_secondary_button_hover_border }};
+    {%- if secondary_hover_background_has_alpha %}
+      --secondary-button-fill-under: transparent;
+    {%- else %}
+      --secondary-button-fill-under: var(--color-secondary-button-background);
+    {%- endif %}
 
     --color-input-background: rgb({{ settings.palette_input_background.rgba }});
     --color-input-text: rgb({{ settings.palette_input_text.rgba }});

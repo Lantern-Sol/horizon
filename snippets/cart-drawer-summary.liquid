@@ -426,8 +426,12 @@
     border: 1px solid var(--color-teal-800);
   }
 
+  /* This button sets `color` directly rather than through --button-color, so the
+     radial hover fill in base.css can't swap the text for it — without this the
+     label would stay teal-800 against a teal-800 fill and vanish. The background
+     is left to the fill; a tint here would sit under it and never be seen. */
   .cart-drawer-summary__view-cart:hover {
-    background-color: rgb(6 76 77 / var(--opacity-5));
+    color: var(--color-white);
   }
 
   .cart-drawer-summary__view-cart-icon {
