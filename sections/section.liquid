@@ -193,6 +193,45 @@
     pointer-events: none;
   }
 
+  /*
+   * Figma names this layer "Hover Image" (2123:571): the template stack is parked out of
+   * sight and slides into the seam between the two panels when the section is hovered.
+   *
+   * No extra mask is needed for the resting state. The accent panel is opaque and paints
+   * above the leading panel (z-index below), and the negative margin above already tucks
+   * the image's trailing edge under it — so translating the image by its own width puts
+   * all of it behind the panel, and the wrapper's overflow clip catches anything past the
+   * far edge.
+   *
+   * Hover-capable pointers only, matching the featured card in custom-packaging-grid: a tap
+   * on touch leaves :hover stuck on, and on a phone the panels stack so there is no seam to
+   * slide out of. Excluding reduced-motion here also means that preference simply leaves the
+   * image where the design puts it, visible and still, rather than hiding it outright.
+   */
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .section--customization-panels .image-block {
+      opacity: 0;
+      transform: translateX(100%);
+      transition: opacity 0.25s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /*
+     * Hover is scoped to the rounded two-panel card rather than the .section box, which
+     * spans the full page width plus 100px of block padding — triggering from there would
+     * fire the reveal with the cursor nowhere near the artwork.
+     *
+     * :focus-within is the keyboard equivalent: tabbing to any control in either panel
+     * counts as being in the section.
+     */
+    .section--customization-panels
+      > .custom-section-content
+      > .section-content-wrapper:is(:hover, :focus-within)
+      .image-block {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
   @media screen and (max-width: 989px) {
     .section--customization-panels > .custom-section-content > .section-content-wrapper > .group-block {
       min-height: 420px;
