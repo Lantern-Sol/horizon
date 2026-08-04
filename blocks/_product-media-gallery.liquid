@@ -309,6 +309,9 @@
     {% if block_settings.extend_media %}
       media-gallery--extend
     {% endif %}
+    {% if block_settings.sticky_media_desktop %}
+      media-gallery--sticky
+    {% endif %}
   "
   style="{% render 'spacing-style', settings: block_settings %} --thumbnail-width: {{ block_settings.thumbnail_width }}px; --media-radius: {{ block_settings.media_radius }}px;{% if block_settings.icons_style contains 'large' %} --slideshow-icon-padding: 0px;{% endif %}--image-gap: {{ block_settings.image_gap }}px;{% unless block_settings.aspect_ratio == 'adapt' %} --gallery-aspect-ratio: {{ block_settings.aspect_ratio }};{% endunless %}"
   data-presentation="{{ block_settings.media_presentation }}"
@@ -653,6 +656,36 @@
 {% endif %}
 
 {% stylesheet %}
+  /*
+    Pin the gallery beside the details column on desktop.
+
+    The block markup has always carried `.sticky-content`, but base.css also ships
+    `.media-gallery--carousel { position: relative }` further down the same file, and at
+    equal specificity the later rule wins — so in the carousel presentation the gallery
+    never actually stuck. Qualifying with the element name takes this to (0,1,1), which
+    clears that rule and the fact that base.css is emitted after this stylesheet.
+
+    Desktop only: below 750px the grid stacks, where a pinned gallery would ride down over
+    the details it is meant to sit beside.
+  */
+  @media screen and (min-width: 750px) {
+    media-gallery.media-gallery--sticky {
+      position: sticky;
+      top: var(--sticky-header-offset, 0);
+      z-index: var(--layer-flat);
+
+      /*
+        Whatever sits below the gallery in the media column — the highlights strip — keeps
+        scrolling once the gallery pins, and travels behind it. The gallery's own box is
+        largely transparent (the thumbnail rail is a column of gaps), so without a surface
+        of its own that content shows through those gaps instead of disappearing under it.
+        --color-background is the token .section-background already paints, so this is a
+        no-op visually until something actually passes underneath.
+      */
+      background-color: var(--color-background);
+    }
+  }
+
   /* ==========================================================================
      Sana product image slider — Figma 2123:177 (desktop) / 2123:1597 (mobile).
      ========================================================================== */
@@ -1343,6 +1376,13 @@
       "id": "constrain_to_viewport",
       "label": "t:settings.limit_media_to_screen_height",
       "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky_media_desktop",
+      "label": "t:settings.make_details_sticky_desktop",
+      "info": "Pins the gallery beside the product details while the details column scrolls.",
+      "default": true
     },
     {
       "type": "select",
