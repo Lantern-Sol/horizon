@@ -236,9 +236,21 @@
     width: 100vw;
   }
 
+  .product-recommendations--pairs {
+    /* How far the carousel bleeds into the container padding so the cards' drop shadow
+       falls inside the scroller's clip — see the slideshow-slides note below. Kept under
+       the 20px padding, so the bleed stays inside the sand panel. */
+    --pairs-bleed: 16px;
+  }
+
   .product-recommendations--pairs .block-resource-list {
     gap: 16px;
     padding: 20px;
+    /* base.css puts `border: 1px solid var(--color-border, currentColor)` on every direct
+       child of .product-recommendations. The design has no rule around the panel — the sand
+       fill is the whole edge — and with no --color-border set the fallback drew the panel's
+       own teal text colour as a hairline box. */
+    border: 0;
     border-radius: 16px;
     color: #064c4d;
     background: #f7f1eb;
@@ -257,8 +269,46 @@
     line-height: 1.25;
   }
 
+  /*
+    Pre-hydration placeholder. Recommendations are fetched client-side, so this is what the
+    block reserves on first paint — and on the theme's own rules it reserved wildly too much.
+    .resource-list--grid asks for `grid-template-columns: var(--resource-list-columns)` above
+    750px and nothing in the theme ever defines that variable, so the declaration is invalid
+    at computed-value time and the grid falls back to a single column. Four placeholders at
+    `aspect-ratio: 3 / 4` and full container width stacked to several thousand pixels, then
+    the block collapsed the moment the fetch landed.
+
+    Mirror what the carousel actually settles into: the two cards of one slide, each the
+    109px media plus 12px of padding at top and bottom, 16px apart.
+  */
+  .product-recommendations--pairs .resource-list--grid { display: flex; flex-direction: column; gap: 16px; }
+  .product-recommendations--pairs .product-recommendations__skeleton-item { aspect-ratio: auto; height: 133px; border-radius: 16px; }
+  /* The block renders max_products placeholders, but a slide only ever shows two. The second
+     rule is what beats base.css's own mobile placeholder rule, which hides every odd child
+     and would otherwise leave a lone card here. */
+  .product-recommendations--pairs .product-recommendations__skeleton-item:nth-child(n + 3) { display: none; }
+  .product-recommendations--pairs .product-recommendations__skeleton-item:nth-child(-n + 2) { display: block; }
+
+  /*
+    slideshow-slides is a scroll container, so it clips at its own edges on both axes. The
+    card's shadow is offset 4px to the right and blurred 10px, and the slide is exactly as
+    wide as the scroller — so the entire right-hand side of the shadow was cut off, and the
+    only part left was the band the theme's `padding-block: 16px` had already made room for.
+    That surviving band is the straight line the shadow read as.
+
+    Bleed the carousel into the container's 20px padding and give the same width back as
+    slide padding: the card lands exactly where it did before, now with room on either side
+    for the shadow to fall inside the clip. The padding goes on the slide rather than on the
+    scroller deliberately — scrolling.js measures slides against the scroller's border box
+    and ignores scroll-padding, so padding there would offset every arrow click by the bleed.
+  */
+  /* `width: auto` is load-bearing: .resource-list pins `width: 100%`, and an explicit width
+     means the negative margins would slide the carousel sideways instead of widening it.
+     Auto lets it stretch to the container less its (negative) margins, i.e. 32px wider. */
+  .product-recommendations--pairs .resource-list--carousel { width: auto; margin-inline: calc(var(--pairs-bleed) * -1); }
+
   .product-recommendations--pairs .resource-list__carousel slideshow-slides { gap: 16px; }
-  .product-recommendations--pairs .resource-list__carousel .resource-list__slide { --slide-width: 100%; width: 100%; height: auto; max-width: none; max-height: none; display: flex; flex: 0 0 100%; flex-direction: column; gap: 16px; overflow: visible; contain: none; content-visibility: visible; }
+  .product-recommendations--pairs .resource-list__carousel .resource-list__slide { --slide-width: 100%; width: 100%; height: auto; max-width: none; max-height: none; display: flex; flex: 0 0 100%; flex-direction: column; gap: 16px; padding-inline: var(--pairs-bleed); overflow: visible; contain: none; content-visibility: visible; }
   /* Each slide stacks two cards. The carousel stretches every item to the full slide
      height, so two items summed to twice the slide and the second one spilled out,
      leaving a tall empty band under the first card. */
@@ -266,12 +316,26 @@
   /* The arrows are absolutely positioned against the carousel but need to sit in the
      header row above it. The carousel starts 76px below the container top and the heading's
      centre line is at 39.5px, so a 30px control centres on it at -51.5px. */
-  .product-recommendations--pairs .resource-list__carousel slideshow-arrows { inset: -51.5px 0 auto auto; z-index: 3; align-items: center; justify-content: flex-end; gap: 10px; padding: 0; mix-blend-mode: normal; pointer-events: none; }
+  .product-recommendations--pairs .resource-list__carousel slideshow-arrows { inset: -51.5px var(--pairs-bleed) auto auto; z-index: 3; align-items: center; justify-content: flex-end; gap: 10px; padding: 0; mix-blend-mode: normal; pointer-events: none; }
   /* The control is a flex box with default (normal) alignment, so the 20px glyph sat in the
      top-right of the 30px circle instead of its centre. */
   .product-recommendations--pairs .resource-list__carousel slideshow-arrows .slideshow-control { display: flex; align-items: center; justify-content: center; width: 30px; min-width: 30px; height: 30px; min-height: 30px; padding: 0; border: 1px solid #064c4d; border-radius: 50%; color: #064c4d; opacity: 1; pointer-events: auto; }
   .product-recommendations--pairs .resource-list__carousel slideshow-arrows .slideshow-control svg { display: block; margin: 0; }
   .product-recommendations--pairs .resource-list__carousel slideshow-arrows .slideshow-control[disabled] { display: flex; opacity: .35; }
+
+  /*
+    These arrows are not the theme's overlay controls. They sit in the header row and are
+    always visible, so the two behaviours base.css gives overlay arrows both read as flicker
+    here: `arrowsSlideIn` restarts from opacity 0 and 8px of travel every time the pointer
+    enters the carousel, and a drag hides them outright even though they are nowhere near
+    the track being dragged.
+
+    The animation cannot be outweighed by declaring opacity again — animated values beat
+    normal declarations whatever their specificity — so it has to be switched off, and the
+    selector has to outrank base.css's own (0,4,4).
+  */
+  .product-recommendations--pairs .resource-list .resource-list__carousel :is(slideshow-component:hover, slideshow-component:focus-within) slideshow-arrows .slideshow-control { animation: none; }
+  .product-recommendations--pairs .resource-list__carousel slideshow-component[dragging] slideshow-arrows { display: flex; }
 
   .pairs-card {
     display: grid;
@@ -282,8 +346,9 @@
     border-radius: 16px;
     color: #064c4d;
     background: #fff;
-    /* Figma uses a drop shadow, not a box shadow: `filter` follows the 16px corner radius,
-       where `box-shadow` at this offset/blur pooled into a square band along the bottom. */
+    /* Figma 2123:458 — a drop shadow, so `filter` rather than `box-shadow`: it follows the
+       16px corner radius instead of the border box. Whichever is used, it only reads as a
+       shadow if the scroller around it has room to paint — see --pairs-bleed above. */
     filter: drop-shadow(4px 4px 10px rgb(0 0 0 / .12));
   }
 
@@ -300,24 +365,51 @@
   .pairs-card__actions product-form-component, .pairs-card__actions form { width: 100%; height: auto; }
   .pairs-card__actions .quick-add__product-form-component .shopify-product-form { display: block; height: auto; }
   /* nowrap + tighter inline padding: "View Product" plus its arrow does not fit on one
-     line inside the 148px action column at 20px padding, and was breaking in two. */
-  .pairs-card__actions .quick-add__button, .pairs-card__view { position: static; inset: auto; display: flex; width: 100%; min-height: 38px; height: 38px; padding: 10px 12px; border-radius: 80px; opacity: 1; font-size: 14px; font-weight: 600; line-height: normal; letter-spacing: .02em; white-space: nowrap; scale: 1; transform: none; translate: none; }
-  .pairs-card__actions .quick-add__button { color: #fff; background: #064c4d; }
+     line inside the 148px action column at 20px padding, and was breaking in two.
+
+     `relative` with auto insets, not `static`: it lays out identically in flow — which is all
+     that was wanted, to undo quick-add's absolute positioning — but it also keeps the button
+     as the containing block for the theme's hover fill, an absolutely positioned ::before.
+     `filter` on .pairs-card makes the card itself a containing block, so a static button
+     would have handed the fill the whole card to size against. */
+  .pairs-card__actions .quick-add__button, .pairs-card__view { position: relative; inset: auto; display: flex; width: 100%; min-height: 38px; height: 38px; padding: 10px 12px; border-radius: 80px; opacity: 1; font-size: 14px; font-weight: 600; line-height: normal; letter-spacing: .02em; white-space: nowrap; scale: 1; transform: none; translate: none; }
+  /* Figma 2144:546 draws this pill as a flat teal fill with no ring, but the theme's primary
+     button token puts a 1.6px rgba(0,0,0,.15) border on it. Besides being a stray dark edge
+     on a dark pill, the border is what the hover fill stops at — an absolutely positioned
+     ::before sizes to the padding box — so it left a teal crescent around the cap that the
+     wipe could never reach. */
+  .pairs-card__actions .quick-add__button { --button-fill-color: #fff; --button-fill-under: #064c4d; border: 0; color: #fff; background: #064c4d; }
   .pairs-card__actions [data-quick-add-button='add'] .quick-add__button--choose { display: none; }
   .pairs-card__actions .quick-add__button .add-to-cart-text { width: 100%; justify-content: center; color: #fff; background: transparent; }
   .pairs-card__actions .quick-add__button .add-to-cart-text::after { content: '+'; margin-inline-start: 10px; font-size: 18px; font-weight: 400; line-height: 1; }
-  .pairs-card__actions .quick-add__button .add-to-cart-text__content { grid-template-columns: 1fr; }
+  /* quick-add.liquid hard-codes icon_only_on_mobile, which tags the label
+     .is-visually-hidden-mobile and lets base.css clip it away under 750px — leaving this pill
+     showing a bare "+", because the plus is an ::after on the parent and escapes the clip.
+     The design carries the label at every width, so undo the clip. `position` has to come
+     back !important because that is how base.css sets it. */
+  .pairs-card__actions .quick-add__button .add-to-cart-text__content { position: static !important; width: auto; height: auto; margin: 0; overflow: visible; clip: auto; grid-template-columns: 1fr; }
   .pairs-card__actions .quick-add__button .add-to-cart-text__content > span > span { padding: 0; opacity: 1; filter: none; translate: 0 0; }
-  .pairs-card__view { align-items: center; justify-content: center; gap: 10px; border: 1px solid #064c4d; color: #064c4d; background: #fff; text-decoration: none; }
+  .pairs-card__view { --button-fill-color: #064c4d; --button-fill-under: #fff; align-items: center; justify-content: center; gap: 10px; border: 1px solid #064c4d; color: #064c4d; background: #fff; text-decoration: none; }
   .pairs-card__view svg { width: 10px; height: 10px; --stroke-0: #064c4d; }
 
-  /* Hover states. The theme scales a radial fill over these buttons on hover and swaps
-     --button-color, but both rules above pin `color` directly, so the token swap never
-     reached the label: "View Product" ended up dark teal on the dark-teal fill and read as
-     disappearing. These pin the hover colours to match each fill instead. */
+  /*
+    Hover. The theme wipes an elliptical fill up over any .button / .button-secondary and
+    swaps --button-color underneath it, but both buttons above pin `color` and `background`
+    directly, so neither half of that contract reached them. The label kept its resting
+    colour; the fill painted --color-primary/secondary-button-hover-background, whatever the
+    merchant's global button settings happen to be; and the button's own background jumped
+    to the theme's colour on hover, because base.css holds it at --button-fill-under at
+    (0,3,0) and the rules above are only (0,2,0).
+
+    So the fill variables are set here too, each next to the background it mirrors — which is
+    what base.css asks of any button that styles itself rather than inheriting the palette.
+    The pair trades places on hover: the solid pill wipes white and its label goes teal, the
+    outline pill wipes teal and its label goes white. Same move .related-card__atc makes in
+    the Related Products section.
+  */
   .pairs-card__actions .quick-add__button:is(:hover, :focus-visible),
   .pairs-card__actions .quick-add__button:is(:hover, :focus-visible) .add-to-cart-text,
-  .pairs-card__actions .quick-add__button:is(:hover, :focus-visible) .add-to-cart-text__content > span > span { color: #fff; opacity: 1; filter: none; translate: 0 0; }
+  .pairs-card__actions .quick-add__button:is(:hover, :focus-visible) .add-to-cart-text__content > span > span { color: #064c4d; opacity: 1; filter: none; translate: 0 0; }
 
   .pairs-card__view:is(:hover, :focus-visible) { color: #fff; border-color: #064c4d; }
   .pairs-card__view:is(:hover, :focus-visible) svg { --stroke-0: #fff; }
@@ -330,6 +422,9 @@
     .pairs-card__details { justify-content: center; gap: 8px; }
     .pairs-card__details h3 { font-size: 18px; }
     .pairs-card__prices { padding: 8px 16px; }
+    /* The actions drop to their own row here, so the placeholder grows by that row and the
+       16px above it: 12 + 109 + 16 + 38 + 12. */
+    .product-recommendations--pairs .product-recommendations__skeleton-item { height: 187px; }
   }
 {% endstylesheet %}
 
