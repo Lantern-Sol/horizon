@@ -657,32 +657,49 @@
 
 {% stylesheet %}
   /*
-    Pin the gallery beside the details column on desktop.
+    Pin the gallery beside the details column on desktop — but only where nothing follows it
+    down the media column.
 
     The block markup has always carried `.sticky-content`, but base.css also ships
     `.media-gallery--carousel { position: relative }` further down the same file, and at
     equal specificity the later rule wins — so in the carousel presentation the gallery
-    never actually stuck. Qualifying with the element name takes this to (0,1,1), which
-    clears that rule and the fact that base.css is emitted after this stylesheet.
+    never actually stuck. Qualifying with the element name clears that rule and the fact
+    that base.css is emitted after this stylesheet.
+
+    The highlights strip is what "nothing follows it" rules out. It sits below the gallery in
+    the same column and is not part of the pinned box, so it keeps scrolling and travels
+    behind it — and base.css sizes the gallery to `max(500px, 100vh - header)`, which leaves
+    no gap under the pinned gallery for it to be read in on the way past. It went from below
+    the fold straight to behind the gallery without ever being on screen. Both only fit the
+    viewport at once if the photo shrinks, so on these products the column scrolls instead
+    and the photo keeps its size.
 
     Desktop only: below 750px the grid stacks, where a pinned gallery would ride down over
     the details it is meant to sit beside.
   */
   @media screen and (min-width: 750px) {
-    media-gallery.media-gallery--sticky {
+    .product-information__media:not(:has(.product-highlights)) media-gallery.media-gallery--sticky {
       position: sticky;
       top: var(--sticky-header-offset, 0);
       z-index: var(--layer-flat);
 
       /*
-        Whatever sits below the gallery in the media column — the highlights strip — keeps
-        scrolling once the gallery pins, and travels behind it. The gallery's own box is
-        largely transparent (the thumbnail rail is a column of gaps), so without a surface
-        of its own that content shows through those gaps instead of disappearing under it.
-        --color-background is the token .section-background already paints, so this is a
-        no-op visually until something actually passes underneath.
+        The gallery's own box is largely transparent (the thumbnail rail is a column of
+        gaps), so anything passing underneath shows through those gaps rather than
+        disappearing under it. --color-background is the token .section-background already
+        paints, so this is a no-op visually until something actually does.
       */
       background-color: var(--color-background);
+    }
+
+    /*
+      `.sticky-content` sets `top` as well as `position`, and the carousel rule that clears
+      the one leaves the other standing — so the gallery would sit 110px down its own box
+      and cover the top of the strip. Clear both.
+    */
+    .product-information__media:has(.product-highlights) media-gallery.media-gallery--sticky {
+      position: relative;
+      top: auto;
     }
   }
 
