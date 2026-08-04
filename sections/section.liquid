@@ -1,13 +1,299 @@
-{% capture children %}
-  {% content_for 'blocks' %}
-{% endcapture %}
-
-{% render 'section',
-  section: section,
-  children: children,
-  section_id: section.id,
-  background_color: section.settings.background_color
+{% liquid
+  assign show_section = true
+  if section.settings.product_faq_style and product.metafields.custom.faq.value == blank
+    assign show_section = false
+  endif
 %}
+
+{% if section.settings.product_faq_style %}
+  {% capture children %}
+    <div class="product-faq__main">
+      <header class="product-faq__header">
+        <h2>{{ section.settings.faq_heading | escape }}</h2>
+        {% if section.settings.faq_page_link != blank %}
+          <p>Find out more on our <a href="{{ section.settings.faq_page_link }}">FAQs</a> page</p>
+        {% endif %}
+      </header>
+      <div class="product-faq__accordion">
+        {% capture faq_richtext %}{{ product.metafields.custom.faq | metafield_tag }}{% endcapture %}
+        {% liquid
+          assign faq_normalized = faq_richtext | replace: '<div class="metafield-rich_text_field">', '' | replace: '</div>', ''
+          assign faq_normalized = faq_normalized | replace: '<h1', '<h2'
+          assign faq_normalized = faq_normalized | replace: '</h1>', '</h2>'
+          assign faq_normalized = faq_normalized | replace: '<h3', '<h2'
+          assign faq_normalized = faq_normalized | replace: '</h3>', '</h2>'
+          assign faq_normalized = faq_normalized | replace: '<h4', '<h2'
+          assign faq_normalized = faq_normalized | replace: '</h4>', '</h2>'
+          assign faq_normalized = faq_normalized | replace: '<h5', '<h2'
+          assign faq_normalized = faq_normalized | replace: '</h5>', '</h2>'
+          assign faq_normalized = faq_normalized | replace: '<h6', '<h2'
+          assign faq_normalized = faq_normalized | replace: '</h6>', '</h2>'
+          assign faq_entries = faq_normalized | split: '<h2'
+        %}
+        {% for faq_entry in faq_entries offset: 1 %}
+          {% assign faq_parts = faq_entry | split: '</h2>' %}
+          {% assign faq_heading_markup = faq_parts.first %}
+          {% assign faq_question = faq_heading_markup | prepend: '<h2' | append: '</h2>' | strip_html | strip %}
+          {% assign faq_answer = faq_entry | remove_first: faq_heading_markup | remove_first: '</h2>' | strip %}
+          {% if faq_question != blank %}
+            <details class="product-faq__item"{% if forloop.index == 2 %} open{% endif %}>
+              <summary>
+                <span>{{ faq_question }}</span>
+                <span class="product-faq__toggle" aria-hidden="true"></span>
+              </summary>
+              {% if faq_answer != blank %}<div class="product-faq__answer rte">{{ faq_answer }}</div>{% endif %}
+            </details>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+    <aside class="product-faq__aside">
+      <div>
+        <h3>{{ section.settings.faq_contact_heading | escape }}</h3>
+        <div class="rte">{{ section.settings.faq_contact_text }}</div>
+        {% if section.settings.faq_contact_link != blank %}
+          <a class="product-faq__contact" href="{{ section.settings.faq_contact_link }}">{{ section.settings.faq_contact_label | escape }} ↗</a>
+        {% endif %}
+      </div>
+      <div class="product-faq__catalog">
+        <div class="rte">{{ section.settings.faq_catalog_text }}</div>
+        {% if section.settings.faq_catalog_link != blank %}
+          <a href="{{ section.settings.faq_catalog_link }}">{{ section.settings.faq_catalog_label | escape }} ↓</a>
+        {% endif %}
+      </div>
+    </aside>
+  {% endcapture %}
+{% else %}
+  {% capture children %}
+    {% content_for 'blocks' %}
+  {% endcapture %}
+{% endif %}
+
+{% if show_section %}
+  {% render 'section',
+    section: section,
+    children: children,
+    section_id: section.id,
+    background_color: section.settings.background_color
+  %}
+{% endif %}
+
+{% stylesheet %}
+  .section--product-faq {
+    --full-page-grid-central-column-width: min(1280px, calc(100% - 160px));
+    overflow: hidden;
+    margin-block: 120px;
+    border-radius: 30px;
+    color: #fff;
+  }
+
+  .section--product-faq > .custom-section-content {
+    overflow: hidden;
+    border-radius: 30px;
+    background: #064c4d;
+  }
+
+  .section--product-faq .custom-section-background {
+    position: relative;
+    overflow: hidden;
+    border-radius: 30px;
+    opacity: .72;
+  }
+
+  .section--product-faq .custom-section-background::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(127deg, #064c4d 7%, rgb(6 76 77 / .2) 95%);
+  }
+
+  .section--product-faq > .custom-section-content > .section-content-wrapper {
+    display: grid;
+    grid-template-columns: minmax(0, 872fr) minmax(300px, 408fr);
+    align-items: stretch;
+    gap: 0;
+  }
+
+  .product-faq__main {
+    padding: 56px;
+    border-radius: 24px;
+    background: rgb(6 76 77 / .85);
+  }
+
+  .product-faq__header { margin-bottom: 32px; }
+  .product-faq__header h2 { margin: 0 0 8px; color: #fff; font-size: 48px; font-weight: 700; line-height: 1.1; }
+  .product-faq__header p { margin: 0; color: #b3f7e5; font-size: 16px; font-weight: 500; line-height: 1.5; }
+  .product-faq__header a { color: inherit; text-underline-offset: 2px; }
+
+  .product-faq__accordion { border-top: 1px solid rgb(179 247 229 / .28); }
+  .product-faq__item { border-bottom: 1px solid rgb(179 247 229 / .28); }
+  .product-faq__item summary { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 20px 8px 20px 0; color: #fff; cursor: pointer; list-style: none; font-size: 20px; font-weight: 600; line-height: 1.3; }
+  .product-faq__item summary::-webkit-details-marker { display: none; }
+  .product-faq__toggle { position: relative; flex: 0 0 12px; width: 12px; height: 12px; }
+  .product-faq__toggle::before,
+  .product-faq__toggle::after { content: ''; position: absolute; inset: 50% 0 auto; height: 1px; background: #75dfca; transition: transform .2s ease; }
+  .product-faq__toggle::after { transform: rotate(90deg); }
+  .product-faq__item[open] .product-faq__toggle::after { transform: rotate(0); }
+  .product-faq__answer { padding: 0 34px 20px 0; color: #fff; font-size: 16px; line-height: 1.5; }
+  .product-faq__answer > :first-child { margin-top: 0; }
+  .product-faq__answer > :last-child { margin-bottom: 0; }
+
+  .product-faq__aside { display: flex; flex-direction: column; justify-content: space-between; padding: 56px; color: #fff; }
+  .product-faq__aside h3 { margin: 0 0 16px; color: #fff; font-size: 36px; font-weight: 600; line-height: 1.2; }
+  .product-faq__aside .rte { font-size: 16px; line-height: 1.5; }
+  .product-faq__contact { display: inline-flex; margin-top: 24px; padding: 14px 28px; border: 1px solid #fff; border-radius: 80px; color: #fff; background: rgb(255 255 255 / .16); text-decoration: none; font-size: 16px; font-weight: 600; letter-spacing: .02em; }
+  .product-faq__catalog { margin-top: 48px; }
+  .product-faq__catalog a { display: inline-block; margin-top: 16px; color: #b3f7e5; font-size: 14px; font-weight: 600; text-underline-offset: 3px; }
+
+  @media screen and (max-width: 749px) {
+    .section--product-faq { --full-page-grid-central-column-width: calc(100% - 32px); margin-block: 64px; border-radius: 20px; }
+    .section--product-faq > .custom-section-content,
+    .section--product-faq .custom-section-background { border-radius: 20px; }
+    .section--product-faq > .custom-section-content > .section-content-wrapper { grid-template-columns: 1fr; }
+    .product-faq__main { padding: 32px 24px; border-radius: 20px; }
+    .product-faq__header h2 { font-size: 36px; }
+    .product-faq__item summary { padding-block: 18px; font-size: 18px; }
+    .product-faq__answer { padding-right: 20px; font-size: 15px; }
+    .product-faq__aside { gap: 48px; padding: 32px 24px; }
+    .product-faq__aside h3 { font-size: 30px; }
+    .product-faq__catalog { margin-top: 0; }
+  }
+
+  /* Two panels sitting flush inside one rounded, clipped container. Existing group
+     settings cover colour, padding and content; these rules only add what they can't:
+     equal-height stretch, the diagonal accent gradient, and the decorative image bleed. */
+  .section--customization-panels > .custom-section-content > .section-content-wrapper {
+    align-items: stretch;
+    overflow: hidden;
+    border-radius: 32px;
+  }
+
+  .section--customization-panels > .custom-section-content > .section-content-wrapper > .group-block {
+    min-height: 448px;
+  }
+
+  /* The leading panel butts against the accent panel, so its trailing corners stay square
+     and the wrapper's own radius supplies the outer curve. */
+  .section--customization-panels > .custom-section-content > .section-content-wrapper > .group-block:first-child {
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+  }
+
+  .section--customization-panels > .custom-section-content > .section-content-wrapper > .group-block:last-child {
+    z-index: var(--layer-flat);
+    border-radius: 32px;
+    background-image: linear-gradient(129deg, #5bc5ad 31%, #e6d7c3 84%);
+  }
+
+  /* The decorative image slides under the accent panel instead of squeezing the copy. */
+  .section--customization-panels .image-block {
+    align-self: center;
+    margin-inline-end: -140px;
+    pointer-events: none;
+  }
+
+  @media screen and (max-width: 989px) {
+    .section--customization-panels > .custom-section-content > .section-content-wrapper > .group-block {
+      min-height: 420px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .section--customization-panels > .custom-section-content > .section-content-wrapper,
+    .section--customization-panels > .custom-section-content > .section-content-wrapper > .group-block:last-child {
+      border-radius: 24px;
+    }
+
+    .section--customization-panels > .custom-section-content > .section-content-wrapper > .group-block {
+      min-height: 0;
+    }
+
+    /* Stacked on mobile, so the leading panel gets its corners back. */
+    .section--customization-panels > .custom-section-content > .section-content-wrapper > .group-block:first-child {
+      border-start-end-radius: 24px;
+      border-end-end-radius: 24px;
+    }
+
+    .section--customization-panels .image-block {
+      margin-inline-end: 0;
+    }
+  }
+
+  .section--subfooter-icons {
+    background: linear-gradient(123deg, #f7f1eb 24%, #e6d7c3 91%);
+  }
+
+  .section--subfooter-icons .custom-section-background {
+    opacity: .3;
+    mix-blend-mode: multiply;
+  }
+
+  .section--subfooter-icons > .custom-section-content > .section-content-wrapper {
+    justify-content: space-between;
+  }
+
+  .section--subfooter-icons > .custom-section-content > .section-content-wrapper > .group-block {
+    width: min(23.4%, 307px);
+    min-height: 80px;
+    padding: 16px;
+    border-radius: 20px;
+    background: rgb(247 241 235 / .83);
+  }
+
+  .section--subfooter-icons > .custom-section-content > .section-content-wrapper > .group-block > .group-block-content {
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .section--subfooter-icons .icon-block {
+    display: grid;
+    flex: 0 0 48px;
+    width: 48px;
+    height: 48px;
+    place-items: center;
+    border: 1px solid #e6d7c3;
+    border-radius: 10px;
+    color: #9e8568;
+    background: linear-gradient(153deg, #e6d7c3 6%, #f7f1eb 75%);
+  }
+
+  .section--subfooter-icons .icon-block__media {
+    width: 30px;
+    height: 30px;
+  }
+
+  .section--subfooter-icons .text-block,
+  .section--subfooter-icons .text-block :is(p, h2, h3) {
+    margin: 0;
+    color: #064c4d;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.3;
+    text-align: left;
+  }
+
+  @media screen and (max-width: 749px) {
+    .section--subfooter-icons > .custom-section-content > .section-content-wrapper {
+      gap: 12px;
+    }
+
+    .section--subfooter-icons > .custom-section-content > .section-content-wrapper > .group-block {
+      width: 100%;
+      min-height: 80px;
+    }
+
+    .section--subfooter-icons > .custom-section-content > .section-content-wrapper > .group-block > .group-block-content {
+      flex-direction: row;
+    }
+
+    .section--subfooter-icons .text-block,
+    .section--subfooter-icons .text-block :is(p, h2, h3) {
+      font-size: 18px;
+    }
+  }
+{% endstylesheet %}
 
 {% schema %}
 {
@@ -61,6 +347,85 @@
       "label": "Clip overflowing content",
       "info": "Crops anything that spills outside the section, so blocks with negative margins bleed off the edge instead of overlapping neighbouring sections.",
       "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "subfooter_icons_style",
+      "label": "Use subfooter icons design",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "customization_panels_style",
+      "label": "Use side-by-side panels design",
+      "info": "Stretches the section's top-level groups to equal height inside one rounded, clipped container. The last group receives the accent gradient.",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "product_faq_style",
+      "label": "Use product metafield FAQ design",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "faq_heading",
+      "label": "FAQ heading",
+      "default": "FAQs",
+      "visible_if": "{{ section.settings.product_faq_style }}"
+    },
+    {
+      "type": "url",
+      "id": "faq_page_link",
+      "label": "FAQ page link",
+      "visible_if": "{{ section.settings.product_faq_style }}"
+    },
+    {
+      "type": "text",
+      "id": "faq_contact_heading",
+      "label": "Contact heading",
+      "default": "Didn't find your answer?",
+      "visible_if": "{{ section.settings.product_faq_style }}"
+    },
+    {
+      "type": "richtext",
+      "id": "faq_contact_text",
+      "label": "Contact text",
+      "default": "<p>Don't hesitate to reach out. We're here to help you find the right products for your brand.</p>",
+      "visible_if": "{{ section.settings.product_faq_style }}"
+    },
+    {
+      "type": "text",
+      "id": "faq_contact_label",
+      "label": "Contact button label",
+      "default": "Contact Us",
+      "visible_if": "{{ section.settings.product_faq_style }}"
+    },
+    {
+      "type": "url",
+      "id": "faq_contact_link",
+      "label": "Contact button link",
+      "visible_if": "{{ section.settings.product_faq_style }}"
+    },
+    {
+      "type": "richtext",
+      "id": "faq_catalog_text",
+      "label": "Catalog text",
+      "default": "<p>Want to see more? Explore our full product catalog for the complete lineup.</p>",
+      "visible_if": "{{ section.settings.product_faq_style }}"
+    },
+    {
+      "type": "text",
+      "id": "faq_catalog_label",
+      "label": "Catalog link label",
+      "default": "View Full Product Catalog",
+      "visible_if": "{{ section.settings.product_faq_style }}"
+    },
+    {
+      "type": "url",
+      "id": "faq_catalog_link",
+      "label": "Catalog link",
+      "visible_if": "{{ section.settings.product_faq_style }}"
     },
     {
       "type": "select",

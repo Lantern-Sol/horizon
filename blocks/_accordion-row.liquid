@@ -2,6 +2,7 @@
 
 {% capture accordion_row_children %}
   <details
+    {% if block_settings.heading == 'Price' %}id="ProductPriceAccordion-{{ section.id }}"{% endif %}
     class="details"
     data-testid="accordion-details"
     {% if block_settings.open_by_default %}
@@ -35,6 +36,10 @@
   open_by_default_on_desktop: block_settings.open_by_default,
   open_by_default_on_mobile: block_settings.open_by_default
 %}
+
+{% stylesheet %}
+  details[id^='ProductPriceAccordion-'] { scroll-margin-top: calc(var(--header-group-height, 0px) + 24px); }
+{% endstylesheet %}
 
 {% schema %}
 {
