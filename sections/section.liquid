@@ -3,6 +3,19 @@
   if section.settings.product_faq_style and product.metafields.custom.faq.value == blank
     assign show_section = false
   endif
+
+  # The Klaviyo widget is injected client-side, so on an unreviewed product it mounts
+  # nothing and leaves this section's background and 120px padding standing as an empty
+  # band. The app syncs its totals to the standard `reviews` metafields — the only view of
+  # review data Liquid gets, and one that tracks the widget exactly — so nothing there
+  # means nothing to show. The editor keeps the section, which could not be selected
+  # on such a product otherwise.
+  if section.settings.klaviyo_reviews_style
+    assign review_count = product.metafields.reviews.rating_count.value | plus: 0
+    unless review_count > 0 or request.design_mode or request.visual_preview_mode
+      assign show_section = false
+    endunless
+  endif
 %}
 
 {% if section.settings.product_faq_style %}
