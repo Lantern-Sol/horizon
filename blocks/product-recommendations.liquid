@@ -440,8 +440,53 @@
   .pairs-card__actions .quick-add__button:is(:hover, :focus-visible) .add-to-cart-text,
   .pairs-card__actions .quick-add__button:is(:hover, :focus-visible) .add-to-cart-text__content > span > span { color: #064c4d; opacity: 1; filter: none; translate: 0 0; }
 
+  /*
+    The hovered pill is white on a white card, so it needs an edge — and without one drawn on
+    purpose it grew a stray one. The button paints its teal background and the white fill
+    paints over it, but both are clipped by the same `overflow: hidden` pill, and each is
+    antialiased against it separately: along the cap the two partial coverages composite into
+    a faint teal fringe, thinner and lighter than any border anyone chose.
+
+    Drawing the ring deliberately covers that seam and finishes the trade with
+    .pairs-card__view, which lands on this exact edge going the other way (its own 1px border
+    is what hides the same seam on the outline pill).
+
+    `outline`, because that is how base.css draws a button's ring — which is also why the
+    `border: 0` above never removed one. It paints above the fill, so the ring stays crisp
+    through the wipe, and it inherits the `outline` transition base.css already declares. The
+    negative offset pulls it inside the border box: base.css would compute 0 here, which
+    would hang the ring outside the pill and leave it 2px wider than the View Product pill
+    directly beneath it.
+  */
+  .pairs-card__actions .quick-add__button:is(:hover, :focus-visible) {
+    --button-border-width: 1px;
+    --button-border-color: #064c4d;
+
+    outline-offset: -1px;
+  }
+
   .pairs-card__view:is(:hover, :focus-visible) { color: #fff; border-color: #064c4d; }
   .pairs-card__view:is(:hover, :focus-visible) svg { --stroke-0: #fff; }
+
+  /*
+    Added state. The burst starts the instant the button flips, but quick-add-styles fades the
+    label out over 125ms underneath it — so for the first eighth of a second the ring pops
+    through the middle of the word, which reads as a rendering fault rather than a transition.
+    The label leaves outright instead, clearing the pill before the burst's first frame.
+
+    Three things have to be cleared for that to hold. `animation`, because an animation's own
+    values outrank a normal declaration — opacity alone would be overwritten by atc-fade-out's
+    for all 125ms of it. `transition`, because the label carries one and would otherwise ramp
+    to 0 over its duration, which is the same overlap in a different costume. And this rule
+    has to sit *below* the hover block: adding to cart leaves the pointer on the pill, and the
+    hover rule pins .add-to-cart-text to opacity 1 at exactly the same specificity — a tie that
+    source order, not the cascade, decides.
+  */
+  .pairs-card__actions .quick-add__button[data-added='true'] .add-to-cart-text {
+    animation: none;
+    transition: none;
+    opacity: 0;
+  }
 
   @container resource-list (max-width: 520px) {
     .product-recommendations--pairs .block-resource-list { padding: 20px; }
