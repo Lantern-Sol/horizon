@@ -389,6 +389,15 @@
      back !important because that is how base.css sets it. */
   .pairs-card__actions .quick-add__button .add-to-cart-text__content { position: static !important; width: auto; height: auto; margin: 0; overflow: visible; clip: auto; grid-template-columns: 1fr; }
   .pairs-card__actions .quick-add__button .add-to-cart-text__content > span > span { padding: 0; opacity: 1; filter: none; translate: 0 0; }
+  /* The checkmark burst is authored for the 48px PDP button and ships in a 32px box, which
+     inside this 38px pill left its rays crossing the button's own `overflow: hidden` and
+     tearing. Same size-down the Related Products pill uses: base.css caps every svg at
+     max-width: 100%, so bringing the wrapper in brings the 30px glyph with it.
+
+     The burst is absolutely positioned and centred on its containing block, so it was also
+     landing in the middle of the whole card until the button became `position: relative`
+     above — `filter` on .pairs-card had been acting as the containing block. */
+  .pairs-card__actions .quick-add__button .add-to-cart__added-icon { width: 24px; height: 24px; }
   .pairs-card__view { --button-fill-color: #064c4d; --button-fill-under: #fff; align-items: center; justify-content: center; gap: 10px; border: 1px solid #064c4d; color: #064c4d; background: #fff; text-decoration: none; }
   .pairs-card__view svg { width: 10px; height: 10px; --stroke-0: #064c4d; }
 
