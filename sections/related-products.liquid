@@ -560,9 +560,21 @@
   /* ------------------------------------------------------------------ *
    * Card buy row — quantity stepper + Add to Cart
    * ------------------------------------------------------------------ */
+  /*
+    slideshow-slides sets `cursor: var(--cursor)` (grab) on the track and it inherits all
+    the way down into the card, so the buy row would advertise a drag handle over controls
+    that are deliberately excluded from the drag gesture (data-slideshow-no-drag on the
+    element below). Reset it here and let the buttons' own `cursor: pointer` come through.
+  */
   .related-products .related-card__actions {
     display: block;
     width: 100%;
+    cursor: auto;
+  }
+
+  .related-products .related-card__quantity :is(.quantity-minus, .quantity-plus),
+  .related-products .related-card__atc {
+    cursor: pointer;
   }
 
   .related-products .related-card__actions form {
@@ -695,11 +707,13 @@
 
     display: inline-flex;
     width: 10.5rem; /* 168px */
+    /* buy-buttons-styles gives every .add-to-cart-button the tall PDP buy-button height;
+       this pill is sized by its padding instead. */
+    height: auto;
     min-height: 0;
     align-items: center;
     align-content: center;
     justify-content: center;
-    gap: 0.625rem; /* 10px */
     padding: 0.625rem 1.25rem; /* 10px 20px */
     border: 0;
     border-radius: 5rem;
@@ -719,17 +733,31 @@
     color: var(--color-teal-900);
   }
 
-  .related-products .related-card__atc::after {
+  /*
+    The plus hangs off .add-to-cart-text rather than off the button, so it travels with
+    the label: adding to cart slides and fades .add-to-cart-text out to clear the pill for
+    the checkmark burst, and a plus pinned to the button itself would be stranded on an
+    otherwise empty button. Same arrangement as the PDP's own Add to cart (_product-details).
+  */
+  .related-products .related-card__atc .add-to-cart-text {
+    gap: 0;
+  }
+
+  .related-products .related-card__atc .add-to-cart-text::after {
     content: '';
     flex-shrink: 0;
     width: 0.875rem; /* 14px */
     height: 0.875rem;
+    margin-inline-start: 0.625rem; /* 10px */
     background-color: currentcolor;
     mask: var(--rp-plus-icon) center / 0.875rem 0.875rem no-repeat;
   }
 
-  .related-products .related-card__atc .add-to-cart-text {
-    gap: 0;
+  /* The burst is authored for the 48px PDP button; this pill is ~37px, so it needs to
+     come down a size to keep clear of the rounded ends. */
+  .related-products .related-card__atc .add-to-cart__added-icon {
+    width: 1.5rem; /* 24px */
+    height: 1.5rem;
   }
 
   /* The placeholder card has no form, so its controls are inert spans. */

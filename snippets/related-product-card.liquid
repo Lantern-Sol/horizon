@@ -95,8 +95,17 @@
     </div>
   </div>
 
+  {%- comment -%}
+    `data-slideshow-no-drag` keeps the card's controls out of the carousel's drag gesture.
+    The card sits in a slideshow slide, and slideshow.js otherwise starts a drag from any
+    mousedown inside the track — which cancels the click on the quantity chevrons and on
+    Add to Cart. See NON_DRAGGABLE_SELECTOR in assets/slideshow.js.
+  {%- endcomment -%}
   {%- if product == blank -%}
-    <div class="related-card__actions">
+    <div
+      class="related-card__actions"
+      data-slideshow-no-drag
+    >
       <div class="related-card__buy">
         <span class="related-card__quantity related-card__quantity--static">
           <span class="related-card__quantity-value">1</span>
@@ -107,6 +116,7 @@
   {%- else -%}
     <product-form-component
       class="related-card__actions"
+      data-slideshow-no-drag
       data-section-id="{{ section_id }}"
       data-product-id="{{ product.id }}"
       data-product-url="{{ product_url }}"
@@ -142,11 +152,17 @@
             can_update_quantity: can_add_to_cart
           %}
 
+          {%- comment -%}
+            `add-to-cart-button` is what gates the checkmark-burst reveal in base.css
+            (.add-to-cart-button[data-added='true'] .checkmark-burst). The label's
+            slide-out is NOT gated, so without the class the button empties itself on
+            add and nothing takes the label's place.
+          {%- endcomment -%}
           {% render 'add-to-cart-button',
             can_add_to_cart: can_add_to_cart,
             add_to_cart_text: add_label,
             product: product,
-            class: 'related-card__atc',
+            class: 'related-card__atc add-to-cart-button',
             style_class: 'button',
             show_icon: false
           %}
