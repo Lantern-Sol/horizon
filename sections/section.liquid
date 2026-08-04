@@ -9,9 +9,11 @@
   {% capture children %}
     <div class="product-faq__main">
       <header class="product-faq__header">
-        <h2>{{ section.settings.faq_heading | escape }}</h2>
+        <h2 class="product-faq__title">{{ section.settings.faq_heading | escape }}</h2>
         {% if section.settings.faq_page_link != blank %}
-          <p>Find out more on our <a href="{{ section.settings.faq_page_link }}">FAQs</a> page</p>
+          <p class="product-faq__subtitle">
+            Find out more on our <a href="{{ section.settings.faq_page_link }}"><span>FAQs</span></a> page
+          </p>
         {% endif %}
       </header>
       <div class="product-faq__accordion">
@@ -48,17 +50,32 @@
       </div>
     </div>
     <aside class="product-faq__aside">
-      <div>
-        <h3>{{ section.settings.faq_contact_heading | escape }}</h3>
-        <div class="rte">{{ section.settings.faq_contact_text }}</div>
+      <div class="product-faq__help">
+        <div class="product-faq__help-copy">
+          <h3>{{ section.settings.faq_contact_heading | escape }}</h3>
+          <div class="rte">{{ section.settings.faq_contact_text }}</div>
+        </div>
         {% if section.settings.faq_contact_link != blank %}
-          <a class="product-faq__contact" href="{{ section.settings.faq_contact_link }}">{{ section.settings.faq_contact_label | escape }} ↗</a>
+          <a class="product-faq__button" href="{{ section.settings.faq_contact_link }}">
+            {{ section.settings.faq_contact_label | escape }}
+            {%- comment -%} Figma "Icon/Arrow Top Right" (I2123:736;258:1151). {%- endcomment -%}
+            <svg class="product-faq__button-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" focusable="false">
+              <path d="M11 11V1H1M11 1L1 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
         {% endif %}
       </div>
       <div class="product-faq__catalog">
         <div class="rte">{{ section.settings.faq_catalog_text }}</div>
         {% if section.settings.faq_catalog_link != blank %}
-          <a href="{{ section.settings.faq_catalog_link }}">{{ section.settings.faq_catalog_label | escape }} ↓</a>
+          <a class="product-faq__catalog-link" href="{{ section.settings.faq_catalog_link }}">
+            <span>{{ section.settings.faq_catalog_label | escape }}</span>
+            {%- comment -%} Figma "fi-rs-sign-in" (2123:741), rotated a quarter turn into a download arrow. {%- endcomment -%}
+            <svg class="product-faq__catalog-icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false">
+              <path d="M1.33333 14V2C1.33333 1.82319 1.40357 1.65362 1.5286 1.5286C1.65362 1.40357 1.82319 1.33333 2 1.33333H5.33333V0H2C1.46957 0 0.960859 0.210714 0.585786 0.585786C0.210714 0.960859 0 1.46957 0 2L0 14C0 14.5304 0.210714 15.0391 0.585786 15.4142C0.960859 15.7893 1.46957 16 2 16H5.33333V14.6667H2C1.82319 14.6667 1.65362 14.5964 1.5286 14.4714C1.40357 14.3464 1.33333 14.1768 1.33333 14V14Z"/>
+              <path d="M16 8.66626V7.33293L5.03731 7.3536L7.91931 4.47093L6.97531 3.52826L3.91798 6.5856C3.54303 6.96065 3.3324 7.46927 3.3324 7.9996C3.3324 8.52993 3.54303 9.03854 3.91798 9.4136L6.97531 12.4709L7.91798 11.5283L5.07598 8.68626L16 8.66626Z"/>
+            </svg>
+          </a>
         {% endif %}
       </div>
     </aside>
@@ -87,38 +104,55 @@
 {% endif %}
 
 {% stylesheet %}
+  /* Figma "Section/FAQs" 2123:696 (desktop) and 2123:2120 (mobile). The 1280px card
+     sits inside 80px page gutters with 120px of breathing room above and below. */
   .section--product-faq {
     --full-page-grid-central-column-width: min(1280px, calc(100% - 160px));
-    overflow: hidden;
     margin-block: 120px;
-    border-radius: 30px;
     color: #fff;
+  }
+
+  /*
+   * The artwork and the content share one grid cell. Without this the background
+   * lands in an auto-placed row of its own — and because its only child is an
+   * absolutely positioned <img>, that row collapses to zero height and the ocean
+   * photo never shows. Pinning both to row 1 / column 2 lets the background stretch
+   * to the card's height and stay inside the page-width column.
+   */
+  .section--product-faq > .custom-section-background,
+  .section--product-faq > .custom-section-content {
+    grid-area: 1 / 2 / 2 / 3;
+    border-radius: 30px;
+  }
+
+  .section--product-faq > .custom-section-background {
+    position: relative;
+    overflow: hidden;
+    background: #064c4d;
+  }
+
+  /* Figma paints the photo under a -52.53deg wash: solid teal at the bottom-right,
+     thinning to 20% by the top-left so the waves read through. */
+  .section--product-faq > .custom-section-background::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(-52.53deg, #064c4d 7%, rgb(6 76 77 / .2) 95%);
+  }
+
+  /* base.css darkens every mobile background image with a black scrim; the design
+     keeps the card in its own teal, so opt this one out. */
+  .section--product-faq .background-image-container::before {
+    display: none;
   }
 
   .section--product-faq > .custom-section-content {
     overflow: hidden;
-    border-radius: 30px;
-    background: #064c4d;
-  }
-
-  .section--product-faq .custom-section-background {
-    position: relative;
-    overflow: hidden;
-    border-radius: 30px;
-    opacity: .72;
-  }
-
-  .section--product-faq .custom-section-background::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: linear-gradient(127deg, #064c4d 7%, rgb(6 76 77 / .2) 95%);
   }
 
   .section--product-faq > .custom-section-content > .section-content-wrapper {
     display: grid;
-    grid-template-columns: minmax(0, 872fr) minmax(300px, 408fr);
+    grid-template-columns: minmax(0, 872fr) minmax(0, 408fr);
     align-items: stretch;
     gap: 0;
   }
@@ -129,43 +163,67 @@
     background: rgb(6 76 77 / .85);
   }
 
-  .product-faq__header { margin-bottom: 32px; }
-  .product-faq__header h2 { margin: 0 0 8px; color: #fff; font-size: 48px; font-weight: 700; line-height: 1.1; }
-  .product-faq__header p { margin: 0; color: #b3f7e5; font-size: 16px; font-weight: 500; line-height: 1.5; }
-  .product-faq__header a { color: inherit; text-underline-offset: 2px; }
+  .product-faq__header { display: flex; flex-direction: column; gap: 8px; margin-bottom: 32px; }
+  .product-faq__title { margin: 0; color: #fff; font-size: 48px; font-weight: 700; line-height: 1.1; }
+  .product-faq__subtitle { margin: 0; color: #b3f7e5; font-size: 16px; font-weight: 500; line-height: 1.5; }
+  .product-faq__subtitle a { color: inherit; text-decoration: none; }
+  .product-faq__subtitle a span { text-decoration: underline; text-underline-offset: 2px; }
 
-  .product-faq__accordion { border-top: 1px solid rgb(179 247 229 / .28); }
-  .product-faq__item { border-bottom: 1px solid rgb(179 247 229 / .28); }
-  .product-faq__item summary { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 20px 8px 20px 0; color: #fff; cursor: pointer; list-style: none; font-size: 20px; font-weight: 600; line-height: 1.3; }
+  /* A rule above the first row and below every row, with 28px of air on each side
+     of the question — the accordion's 28px stack gap in Figma. */
+  .product-faq__accordion { border-top: 1px solid #2b8b83; }
+  .product-faq__item { padding-block: 28px; border-bottom: 1px solid #2b8b83; }
+  .product-faq__item summary { display: flex; align-items: center; gap: 16px; padding-inline-end: 8px; color: #fff; cursor: pointer; list-style: none; font-size: 20px; font-weight: 600; line-height: 1.3; }
   .product-faq__item summary::-webkit-details-marker { display: none; }
+  .product-faq__item summary > span:first-child { flex: 1; }
   .product-faq__toggle { position: relative; flex: 0 0 12px; width: 12px; height: 12px; }
   .product-faq__toggle::before,
-  .product-faq__toggle::after { content: ''; position: absolute; inset: 50% 0 auto; height: 1px; background: #75dfca; transition: transform .2s ease; }
+  .product-faq__toggle::after { content: ''; position: absolute; top: calc(50% - 1px); left: 0; width: 12px; height: 2px; border-radius: 1px; background: #5bc5ad; transition: transform .2s ease; }
   .product-faq__toggle::after { transform: rotate(90deg); }
+  /* Open: the upright bar swings flat onto the horizontal one, leaving a minus. */
   .product-faq__item[open] .product-faq__toggle::after { transform: rotate(0); }
-  .product-faq__answer { padding: 0 34px 20px 0; color: #fff; font-size: 16px; line-height: 1.5; }
+  .product-faq__answer { margin-top: 10px; color: #fff; font-size: 16px; font-weight: 400; line-height: 1.5; }
   .product-faq__answer > :first-child { margin-top: 0; }
   .product-faq__answer > :last-child { margin-bottom: 0; }
 
-  .product-faq__aside { display: flex; flex-direction: column; justify-content: space-between; padding: 56px; color: #fff; }
-  .product-faq__aside h3 { margin: 0 0 16px; color: #fff; font-size: 36px; font-weight: 600; line-height: 1.2; }
+  .product-faq__aside { display: flex; flex-direction: column; justify-content: space-between; gap: 48px; padding: 56px; color: #fff; }
+  .product-faq__help { display: flex; flex-direction: column; align-items: flex-start; gap: 32px; }
+  .product-faq__help-copy { display: flex; flex-direction: column; gap: 16px; }
+  .product-faq__help h3 { margin: 0; color: #fff; font-size: 36px; font-weight: 600; line-height: 1.2; }
   .product-faq__aside .rte { font-size: 16px; line-height: 1.5; }
-  .product-faq__contact { display: inline-flex; margin-top: 24px; padding: 14px 28px; border: 1px solid #fff; border-radius: 80px; color: #fff; background: rgb(255 255 255 / .16); text-decoration: none; font-size: 16px; font-weight: 600; letter-spacing: .02em; }
-  .product-faq__catalog { margin-top: 48px; }
-  .product-faq__catalog a { display: inline-block; margin-top: 16px; color: #b3f7e5; font-size: 14px; font-weight: 600; text-underline-offset: 3px; }
+  .product-faq__aside .rte > :first-child { margin-top: 0; }
+  .product-faq__aside .rte > :last-child { margin-bottom: 0; }
+
+  .product-faq__button { display: inline-flex; align-items: center; gap: 10px; padding: 14px 28px; border: 1px solid #fff; border-radius: 80px; color: #fff; background: rgb(255 255 255 / .16); text-decoration: none; font-size: 16px; font-weight: 600; letter-spacing: .02em; transition: background-color .2s ease; }
+  .product-faq__button:hover { background: rgb(255 255 255 / .28); }
+  .product-faq__button-icon { flex: 0 0 12px; }
+
+  .product-faq__catalog { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
+  .product-faq__catalog-link { display: inline-flex; align-items: center; gap: 10px; padding-block: 6px; color: #b3f7e5; text-decoration: none; font-size: 14px; font-weight: 600; letter-spacing: .02em; }
+  .product-faq__catalog-link span { text-decoration: underline; text-underline-offset: 3px; }
+  .product-faq__catalog-icon { flex: 0 0 16px; transform: rotate(-90deg); }
+
+  /* Between the mobile stack and the full 1280px card the aside still has to hold a
+     36px heading, so ease the panel padding in rather than letting the copy pinch. */
+  @media screen and (min-width: 750px) and (max-width: 1099px) {
+    .section--product-faq { --full-page-grid-central-column-width: calc(100% - 64px); margin-block: 80px; }
+    .product-faq__main,
+    .product-faq__aside { padding: 40px; }
+    .product-faq__title { font-size: 40px; }
+    .product-faq__help h3 { font-size: 28px; }
+    .product-faq__help { gap: 24px; }
+  }
 
   @media screen and (max-width: 749px) {
-    .section--product-faq { --full-page-grid-central-column-width: calc(100% - 32px); margin-block: 64px; border-radius: 20px; }
-    .section--product-faq > .custom-section-content,
-    .section--product-faq .custom-section-background { border-radius: 20px; }
+    .section--product-faq { --full-page-grid-central-column-width: calc(100% - 32px); margin-block: 48px; }
     .section--product-faq > .custom-section-content > .section-content-wrapper { grid-template-columns: 1fr; }
-    .product-faq__main { padding: 32px 24px; border-radius: 20px; }
-    .product-faq__header h2 { font-size: 36px; }
-    .product-faq__item summary { padding-block: 18px; font-size: 18px; }
-    .product-faq__answer { padding-right: 20px; font-size: 15px; }
-    .product-faq__aside { gap: 48px; padding: 32px 24px; }
-    .product-faq__aside h3 { font-size: 30px; }
-    .product-faq__catalog { margin-top: 0; }
+    .product-faq__main { padding: 32px 24px; }
+    .product-faq__aside { padding: 32px 24px; }
+    .product-faq__help { gap: 24px; }
+    .product-faq__help-copy { gap: 8px; }
+    .product-faq__help h3 { font-size: 24px; line-height: 1.1; }
+    /* Mobile promotes the catalog line to the small semibold body style. */
+    .product-faq__catalog .rte { font-size: 14px; font-weight: 600; }
   }
 
   /* Two panels sitting flush inside one rounded, clipped container. Existing group
