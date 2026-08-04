@@ -398,6 +398,26 @@
      landing in the middle of the whole card until the button became `position: relative`
      above — `filter` on .pairs-card had been acting as the containing block. */
   .pairs-card__actions .quick-add__button .add-to-cart__added-icon { width: 24px; height: 24px; }
+  /*
+    quick-add-styles reuses ::before on this button as a "hover stabiliser" — an invisible box
+    at `inset: -10px` that widens the hit area of the quick-add badge floating over a product
+    card. base.css uses that same ::before for the button fill, so on hover the stabiliser's
+    offsets replaced the fill's own: `left: -10px` against the fill's `width: 100%` leaves the
+    box over-constrained, the inline-end offset is dropped, and the fill ends up sitting 10px
+    to the left of the pill. The last 10px of the right cap therefore never got painted, which
+    is the crescent the wipe appeared to stop short of. Only the 3-column card showed it — the
+    narrow card stacks the actions, where the pill is wide enough for 10px to read as a sliver.
+
+    Restoring base.css's offsets costs nothing: the stabiliser is for a floating badge, and
+    base.css marks this pseudo pointer-events: none, so it was never a hit area here.
+
+    The 1.03 hover scale goes for the same reason `scale: 1` is set above — also a floating
+    badge affordance, and here it only made the Add pill wider than the View Product pill
+    directly beneath it.
+  */
+  .pairs-card__actions .quick-add__button:hover::before { inset-block: auto -100%; inset-inline: 0 auto; }
+  .pairs-card__actions .quick-add__button:hover { scale: 1; }
+
   .pairs-card__view { --button-fill-color: #064c4d; --button-fill-under: #fff; align-items: center; justify-content: center; gap: 10px; border: 1px solid #064c4d; color: #064c4d; background: #fff; text-decoration: none; }
   .pairs-card__view svg { width: 10px; height: 10px; --stroke-0: #064c4d; }
 
