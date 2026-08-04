@@ -27,6 +27,27 @@
   unless product_ref.metafields.custom.sustainability_heading == blank
     assign si_active = true
   endunless
+
+  # Figma 2123:578 fills the section with a Sand/200 -> Sand/50 gradient rather than a flat
+  # colour. Built here as a single string, the way blocks/offset-media-card.liquid does it, so
+  # the CSS only ever reads one custom property and never has to know which mode is active.
+  if section.settings.use_gradient
+    capture si_background_image
+      echo 'linear-gradient('
+      echo section.settings.gradient_angle
+      echo 'deg, '
+      echo section.settings.gradient_start_color
+      echo ' '
+      echo section.settings.gradient_start_position
+      echo '%, '
+      echo section.settings.gradient_end_color
+      echo ' '
+      echo section.settings.gradient_end_position
+      echo '%)'
+    endcapture
+  else
+    assign si_background_image = 'none'
+  endif
 -%}
 
 {%- if si_active -%}
@@ -37,7 +58,10 @@
   endif
 %}
  
-<div class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %} sustainability-impact-bg"></div>
+<div
+  class="section-background{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %} sustainability-impact-bg"
+  style="--sustainability-background-image: {{ si_background_image }};"
+></div>
 
 <section
   class="sustainability-impact section section--page-width spacing-style{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
@@ -63,16 +87,31 @@
       {%- endif -%}
 
       {%- if si_btn_label != blank -%}
+        {%- comment -%}
+          Figma calls this Button/Primary/LG, so it takes the theme's primary `button` class —
+          `button-secondary` was pulling in the outlined secondary colour tokens.
+        {%- endcomment -%}
         <a
           href="{{ si_btn_url | default: '#' }}"
-          class="sustainability-impact__cta button button-secondary"
+          class="sustainability-impact__cta button"
           {% if section.settings.open_in_new_tab %}
             target="_blank"
             rel="noopener noreferrer"
           {% endif %}
         >
           {{- si_btn_label -}}
-          <span class="sustainability-impact__cta-arrow" aria-hidden="true">&#x2197;</span>
+          <span class="sustainability-impact__cta-arrow" aria-hidden="true">
+            {%- comment -%} Figma 2998:207 — Icon/Arrow Top Right, 24px frame, 2px round stroke. {%- endcomment -%}
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false">
+              <path
+                d="M17 17V7H7M17 7L7 17"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </span>
         </a>
       {%- endif -%}
     </div>
@@ -161,8 +200,12 @@
           </div>
           {%- if si_badge_text != blank -%}
             <div class="sustainability-impact__feature-content" aria-label="{{ si_badge_text }}">
+              {%- comment -%}
+                Figma 2123:617 — the "ocean" mark draws its own ring, so it replaces the
+                three-line wave mark that used to sit inside a CSS border circle.
+              {%- endcomment -%}
               <span class="sustainability-impact__impact-icon" aria-hidden="true">
-                {{- 'sana-wave-mark.svg' | inline_asset_content -}}
+                {{- 'sana-ocean-mark.svg' | inline_asset_content -}}
               </span>
               <span class="sustainability-impact__feature-text">{{- si_badge_text -}}</span>
             </div>
@@ -182,33 +225,32 @@
 {% stylesheet %}
 
   /* ─────────────────────────────────────────────────
-     Background: warm sand, matching the Figma design.
-     Falls back to the brand sand-100 token when no
-     custom colour is set in section settings.
+     Background — the section's own background is not
+     paintable: base.css forces
+     `.shopify-section:not(.header-section) :is(.section, .cart-summary)`
+     to `background: transparent` at (0,3,0). Everything
+     visible comes from the .section-background sibling,
+     which base.css paints with `background-color:
+     var(--color-background)` at the same specificity.
+     So the gradient rides on background-image, the one
+     background property nothing else declares here, and
+     the flat `background_color` setting keeps working
+     underneath it via contrast-override.
      ───────────────────────────────────────────────── */
   .sustainability-impact-bg {
-    background-color: var(--color-sand-100, #f3ebe1);
+    background-image: var(--sustainability-background-image, none);
   }
 
   .sustainability-impact {
+    /* Figma keeps the heading and body on Teal/800 across every background variant, so these
+       deliberately do not track contrast-override's --color. */
     --sustainability-heading-color: var(--color-teal-800, #064c4d);
     --sustainability-body-color: var(--color-teal-800, #064c4d);
     --sustainability-card-radius: 16px;
 
-    background-color: var(--color-sand-100, #f3ebe1);
     /* Override the default section grid so we can use our own inner layout */
     display: block;
     padding-block: max(64px, calc(var(--spacing-scale, 1) * 5rem));
-  }
-
-  .sustainability-impact.color-custom-{{ section.id }},
-  .sustainability-impact-bg.color-custom-{{ section.id }} {
-    background-color: var(--color-background);
-  }
-
-  .sustainability-impact.color-custom-{{ section.id }} {
-    --sustainability-heading-color: var(--color);
-    --sustainability-body-color: var(--color);
   }
 
   /* ─────────────────────────────────────────────────
@@ -268,11 +310,12 @@
     margin: 0;
   }
 
-  /* Figma "Learn More" — solid Teal/800 pill, white label, UI/Button/Large. */
+  /* Figma 2123:583 "Learn More" — solid Teal/800 pill, white label, UI/Button/Large.
+     Measured 191x53: 28px side padding, 110px label, 10px gap, 15px icon slot. */
   .sustainability-impact__cta.sustainability-impact__cta {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 10px;
     margin-top: 0.5rem;
     padding: 14px 28px;
     border: 0;
@@ -285,10 +328,38 @@
     letter-spacing: var(--font-button--letter-spacing, 0.02em);
   }
 
+  /* Figma centres a 24px icon frame on a 15px slot, so the glyph overflows by 4.5px a side.
+     Reproducing the slot width rather than the frame width is what keeps the 10px gap honest. */
   .sustainability-impact__cta-arrow {
-    font-size: 1em;
-    line-height: 1;
-    display: inline-block;
+    position: relative;
+    display: block;
+    flex: none;
+    width: 15px;
+    height: 15px;
+  }
+
+  /* Shared arrow motion: --button-arrow-hover-transform levels the ↗ glyph out to → and nudges
+     it 2px right. Referencing the theme vars rather than re-deriving the motion also means
+     prefers-reduced-motion is already handled — theme-styles-variables drops the speed to 0s. */
+  /* Centred with negative margins rather than grid alignment or translate(-50%, -50%): grid
+     start-aligns a subject that overflows its area, and a centring transform would be wiped
+     out by the hover transform below. */
+  .sustainability-impact__cta-arrow svg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: block;
+    width: 24px;
+    height: 24px;
+    margin: -12px 0 0 -12px;
+    /* base.css caps every svg at max-width: 100%, which clamped this to the 15px slot and let
+       preserveAspectRatio shrink the glyph to ~6px. The overflow is deliberate — release it. */
+    max-width: none;
+    transition: var(--button-arrow-transition, transform 0.25s ease);
+  }
+
+  .sustainability-impact__cta:is(:hover, :focus-visible) .sustainability-impact__cta-arrow svg {
+    transform: var(--button-arrow-hover-transform, translate(2px, 0) rotate(45deg));
   }
 
   /* ─────────────────────────────────────────────────
@@ -441,39 +512,41 @@
     pointer-events: none;
   }
 
+  /* Figma 2123:612 bottom-anchors the content box: 24px side padding, 32px from the base,
+     24px between the mark and the label. */
   .sustainability-impact__feature-content {
     position: absolute;
     z-index: 1;
-    inset: auto 1.5rem 1.5rem;
+    inset: auto 24px 32px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 1rem;
+    gap: 24px;
   }
 
   /* The mark is inlined in the markup — a mask: url() here cannot work, because this
-     stylesheet block is served as static CSS and never has its Liquid rendered. */
+     stylesheet block is served as static CSS and never has its Liquid rendered.
+     The ocean mark draws its own ring, so there is no CSS border circle around it. */
   .sustainability-impact__impact-icon {
-    display: grid;
-    width: 4rem;
-    height: 4rem;
-    place-items: center;
-    border: 2px solid #fff;
-    border-radius: 50%;
+    display: block;
+    width: 68px;
+    height: 68px;
     color: #fff;
   }
 
   .sustainability-impact__impact-icon svg {
-    width: 2.9rem;
-    height: auto;
+    display: block;
+    width: 100%;
+    height: 100%;
     fill: currentcolor;
   }
 
+  /* Figma Body/XL/SemiBold — 24px / 600 / 1.3. */
   .sustainability-impact__feature-text {
     font-family: var(--font-heading--family);
-    font-size: var(--font-size--h4, 1.5rem);
-    font-weight: 700;
-    line-height: 1.25;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.3;
     color: #fff;
   }
 
@@ -562,10 +635,69 @@
       "default": false
     },
     {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_gradient",
+      "label": "Use gradient background",
+      "info": "Defaults to the warm sand gradient from the design.",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "gradient_start_color",
+      "label": "Gradient start",
+      "default": "#e6d7c3",
+      "visible_if": "{{ section.settings.use_gradient }}"
+    },
+    {
+      "type": "color",
+      "id": "gradient_end_color",
+      "label": "Gradient end",
+      "default": "#f7f1eb",
+      "visible_if": "{{ section.settings.use_gradient }}"
+    },
+    {
+      "type": "range",
+      "id": "gradient_angle",
+      "label": "Gradient angle",
+      "min": -180,
+      "max": 180,
+      "step": 4,
+      "unit": "deg",
+      "default": -36,
+      "visible_if": "{{ section.settings.use_gradient }}"
+    },
+    {
+      "type": "range",
+      "id": "gradient_start_position",
+      "label": "Gradient start position",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 35,
+      "visible_if": "{{ section.settings.use_gradient }}"
+    },
+    {
+      "type": "range",
+      "id": "gradient_end_position",
+      "label": "Gradient end position",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 88,
+      "visible_if": "{{ section.settings.use_gradient }}"
+    },
+    {
       "type": "color",
       "id": "background_color",
       "label": "Background colour",
-      "placeholder": "Default (warm sand)"
+      "placeholder": "Default (warm sand)",
+      "info": "Sits behind the gradient. Shown on its own when the gradient is switched off."
     },
     {
       "type": "header",
