@@ -34,7 +34,7 @@
 {% render 'product-badges-styles' %}
 <product-recommendations
   id="product-recommendations-{{ block.id }}"
-  class="product-recommendations"
+  class="product-recommendations{% if block_settings.compact_pairs_style %} product-recommendations--pairs{% endif %}"
   data-url="{{ routes.product_recommendations_url }}?limit={{ block_settings.max_products }}"
   data-section-id="{{ section.id }}"
   data-product-id="{{ closest.product.id }}"
@@ -92,15 +92,52 @@
       {% capture list_items %}
         {% for product in products limit: block_settings.max_products %}
           <div class="resource-list__item">
-            {% content_for 'block',
-              type: '_product-card',
-              id: 'static-product-card',
-              closest.product: product
-            %}
+            {% if block_settings.compact_pairs_style and product != blank %}
+              <article class="pairs-card">
+                <a class="pairs-card__media" href="{{ product.selected_or_first_available_variant.url }}" aria-label="{{ product.title | escape }}">
+                  {% if product.featured_image != blank %}
+                    {{ product.featured_image | image_url: width: 240 | image_tag: loading: 'lazy', sizes: '96px', alt: product.featured_image.alt | default: product.title }}
+                  {% endif %}
+                </a>
+                <div class="pairs-card__details">
+                  <h3><a href="{{ product.selected_or_first_available_variant.url }}">{{ product.title | escape }}</a></h3>
+                  {% liquid
+                    assign pairs_units_per_case = product.metafields.custom.units_per_case.value | plus: 0
+                    if pairs_units_per_case <= 0
+                      assign pairs_units_per_case = 1000
+                    endif
+                    assign pairs_case_price = product.selected_or_first_available_variant.price
+                    assign pairs_unit_price = pairs_case_price | divided_by: pairs_units_per_case
+                  %}
+                  <dl class="pairs-card__prices">
+                    <div><dt>{{ block_settings.unit_price_label | escape }}</dt><dd>{{ pairs_unit_price | money }}</dd></div>
+                    <div><dt>{{ block_settings.case_price_label | escape }}</dt><dd>{{ pairs_case_price | money }}</dd></div>
+                  </dl>
+                </div>
+                <div class="pairs-card__actions">
+                  {% render 'quick-add', product: product, section_id: section.id, block: block, show_icon: false, style_class: 'button', add_to_cart_text: block_settings.add_label, force_add: true %}
+                  <a class="button-secondary pairs-card__view" href="{{ product.selected_or_first_available_variant.url }}">
+                    {{ block_settings.view_label | escape }}
+                    {{ 'icon-arrow-top-right-small.svg' | inline_asset_content }}
+                  </a>
+                </div>
+              </article>
+            {% else %}
+              {% content_for 'block',
+                type: '_product-card',
+                id: 'static-product-card',
+                closest.product: product
+              %}
+            {% endif %}
           </div>
           {% if block_settings.layout_type == 'carousel' or block_settings.carousel_on_mobile %}
             {% unless forloop.last %}
-              <!--@list/split-->
+              {% if block_settings.compact_pairs_style %}
+                {% assign pairs_group_modulo = forloop.index | modulo: 2 %}
+                {% if pairs_group_modulo == 0 %}<!--@list/split-->{% endif %}
+              {% else %}
+                <!--@list/split-->
+              {% endif %}
             {% endunless %}
           {% endif %}
         {% endfor %}
@@ -110,6 +147,8 @@
         # Create an array from the list items to be used in the carousel
         assign slide_content = list_items | strip
         assign slides = slide_content | split: '<!--@list/split-->'
+
+        assign recommendation_slide_count = slides.size
 
         if products != blank and products.size > 0
           assign has_recommendations = 'true'
@@ -138,7 +177,7 @@
             {% render 'resource-list-carousel',
               ref: 'resourceListCarousel',
               slides: slides,
-              slide_count: recommendations.products.size,
+              slide_count: recommendation_slide_count,
               settings: block_settings
             %}
         {% endcase %}
@@ -159,7 +198,7 @@
           {% render 'resource-list-carousel',
             ref: 'resourceListCarouselMobile',
             slides: slides,
-            slide_count: recommendations.products.size,
+            slide_count: recommendation_slide_count,
             settings: block_settings
           %}
         </div>
@@ -195,6 +234,102 @@
 
   .product-recommendations-wrapper:has(product-recommendations[data-shopify-editor-preview]) {
     width: 100vw;
+  }
+
+  .product-recommendations--pairs .block-resource-list {
+    gap: 16px;
+    padding: 20px;
+    border-radius: 16px;
+    color: #064c4d;
+    background: #f7f1eb;
+  }
+
+  .product-recommendations--pairs .section-resource-list__content {
+    padding-block: 8px;
+    border-bottom: 1px solid #e6d7c3;
+  }
+
+  .product-recommendations--pairs .section-resource-list__content :is(h2, h3, p) {
+    margin: 0;
+    color: #064c4d;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  .product-recommendations--pairs .resource-list__carousel slideshow-slides { gap: 16px; }
+  .product-recommendations--pairs .resource-list__carousel .resource-list__slide { --slide-width: 100%; width: 100%; height: auto; max-width: none; max-height: none; display: flex; flex: 0 0 100%; flex-direction: column; gap: 16px; overflow: visible; contain: none; content-visibility: visible; }
+  /* Each slide stacks two cards. The carousel stretches every item to the full slide
+     height, so two items summed to twice the slide and the second one spilled out,
+     leaving a tall empty band under the first card. */
+  .product-recommendations--pairs .resource-list__slide > .resource-list__item { width: 100%; flex: 0 0 auto; height: auto; min-height: 0; }
+  /* The arrows are absolutely positioned against the carousel but need to sit in the
+     header row above it. The carousel starts 76px below the container top and the heading's
+     centre line is at 39.5px, so a 30px control centres on it at -51.5px. */
+  .product-recommendations--pairs .resource-list__carousel slideshow-arrows { inset: -51.5px 0 auto auto; z-index: 3; align-items: center; justify-content: flex-end; gap: 10px; padding: 0; mix-blend-mode: normal; pointer-events: none; }
+  /* The control is a flex box with default (normal) alignment, so the 20px glyph sat in the
+     top-right of the 30px circle instead of its centre. */
+  .product-recommendations--pairs .resource-list__carousel slideshow-arrows .slideshow-control { display: flex; align-items: center; justify-content: center; width: 30px; min-width: 30px; height: 30px; min-height: 30px; padding: 0; border: 1px solid #064c4d; border-radius: 50%; color: #064c4d; opacity: 1; pointer-events: auto; }
+  .product-recommendations--pairs .resource-list__carousel slideshow-arrows .slideshow-control svg { display: block; margin: 0; }
+  .product-recommendations--pairs .resource-list__carousel slideshow-arrows .slideshow-control[disabled] { display: flex; opacity: .35; }
+
+  .pairs-card {
+    display: grid;
+    grid-template-columns: 87px minmax(0, 1fr) 148px;
+    align-items: center;
+    gap: 24px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    color: #064c4d;
+    background: #fff;
+    /* Figma uses a drop shadow, not a box shadow: `filter` follows the 16px corner radius,
+       where `box-shadow` at this offset/blur pooled into a square band along the bottom. */
+    filter: drop-shadow(4px 4px 10px rgb(0 0 0 / .12));
+  }
+
+  .pairs-card__media { display: block; width: 87px; height: 109px; overflow: hidden; border-radius: 8px; background: #f7f1eb; }
+  .pairs-card__media img { width: 100%; height: 100%; object-fit: cover; }
+  .pairs-card__details { display: flex; align-self: stretch; flex-direction: column; justify-content: space-between; min-width: 0; }
+  .pairs-card__details h3 { margin: 0; padding-left: 4px; font-size: 18px; font-weight: 600; line-height: 1.25; }
+  .pairs-card__details h3 a { color: inherit; text-decoration: none; }
+  .pairs-card__prices { display: flex; flex-direction: column; gap: 0; margin: 0; padding: 8px 16px; border-radius: 12px; background: #f0fdfa; font-size: 14px; line-height: 1.5; }
+  .pairs-card__prices div { display: flex; justify-content: space-between; gap: 12px; }
+  .pairs-card__prices dd { margin: 0; }
+  .pairs-card__actions { display: flex; flex-direction: column; justify-content: center; gap: 8px; }
+  .pairs-card__actions .quick-add { position: static; inset: auto; width: 100%; pointer-events: auto; }
+  .pairs-card__actions product-form-component, .pairs-card__actions form { width: 100%; height: auto; }
+  .pairs-card__actions .quick-add__product-form-component .shopify-product-form { display: block; height: auto; }
+  /* nowrap + tighter inline padding: "View Product" plus its arrow does not fit on one
+     line inside the 148px action column at 20px padding, and was breaking in two. */
+  .pairs-card__actions .quick-add__button, .pairs-card__view { position: static; inset: auto; display: flex; width: 100%; min-height: 38px; height: 38px; padding: 10px 12px; border-radius: 80px; opacity: 1; font-size: 14px; font-weight: 600; line-height: normal; letter-spacing: .02em; white-space: nowrap; scale: 1; transform: none; translate: none; }
+  .pairs-card__actions .quick-add__button { color: #fff; background: #064c4d; }
+  .pairs-card__actions [data-quick-add-button='add'] .quick-add__button--choose { display: none; }
+  .pairs-card__actions .quick-add__button .add-to-cart-text { width: 100%; justify-content: center; color: #fff; background: transparent; }
+  .pairs-card__actions .quick-add__button .add-to-cart-text::after { content: '+'; margin-inline-start: 10px; font-size: 18px; font-weight: 400; line-height: 1; }
+  .pairs-card__actions .quick-add__button .add-to-cart-text__content { grid-template-columns: 1fr; }
+  .pairs-card__actions .quick-add__button .add-to-cart-text__content > span > span { padding: 0; opacity: 1; filter: none; translate: 0 0; }
+  .pairs-card__view { align-items: center; justify-content: center; gap: 10px; border: 1px solid #064c4d; color: #064c4d; background: #fff; text-decoration: none; }
+  .pairs-card__view svg { width: 10px; height: 10px; --stroke-0: #064c4d; }
+
+  /* Hover states. The theme scales a radial fill over these buttons on hover and swaps
+     --button-color, but both rules above pin `color` directly, so the token swap never
+     reached the label: "View Product" ended up dark teal on the dark-teal fill and read as
+     disappearing. These pin the hover colours to match each fill instead. */
+  .pairs-card__actions .quick-add__button:is(:hover, :focus-visible),
+  .pairs-card__actions .quick-add__button:is(:hover, :focus-visible) .add-to-cart-text,
+  .pairs-card__actions .quick-add__button:is(:hover, :focus-visible) .add-to-cart-text__content > span > span { color: #fff; opacity: 1; filter: none; translate: 0 0; }
+
+  .pairs-card__view:is(:hover, :focus-visible) { color: #fff; border-color: #064c4d; }
+  .pairs-card__view:is(:hover, :focus-visible) svg { --stroke-0: #fff; }
+
+  @container resource-list (max-width: 520px) {
+    .product-recommendations--pairs .block-resource-list { padding: 20px; }
+    .pairs-card { grid-template-columns: 87px minmax(0, 1fr); gap: 16px 24px; padding: 12px 14px; }
+    .pairs-card__media { width: 87px; height: 109px; }
+    .pairs-card__actions { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; }
+    .pairs-card__details { justify-content: center; gap: 8px; }
+    .pairs-card__details h3 { font-size: 18px; }
+    .pairs-card__prices { padding: 8px 16px; }
   }
 {% endstylesheet %}
 
@@ -234,6 +369,40 @@
     {
       "type": "paragraph",
       "content": "t:content.complementary_products"
+    },
+    {
+      "type": "checkbox",
+      "id": "compact_pairs_style",
+      "label": "Use Pairs well with design",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "unit_price_label",
+      "label": "Unit price label",
+      "default": "Per Unit",
+      "visible_if": "{{ block.settings.compact_pairs_style }}"
+    },
+    {
+      "type": "text",
+      "id": "case_price_label",
+      "label": "Case price label",
+      "default": "Per Case",
+      "visible_if": "{{ block.settings.compact_pairs_style }}"
+    },
+    {
+      "type": "text",
+      "id": "add_label",
+      "label": "Add button label",
+      "default": "Add",
+      "visible_if": "{{ block.settings.compact_pairs_style }}"
+    },
+    {
+      "type": "text",
+      "id": "view_label",
+      "label": "View button label",
+      "default": "View Product",
+      "visible_if": "{{ block.settings.compact_pairs_style }}"
     },
     {
       "type": "header",
