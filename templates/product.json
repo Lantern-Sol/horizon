@@ -1844,7 +1844,8 @@
       }
     },
     "17856462041081c59d": {
-      "type": "_blocks",
+      "type": "section",
+      "name": "Customer Reviews",
       "blocks": {
         "klaviyo_reviews_product_reviews_mjABn9": {
           "type": "shopify://apps/klaviyo-reviews/blocks/product-reviews/db20e365-d984-4ac4-9655-e1588d951ca9",
@@ -1857,12 +1858,13 @@
       "settings": {
         "content_direction": "column",
         "vertical_on_mobile": true,
+        "klaviyo_reviews_style": true,
         "horizontal_alignment": "flex-start",
         "vertical_alignment": "center",
         "align_baseline": false,
         "horizontal_alignment_flex_direction_column": "flex-start",
         "vertical_alignment_flex_direction_column": "center",
-        "gap": 12,
+        "gap": 0,
         "section_width": "page-width",
         "section_height": "",
         "section_height_custom": 50,
@@ -1880,7 +1882,9 @@
         "border_color": "",
         "border_radius": 0,
         "padding-block-start": 0,
-        "padding-block-end": 0
+        "padding-block-end": 0,
+        "padding-inline-start": 0,
+        "padding-inline-end": 0
       }
     },
     "product_faq": {

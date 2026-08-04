@@ -69,6 +69,14 @@
   {% endcapture %}
 {% endif %}
 
+{% comment %}
+  The Klaviyo reviews design needs no markup of its own — the app block's widget
+  already renders the heading, the rule and the summary. Only the stylesheet.
+{% endcomment %}
+{% if section.settings.klaviyo_reviews_style %}
+  {% render 'klaviyo-reviews-styles' %}
+{% endif %}
+
 {% if show_section %}
   {% render 'section',
     section: section,
@@ -404,6 +412,13 @@
       "type": "checkbox",
       "id": "product_faq_style",
       "label": "Use product metafield FAQ design",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "klaviyo_reviews_style",
+      "label": "Use Klaviyo reviews design",
+      "info": "Restyles the Klaviyo product reviews app block to the customer reviews design. Add that app block to this section.",
       "default": false
     },
     {
