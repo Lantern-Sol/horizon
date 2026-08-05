@@ -1,0 +1,155 @@
+{{ 'checklist-icn.css' | asset_url | stylesheet_tag }}
+{% liquid
+  assign s = block.settings
+%}
+
+<div
+  class="checklist checklist--{{ block.id }} checklist--icon-{{ s.icon_style }}"
+  style="
+    --checklist-text-color: {{ s.text_color }};
+    --checklist-checkbox-border-color: {{ s.checkbox_border_color }};
+    {% if s.icon_style == 'image' and s.icon_image != blank %}
+      --checklist-icon-image-url: url({{ s.icon_image | image_url: width: 64 }});
+    {% endif %}
+  "
+  {{ block.shopify_attributes }}
+>
+  {% content_for 'blocks' %}
+</div>
+
+{% stylesheet %}
+  .checklist {
+    display: grid;
+    gap: 5px;
+  }
+
+  /* Shared item styles live here so children can inherit */
+  .checklist__item {
+    display: block;
+  }
+
+  .checklist__input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .checklist__label {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--gap-sm, 12px);
+    color: var(--checklist-text-color);
+    min-height: var(--minimum-touch-target);
+    cursor: pointer;
+  }
+ 
+  .checklist__box {
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--checklist-checkbox-border-color);
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .checklist__icon {
+    display: none;
+    width: 16px;
+    height: 16px;
+    color: var(--checklist-text-color);
+  }
+
+  /* Image icon variant renders via pseudo element for performance */
+  .checklist--icon-image .checklist__box::after {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    background-image: var(--checklist-icon-image-url);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    display: none;
+  }
+
+  /* Show selected icon only when the item is checked */
+  .checklist--icon-checkmark .checklist__input:checked + .checklist__label .checklist__icon--checkmark { display: inline-flex; }
+  .checklist--icon-plus .checklist__input:checked + .checklist__label .checklist__icon--plus { display: inline-flex; }
+  .checklist--icon-caret .checklist__input:checked + .checklist__label .checklist__icon--caret { display: inline-flex; }
+  .checklist--icon-close .checklist__input:checked + .checklist__label .checklist__icon--close { display: inline-flex; }
+  .checklist--icon-image .checklist__input:checked + .checklist__label .checklist__box::after { display: block; }
+
+  /* Optional hover focus styles */
+  .checklist__label:focus-visible .checklist__box { outline: 2px solid var(--checklist-text-color); outline-offset: 2px; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Checklist",
+  "tag": null,
+  "blocks": [
+    { "type": "checklist-item" }
+  ],
+  "settings": [
+    {
+      "type": "select",
+      "id": "icon_style",
+      "label": "Checked icon",
+      "options": [
+        { "value": "checkmark", "label": "Checkmark" },
+        { "value": "plus", "label": "Plus" },
+        { "value": "caret", "label": "Caret" },
+        { "value": "close", "label": "Close" },
+        { "value": "image", "label": "Custom image" }
+      ],
+      "default": "checkmark"
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_image",
+      "label": "Custom icon image",
+      "visible_if": "{{ block.settings.icon_style == 'image' }}"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "checkbox_border_color",
+      "label": "Checkbox border color",
+      "default": "#000000"
+    }
+  ]
+  ,
+  "presets": [
+    {
+      "name": "Checklist",
+      "category": "t:categories.basic",
+      "blocks": {
+        "item-1": {
+          "type": "checklist-item",
+          "settings": { "text": "Rubber flooring rolls or tiles" }
+        },
+        "item-2": {
+          "type": "checklist-item",
+          "settings": { "text": "Measuring tape" }
+        },
+        "item-3": {
+          "type": "checklist-item",
+          "settings": { "text": "Utility knife or rubber cutter" }
+        }
+      },
+      "block_order": ["item-1", "item-2", "item-3"],
+      "settings": {
+        "icon_style": "checkmark",
+        "text_color": "#ffffff",
+        "checkbox_border_color": "#ffffff"
+      }
+    }
+  ]
+}
+{% endschema %}

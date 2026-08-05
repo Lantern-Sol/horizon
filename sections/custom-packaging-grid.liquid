@@ -1,0 +1,941 @@
+{%- liquid
+  assign bg_color = section.settings.section_bg_color | default: '#f7f1eb'
+  assign overlay_color = section.settings.featured_bg_color_1 | default: '#064c4d'
+  assign featured_fallback = section.settings.featured_bg_color_2 | default: '#064c4d'
+  assign wave_color = section.settings.wave_icon_color | default: '#5bc5ad'
+  assign text_color = section.settings.featured_text_color | default: '#ffffff'
+  assign card_text_color = section.settings.card_text_color | default: '#064c4d'
+-%}
+
+<div
+  id="CustomPackagingGrid-{{ section.id }}"
+  class="custom-packaging-grid-section"
+  style="
+    --section-bg-color: {{ bg_color }};
+    --overlay-color: {{ overlay_color }};
+    --overlay-angle: {{ section.settings.overlay_angle }}deg;
+    --overlay-angle-mobile: {{ section.settings.overlay_angle_mobile }}deg;
+    --featured-fallback-color: {{ featured_fallback }};
+    --wave-color: {{ wave_color }};
+    --wave-icon: url('{{ 'sana-wave-mark.svg' | asset_url }}');
+    --arrow-icon: url('{{ 'icon-arrow-top-right.svg' | asset_url }}');
+    --featured-text-color: {{ text_color }};
+    --featured-title-size: {{ section.settings.featured_title_size }}px;
+    --featured-title-size-mobile: {{ section.settings.featured_title_size_mobile }}px;
+    --button-bg-color: {{ section.settings.button_bg_color }};
+    --button-bg-hover-color: {{ section.settings.button_bg_hover_color }};
+    --button-text-color: {{ section.settings.button_text_color }};
+    --card-bg-color: {{ section.settings.card_bg_color }};
+    --card-text-color: {{ card_text_color }};
+    --card-desc-color: {{ section.settings.card_desc_color }};
+    --card-title-size: {{ section.settings.card_title_size }}px;
+    --card-title-size-mobile: {{ section.settings.card_title_size_mobile }}px;
+    --card-body-size: {{ section.settings.card_body_size }}px;
+    --card-icon-color: {{ section.settings.card_icon_color }};
+    --card-icon-bg-start: {{ section.settings.card_icon_bg_start }};
+    --card-icon-bg-end: {{ section.settings.card_icon_bg_end }};
+    --card-icon-border-color: {{ section.settings.card_icon_border_color }};
+    --corner-radius: {{ section.settings.corner_radius }}px;
+    --grid-gap: {{ section.settings.grid_gap }}px;
+    --padding-block-start: {{ section.settings['padding-block-start'] }}px;
+    --padding-block-end: {{ section.settings['padding-block-end'] }}px;
+    --padding-inline: {{ section.settings['padding-inline'] }}px;
+    --padding-block-start-mobile: {{ section.settings['padding-block-start-mobile'] }}px;
+    --padding-block-end-mobile: {{ section.settings['padding-block-end-mobile'] }}px;
+    --padding-inline-mobile: {{ section.settings['padding-inline-mobile'] }}px;
+  "
+>
+  <div class="custom-packaging-grid__container">
+    <div class="custom-packaging-grid__layout">
+      <!-- Featured banner — spans two columns on desktop, full width below -->
+      <div class="custom-packaging-grid__featured-card">
+        <!--
+          The photograph and its scrim sit on their own layer so the corner notch can be masked out
+          of both at once, leaving the copy and the wave mark — which live outside the mask —
+          untouched.
+        -->
+        <div class="custom-packaging-grid__featured-surface" aria-hidden="true">
+          {%- if section.settings.featured_image != blank -%}
+            {{
+              section.settings.featured_image
+              | image_url: width: 1692
+              | image_tag:
+                class: 'custom-packaging-grid__featured-img',
+                loading: 'lazy',
+                sizes: '(max-width: 749px) 100vw, 66vw',
+                widths: '420, 640, 846, 1280, 1692'
+            }}
+          {%- endif -%}
+
+          <!-- Teal scrim: opaque behind the copy, clearing to nothing over the photograph -->
+          <div class="custom-packaging-grid__featured-scrim"></div>
+        </div>
+
+        <span class="custom-packaging-grid__wave" aria-hidden="true"></span>
+
+        <div class="custom-packaging-grid__featured-content">
+          <div class="custom-packaging-grid__featured-copy">
+            {%- if section.settings.featured_title != blank -%}
+              <h2 class="custom-packaging-grid__featured-title">{{ section.settings.featured_title | escape }}</h2>
+            {%- endif -%}
+            {%- if section.settings.featured_description != blank -%}
+              <p class="custom-packaging-grid__featured-desc">
+                {{- section.settings.featured_description | escape -}}
+              </p>
+            {%- endif -%}
+          </div>
+
+          {%- if section.settings.featured_link_text != blank -%}
+            <a
+              {% if section.settings.featured_link != blank %}
+                href="{{ section.settings.featured_link }}"
+              {% endif %}
+              class="custom-packaging-grid__featured-btn button-fill"
+            >
+              {{ section.settings.featured_link_text | escape }}
+            </a>
+          {%- endif -%}
+        </div>
+      </div>
+
+      <!-- Info cards -->
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign card_tag = 'div'
+          if block.settings.link != blank
+            assign card_tag = 'a'
+          endif
+        -%}
+        <{{ card_tag }}
+          {% if block.settings.link != blank %}href="{{ block.settings.link }}"{% endif %}
+          class="custom-packaging-grid__info-card"
+          {{ block.shopify_attributes }}
+        >
+          <div class="custom-packaging-grid__card-icon">
+            {%- if block.settings.custom_icon_image != blank -%}
+              {{
+                block.settings.custom_icon_image
+                | image_url: width: 78
+                | image_tag:
+                  class: 'custom-packaging-grid__card-icon-img',
+                  alt: block.settings.title,
+                  loading: 'lazy'
+              }}
+            {%- else -%}
+              <svg
+                class="custom-packaging-grid__card-icon-svg"
+                viewBox="0 0 39 39"
+                fill="none"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path
+                  d="M8.125 4.875H30.875V34.125L28.3849 31.9906C27.6359 31.3487 26.5307 31.3487 25.7818 31.9906L23.2917 34.125L20.8016 31.9906C20.0526 31.3487 18.9474 31.3487 18.1984 31.9906L15.7083 34.125L13.2182 31.9906C12.4693 31.3487 11.3641 31.3487 10.6151 31.9906L8.125 34.125V4.875Z"
+                />
+                <path d="M24.375 11.375L14.625 11.375" />
+                <path d="M24.375 17.875H14.625" />
+                <path d="M24.375 24.375L17.875 24.375" />
+              </svg>
+            {%- endif -%}
+          </div>
+
+          <div class="custom-packaging-grid__card-content">
+            {%- if block.settings.title != blank -%}
+              <h3 class="custom-packaging-grid__card-title">{{ block.settings.title | escape }}</h3>
+            {%- endif -%}
+            {%- if block.settings.description != blank -%}
+              <p class="custom-packaging-grid__card-desc">{{ block.settings.description | escape }}</p>
+            {%- endif -%}
+          </div>
+        </{{ card_tag }}>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+<style>
+  .custom-packaging-grid-section {
+    /* Notch geometry — the tab's footprint and the radius used for all three of its corners. */
+    --notch-w: 92px;
+    --notch-h: 56px;
+    --notch-r: var(--corner-radius, 20px);
+    --wave-width: 64px;
+
+    background-color: var(--section-bg-color);
+    padding-block-start: var(--padding-block-start, 120px);
+    padding-block-end: var(--padding-block-end, 120px);
+    padding-inline: var(--padding-inline, 80px);
+  }
+
+  .custom-packaging-grid__container {
+    max-width: 1280px;
+    margin-inline: auto;
+  }
+
+  .custom-packaging-grid__layout {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--grid-gap, 20px);
+    align-items: stretch;
+  }
+
+  /* Featured banner */
+  .custom-packaging-grid__featured-card {
+    position: relative;
+    grid-column: span 2;
+    min-height: 260px;
+    display: flex;
+    isolation: isolate;
+  }
+
+  /*
+   * Corner notch, matching the treatment on the image block: a tab is cut out of the top-right by
+   * compositing two rounded rectangles with an inverted-radius fillet at the inner corner. Cutting
+   * rather than covering means the notch reads correctly whatever sits behind the section.
+   */
+  .custom-packaging-grid__featured-surface {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--corner-radius, 20px);
+    background-color: var(--featured-fallback-color);
+    overflow: hidden;
+    mask:
+      linear-gradient(#000 0 0) 0 0 / calc(100% - var(--notch-w) - var(--notch-r)) 100% no-repeat,
+      linear-gradient(#000 0 0) 0 var(--notch-r) / calc(100% - var(--notch-w)) calc(100% - var(--notch-r)) no-repeat,
+      radial-gradient(circle var(--notch-r) at 0 100%, #000 calc(100% - 0.5px), transparent 100%)
+        calc(100% - var(--notch-w)) 0 / var(--notch-r) var(--notch-r) no-repeat,
+      linear-gradient(#000 0 0) 0 var(--notch-h) / calc(100% - var(--notch-r)) calc(100% - var(--notch-h)) no-repeat,
+      linear-gradient(#000 0 0) 0 calc(var(--notch-h) + var(--notch-r)) / 100%
+        calc(100% - var(--notch-h) - var(--notch-r)) no-repeat,
+      radial-gradient(circle var(--notch-r) at 0 100%, #000 calc(100% - 0.5px), transparent 100%) 100%
+        var(--notch-h) / var(--notch-r) var(--notch-r) no-repeat,
+      radial-gradient(circle var(--notch-r) at 100% 0, transparent calc(100% - 0.5px), #000 100%)
+        calc(100% - var(--notch-w) + var(--notch-r)) calc(var(--notch-h) - var(--notch-r)) / var(--notch-r)
+        var(--notch-r) no-repeat;
+  }
+
+  /*
+   * The photograph rests slightly over-scaled so it can ease back to its natural size on hover —
+   * a zoom-out. It never drops below scale(1), so the masked surface is always fully covered.
+   */
+  .custom-packaging-grid__featured-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.08);
+    transform-origin: center;
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .custom-packaging-grid__featured-card:hover .custom-packaging-grid__featured-img,
+  .custom-packaging-grid__featured-card:focus-within .custom-packaging-grid__featured-img {
+    transform: scale(1);
+  }
+
+  .custom-packaging-grid__featured-scrim {
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(
+      var(--overlay-angle, 70deg),
+      var(--overlay-color) 24.85%,
+      color-mix(in srgb, var(--overlay-color) 70%, transparent) 48.21%,
+      color-mix(in srgb, var(--overlay-color) 0%, transparent) 70.76%
+    );
+  }
+
+  /* The wave sits in the cut-out itself, so it stays outside the masked surface. */
+  .custom-packaging-grid__wave {
+    position: absolute;
+    top: 0;
+    inset-inline-end: 0;
+    width: var(--notch-w);
+    height: var(--notch-h);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-block-start: 3px;
+  }
+
+  .custom-packaging-grid__wave::before {
+    content: '';
+    width: var(--wave-width, 64px);
+    aspect-ratio: 66.4983 / 37.0141;
+    background-color: var(--wave-color);
+    mask: var(--wave-icon) center / contain no-repeat;
+  }
+
+  .custom-packaging-grid__featured-content {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 32px;
+    color: var(--featured-text-color);
+  }
+
+  .custom-packaging-grid__featured-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 402px;
+  }
+
+  .custom-packaging-grid__featured-title {
+    margin: 0;
+    font-size: var(--featured-title-size, 40px);
+    font-weight: 700;
+    line-height: 1.15;
+    color: inherit;
+  }
+
+  .custom-packaging-grid__featured-desc {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  .custom-packaging-grid__featured-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    gap: 10px;
+    padding: 10px 20px;
+    border: 1px solid transparent;
+    border-radius: 80px;
+    background-color: var(--button-bg-color);
+    color: var(--button-text-color);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: normal;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+
+    /*
+     * .button-fill on the markup opts this pill into the shared radial hover fill in base.css.
+     * It has no --button-background-color for base.css's fallbacks to reach, so both knobs are
+     * set here: the fill paints the hover teal, and the resting teal is what the button holds
+     * underneath while that fill travels. The hover colour is opaque, so holding is right —
+     * cross-fading the base out beneath the wipe would muddy it.
+     */
+    --button-fill-color: var(--button-bg-hover-color);
+    --button-fill-under: var(--button-bg-color);
+  }
+
+  /*
+   * icon-arrow-top-right.svg draws a 12px glyph inside a padded 24px viewBox, so sizing the mask
+   * with `contain` shrank the arrow to ~42% of the box (a hairline ~0.8px stroke). Pinning the mask
+   * to its native 24px and letting the 15px box crop the padding renders the arrow at its intended
+   * 12px / 2px stroke — the same treatment the shared button arrow uses in button-custom-styles.
+   */
+  .custom-packaging-grid__featured-btn::after {
+    content: '';
+    flex-shrink: 0;
+    width: 15px;
+    height: 15px;
+    background-color: currentcolor;
+    mask: var(--arrow-icon) center / 24px 24px no-repeat;
+    transition: var(--button-arrow-transition);
+  }
+
+  /*
+   * Hover: the pill lifts one step up the teal ramp, and the arrow swings round to the horizontal.
+   * That swing is the shared trailing-arrow motion — defined once in theme-styles-variables and
+   * used by every arrow button in the theme, so it is referenced here rather than spelled out.
+   *
+   * Hover-capable pointers only: a tap on touch leaves :hover stuck on, which would strand the
+   * mobile outline variant in the filled state until something else is tapped.
+   */
+  @media (hover: hover) {
+    /*
+     * The radial fill normally wins this declaration — its hover rule is a class more specific
+     * and repaints the background from --button-fill-under. This is the reduced-motion path,
+     * where base.css skips the fill entirely and the pill still needs its hover colour.
+     */
+    .custom-packaging-grid__featured-btn:hover {
+      background-color: var(--button-bg-hover-color);
+    }
+
+    .custom-packaging-grid__featured-btn:hover::after {
+      transform: var(--button-arrow-hover-transform);
+    }
+  }
+
+  /*
+   * Hover-capable pointers only: the CTA is parked off toward the bottom-right corner and slides
+   * back into place with the card. Touch devices have no hover, so the button stays put there —
+   * hiding it would make the link unreachable.
+   */
+  @media (hover: hover) and (pointer: fine) {
+    /*
+     * Trebled class for (0,3,0): base.css sets its own `transition` shorthand on everything
+     * carrying .button-fill at (0,2,0), and a shorthand replaces rather than merges — left at
+     * one class this rule loses the tie and the pill snaps into place instead of sliding. The
+     * fill's own colour timings are folded in below so nothing is lost in the other direction.
+     */
+    .custom-packaging-grid__featured-btn.custom-packaging-grid__featured-btn.custom-packaging-grid__featured-btn {
+      opacity: 0;
+      transform: translate(32px, 32px) scale(0.92);
+      transition: opacity 0.3s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+        background-color var(--button-fill-speed) var(--button-fill-easing),
+        color var(--button-fill-speed) var(--button-fill-easing), border-color 0.25s ease;
+    }
+
+    /* :focus-within keeps the CTA reachable by keyboard, where there is no hover to trigger it. */
+    .custom-packaging-grid__featured-card:hover .custom-packaging-grid__featured-btn,
+    .custom-packaging-grid__featured-card:focus-within .custom-packaging-grid__featured-btn {
+      opacity: 1;
+      transform: translate(0, 0) scale(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .custom-packaging-grid__featured-img,
+    .custom-packaging-grid__featured-btn {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+
+  /* Info cards */
+  .custom-packaging-grid__info-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 24px;
+    min-height: 260px;
+    padding: 32px;
+    border-radius: var(--corner-radius, 20px);
+    background-color: var(--card-bg-color);
+    text-decoration: none;
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s ease;
+  }
+
+  a.custom-packaging-grid__info-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgb(0 0 0 / 0.06);
+  }
+
+  .custom-packaging-grid__card-icon {
+    flex-shrink: 0;
+    width: 55px;
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--card-icon-border-color);
+    border-radius: 10px;
+    background-image: linear-gradient(-27deg, var(--card-icon-bg-start) 6%, var(--card-icon-bg-end) 75%);
+  }
+
+  .custom-packaging-grid__card-icon-svg {
+    width: 39px;
+    height: 39px;
+    fill: none;
+    stroke: var(--card-icon-color);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .custom-packaging-grid__card-icon-img {
+    width: 39px;
+    height: 39px;
+    object-fit: contain;
+  }
+
+  .custom-packaging-grid__card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .custom-packaging-grid__card-title {
+    margin: 0;
+    font-size: var(--card-title-size, 24px);
+    font-weight: 600;
+    line-height: 1.25;
+    color: var(--card-text-color);
+  }
+
+  .custom-packaging-grid__card-desc {
+    margin: 0;
+    font-size: var(--card-body-size, 16px);
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--card-desc-color);
+  }
+
+  /* Tablet — the banner keeps its two-column span, the cards fall into pairs beneath it. */
+  @media screen and (max-width: 989px) {
+    .custom-packaging-grid__layout {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    /*
+      The scrim's stops are proportions of the gradient line, so on a narrower banner the clear end
+      creeps back under the copy. Holding it opaque for longer keeps the text legible at widths the
+      design does not specify.
+    */
+    .custom-packaging-grid__featured-scrim {
+      background-image: linear-gradient(
+        var(--overlay-angle, 70deg),
+        var(--overlay-color) 42%,
+        color-mix(in srgb, var(--overlay-color) 70%, transparent) 63%,
+        color-mix(in srgb, var(--overlay-color) 0%, transparent) 85%
+      );
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .custom-packaging-grid-section {
+      --notch-w: 90px;
+      --notch-h: 49px;
+
+      padding-block-start: var(--padding-block-start-mobile, 48px);
+      padding-block-end: var(--padding-block-end-mobile, 48px);
+      padding-inline: var(--padding-inline-mobile, 16px);
+    }
+
+    .custom-packaging-grid__layout {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .custom-packaging-grid__featured-card {
+      grid-column: auto;
+      min-height: 504px;
+    }
+
+    /* The scrim runs bottom-to-top on mobile because the copy sits under the photograph. */
+    .custom-packaging-grid__featured-scrim {
+      background-image: linear-gradient(
+        var(--overlay-angle-mobile, 0deg),
+        var(--overlay-color) 25.59%,
+        color-mix(in srgb, var(--overlay-color) 70%, transparent) 56.21%,
+        color-mix(in srgb, var(--overlay-color) 0%, transparent) 82.54%
+      );
+    }
+
+    .custom-packaging-grid__featured-content {
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-end;
+      gap: 16px;
+      padding: 32px 24px;
+    }
+
+    .custom-packaging-grid__featured-copy {
+      max-width: none;
+      width: 100%;
+    }
+
+    .custom-packaging-grid__featured-title {
+      font-size: var(--featured-title-size-mobile, 32px);
+    }
+
+    /* Against a photograph the solid pill loses its edge, so mobile uses the outlined variant.
+       --button-fill-under tracks the background it sits behind, so the fill has the outline
+       wash beneath it here rather than the solid teal it holds on desktop. */
+    .custom-packaging-grid__featured-btn {
+      background-color: color-mix(in srgb, var(--button-text-color) 16%, transparent);
+      border-color: var(--button-text-color);
+      color: var(--button-text-color);
+
+      --button-fill-under: color-mix(in srgb, var(--button-text-color) 16%, transparent);
+    }
+
+    .custom-packaging-grid__info-card {
+      min-height: 0;
+      padding: 32px 24px;
+    }
+
+    .custom-packaging-grid__card-title {
+      font-size: var(--card-title-size-mobile, 20px);
+      line-height: 1.2;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Custom Packaging Grid",
+  "tag": "section",
+  "class": "custom-packaging-grid-wrapper",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "label": "Section Background",
+      "default": "#f7f1eb"
+    },
+    {
+      "type": "header",
+      "content": "Featured Banner"
+    },
+    {
+      "type": "text",
+      "id": "featured_title",
+      "label": "Banner Heading",
+      "default": "Custom Packaging, Simplified"
+    },
+    {
+      "type": "textarea",
+      "id": "featured_description",
+      "label": "Banner Description",
+      "default": "We understand how difficult it is to source high-quality, sustainable, and customized packaging - that's why we've done all the legwork for you!"
+    },
+    {
+      "type": "image_picker",
+      "id": "featured_image",
+      "label": "Banner Image"
+    },
+    {
+      "type": "url",
+      "id": "featured_link",
+      "label": "Button Link"
+    },
+    {
+      "type": "text",
+      "id": "featured_link_text",
+      "label": "Button Text",
+      "default": "Learn More"
+    },
+    {
+      "type": "range",
+      "id": "featured_title_size",
+      "label": "Heading Size",
+      "min": 24,
+      "max": 56,
+      "step": 2,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "featured_title_size_mobile",
+      "label": "Heading Size (Mobile)",
+      "min": 20,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "color",
+      "id": "featured_text_color",
+      "label": "Banner Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "featured_bg_color_1",
+      "label": "Image Overlay Color",
+      "info": "Fades out across the image so the photograph stays visible on the far side.",
+      "default": "#064c4d"
+    },
+    {
+      "type": "color",
+      "id": "featured_bg_color_2",
+      "label": "Fallback Background",
+      "info": "Shown behind the overlay when no banner image is set.",
+      "default": "#064c4d"
+    },
+    {
+      "type": "range",
+      "id": "overlay_angle",
+      "label": "Overlay Angle",
+      "min": -180,
+      "max": 180,
+      "step": 5,
+      "unit": "deg",
+      "default": 70
+    },
+    {
+      "type": "range",
+      "id": "overlay_angle_mobile",
+      "label": "Overlay Angle (Mobile)",
+      "min": -180,
+      "max": 180,
+      "step": 5,
+      "unit": "deg",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Banner Button"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Button Background",
+      "info": "On mobile the button switches to an outline using the text colour.",
+      "default": "#064c4d"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_hover_color",
+      "label": "Button Background (Hover)",
+      "info": "One step up the teal ramp from the resting background.",
+      "default": "#2b8b83"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button Text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Wave Badge"
+    },
+    {
+      "type": "color",
+      "id": "wave_icon_color",
+      "label": "Wave Icon Color",
+      "default": "#5bc5ad"
+    },
+    {
+      "type": "header",
+      "content": "Info Cards"
+    },
+    {
+      "type": "color",
+      "id": "card_bg_color",
+      "label": "Card Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_text_color",
+      "label": "Card Heading Color",
+      "default": "#064c4d"
+    },
+    {
+      "type": "color",
+      "id": "card_desc_color",
+      "label": "Card Body Color",
+      "default": "#6c8283"
+    },
+    {
+      "type": "range",
+      "id": "card_title_size",
+      "label": "Card Heading Size",
+      "min": 16,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "card_title_size_mobile",
+      "label": "Card Heading Size (Mobile)",
+      "min": 14,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "card_body_size",
+      "label": "Card Body Size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "card_icon_color",
+      "label": "Icon Color",
+      "default": "#42a899"
+    },
+    {
+      "type": "color",
+      "id": "card_icon_bg_start",
+      "label": "Icon Tile Gradient Start",
+      "default": "#b3f7e5"
+    },
+    {
+      "type": "color",
+      "id": "card_icon_bg_end",
+      "label": "Icon Tile Gradient End",
+      "default": "#f0fdfa"
+    },
+    {
+      "type": "color",
+      "id": "card_icon_border_color",
+      "label": "Icon Tile Border",
+      "default": "#b3f7e5"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "corner_radius",
+      "label": "Corner Radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "label": "Grid Gap",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Section Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Padding Top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 120
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Padding Bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 120
+    },
+    {
+      "type": "range",
+      "id": "padding-inline",
+      "label": "Padding Sides",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start-mobile",
+      "label": "Padding Top (Mobile)",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end-mobile",
+      "label": "Padding Bottom (Mobile)",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-mobile",
+      "label": "Padding Sides (Mobile)",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    }
+  ],
+  "blocks": [
+    {
+      "type": "info_card",
+      "name": "Info Card",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Short Lead Times"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description",
+          "default": "Move quickly without compromising quality. Our streamlined process helps you get to market faster."
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_icon_image",
+          "label": "Custom Icon Image",
+          "info": "Upload custom icon PNG/SVG. If blank, default ticket icon will be used."
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Card Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Packaging Grid",
+      "blocks": [
+        {
+          "type": "info_card",
+          "settings": {
+            "title": "Short Lead Times",
+            "description": "Move quickly without compromising quality. Our streamlined process helps you get to market faster."
+          }
+        },
+        {
+          "type": "info_card",
+          "settings": {
+            "title": "Label Printing & Application",
+            "description": "We coordinate high-quality label printing and application to ensure your packaging is consistent and shelf-ready."
+          }
+        },
+        {
+          "type": "info_card",
+          "settings": {
+            "title": "Direct Printing",
+            "description": "Apply your branding directly to packaging for a clean, seamless finish. We work with trusted partners to ensure consistent results."
+          }
+        },
+        {
+          "type": "info_card",
+          "settings": {
+            "title": "Fully Customizable Pouches",
+            "description": "Choose from a range of sizes to create pouches that align with your product and brand. We help you find the right fit."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

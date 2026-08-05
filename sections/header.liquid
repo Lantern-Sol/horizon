@@ -1177,6 +1177,256 @@
     font-family: var(--menu-localization-font);
     font-size: var(--menu-localization-font-size);
   }
+
+  /* ================================================================
+     Sana 2026 navigation bar
+     Figma: Navigation/Desktop 2001:385 · Navigation/Mobile 2001:1842
+
+     Both frames specify the bar as full-bleed with a fixed gutter
+     (80px desktop / 24px mobile) rather than a page-width container,
+     so the row overrides the section grid and `section_width` no
+     longer changes the bar's gutters.
+     ================================================================ */
+
+  .header {
+    --header-padding: var(--nav-bar-padding-block);
+    --color-account-icon: currentcolor;
+
+    color: var(--color-teal-800);
+  }
+
+  .header .header__row .header__columns {
+    /* stylelint-disable-next-line length-zero-no-unit */
+    --padding-block-start: 0px;
+    /* stylelint-disable-next-line length-zero-no-unit */
+    --padding-block-end: 0px;
+
+    grid-column: 1 / -1;
+    grid-gap: var(--nav-bar-gap);
+
+    /* Deliberately NOT `align-items: center` — the columns have to stretch to
+       the row's content height so the menu items inherit it, which is what
+       lets the dropdown card hang off the bar's bottom edge. Each
+       .header__column centres its own contents. */
+    align-items: stretch;
+    padding-inline: var(--nav-bar-padding-inline);
+    padding-block: var(--nav-bar-padding-block);
+  }
+
+  /* Logo — Figma "Brand/Logo" 152 x 62, never squeezed by the link row. */
+  .header .header-logo {
+    flex-shrink: 0;
+    padding: 0;
+  }
+
+  /* Actions — three 24px icons, 20px apart (Figma "Actions" 2001:506). */
+  .header .header__column--right {
+    gap: var(--nav-actions-gap);
+  }
+
+  .header header-actions {
+    gap: var(--nav-actions-gap);
+    align-items: center;
+  }
+
+  /* Every action resolves to the same 24x24 flex-centred box so the three
+     glyphs share a baseline. Without this the boxes disagree: cart-icon is an
+     inline box (line-height adds ~4px below it) and shopify-account renders a
+     44px box inside the 24px button, so the glyphs land ~3px apart. */
+  .header .header-actions__action,
+  .header .search-action,
+  .header cart-icon,
+  .header .account-button .svg-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+  }
+
+  .header .header-actions__action {
+    --button-color: currentcolor;
+
+    width: var(--nav-icon-size);
+    height: var(--nav-icon-size);
+    padding: 0;
+  }
+
+  .header cart-icon {
+    width: var(--nav-icon-size);
+    height: var(--nav-icon-size);
+  }
+
+  /* The .header-actions__action wrapper hit-tests above the shopify-account it
+     contains, so real pointer events landed on the div and never reached
+     Shopify's button — the account panel could not open. The wrapper carries no
+     visuals of its own, so it opts out of hit-testing and the component takes
+     the whole target. */
+  .header .account-button.header-actions__action {
+    pointer-events: none;
+  }
+
+  .header .account-button shopify-account {
+    pointer-events: auto;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--nav-icon-size);
+    height: var(--nav-icon-size);
+    min-width: 0;
+    line-height: 0;
+  }
+
+  .header .header-actions__action .svg-wrapper,
+  .header .header-actions__action svg,
+  .header .account-button__icon {
+    width: var(--nav-icon-size);
+    height: var(--nav-icon-size);
+  }
+
+  /* Figma draws the cart glyph whole (2001:513). The stock treatment punches a
+     donut out of the icon so a 20px bubble can nest inside it — at 24px that
+     eats the handle. Instead the bubble is smaller and tucked just outside the
+     glyph's top-right corner, and the mask is dropped. */
+  .header .header-actions__cart-icon {
+    --cart-bubble-size: 14px;
+    --cart-bubble-top: -3px;
+    --cart-bubble-right: -4px;
+  }
+
+  .header .header-actions__cart-icon.header-actions__cart-icon--has-cart svg {
+    mask: none;
+  }
+
+  /* Dropping the mask leaves the badge sitting directly on the glyph, where it
+     merges into the basket rim. A ring in the bar's own background colour
+     separates the two, so the count reads as a badge over the icon. */
+  .header .header-actions__cart-icon .cart-bubble__background {
+    box-shadow: 0 0 0 2px var(--color-background);
+    border-radius: 999px;
+  }
+
+  /* The action button is overflow: hidden and exactly 24x24, so a badge that
+     sits proud of the glyph's corner gets its top and right sliced off — the
+     circle renders as a wedge with the count cut in half. Only the badge
+     overflows this box, so it can clip nothing else. */
+  .header .header-actions__action:has(cart-icon),
+  .header .header-actions__cart-icon {
+    overflow: visible;
+  }
+
+  /* Fixed width fits one digit; a two-digit count needs to grow into a pill
+     rather than overflow the circle. */
+  .header .header-actions__cart-icon .cart-bubble {
+    width: auto;
+    min-width: var(--cart-bubble-size);
+    height: var(--cart-bubble-size);
+    aspect-ratio: auto;
+    border-radius: 999px;
+  }
+
+  /* .visually-hidden collapses the bubble to 1px, but the theme's own
+     `width: var(--cart-bubble-size)` rule outranks it — leaving an empty cart
+     with a 14x1px bar sitting over the glyph. */
+  .header .header-actions__cart-icon .cart-bubble.visually-hidden {
+    display: none;
+  }
+
+  /* .cart-bubble__text reads --font-size--3xs, which this theme deliberately
+     leaves undefined, so the count would inherit the bar's font size and
+     overflow the circle. */
+  .header .header-actions__cart-icon .cart-bubble__text {
+    font-size: 0.5625rem; /* 9 */
+  }
+
+  .header cart-icon:has(.cart-bubble__text-count:empty) {
+    --cart-bubble-size: 8px;
+    --cart-bubble-top: -1px;
+    --cart-bubble-right: -1px;
+  }
+
+  /* The stock rules pull these back with negative margins sized for the old
+     icon set; the Figma spacing is a plain 20px gap, so neutralise them. */
+  @media screen and (min-width: 750px) {
+    .header .header__column--right .search-action,
+    .header .header__column--right header-actions,
+    .header [data-menu-style='menu'] .header__column--left .search-action {
+      margin-inline: 0;
+    }
+  }
+
+  .header .account-button.account-button {
+    width: var(--nav-icon-size);
+    height: var(--nav-icon-size);
+    padding: 0;
+  }
+
+  .header .account-button shopify-account:not(:defined) {
+    min-width: var(--nav-icon-size);
+    height: var(--nav-icon-size);
+  }
+
+  /* ---- Mobile bar — Figma "Nav/Desktop" 2001:1855 --------------- */
+  @media screen and (max-width: 749px) {
+    .header .header__row .header__columns {
+      grid-template-columns: 1fr auto auto auto;
+      grid-template-areas: 'logo search actions menu';
+      column-gap: var(--nav-actions-gap-mobile);
+      padding-inline: var(--nav-bar-padding-mobile);
+      padding-block: var(--nav-bar-padding-mobile);
+    }
+
+    .header header-actions {
+      gap: var(--nav-actions-gap-mobile);
+    }
+  }
+
+  /* Touch devices get the drawer layout at any width, so mirror it. */
+  #header-component[data-menu-style='drawer'] .header__row .header__columns {
+    grid-template-columns: 1fr auto auto auto;
+    grid-template-areas: 'logo search actions menu';
+    column-gap: var(--nav-actions-gap-mobile);
+    padding-inline: var(--nav-bar-padding-mobile);
+    padding-block: var(--nav-bar-padding-mobile);
+  }
+
+  #header-component[data-menu-style='drawer'] header-actions {
+    gap: var(--nav-actions-gap-mobile);
+  }
+
+  /* ---- Menu optical centring ------------------------------------
+     The stock grid gives both side columns an equal 1fr, which centres the
+     menu on the page. But the logo (152px) is wider than the actions cluster
+     (112px), so the whitespace either side of the links differs by that 40px
+     and the row reads as sitting left. Figma has the same imbalance; this
+     centres the links between the logo and the icons instead, which is what
+     "centred" looks like. Costs ~20px against Figma's literal x. */
+  @media screen and (min-width: 750px) {
+    .header .header__row .header__columns:has(.header__column--center .header-menu) {
+      --header-left: max-content;
+      --header-center: 1fr;
+      --header-right: max-content;
+    }
+
+    .header .header__column--center {
+      justify-content: center;
+    }
+
+    .header .overflow-menu::part(list) {
+      justify-content: center;
+    }
+  }
+
+  /* ---- Scrolled state — Figma "Sana_nav_bar_scroll_shadow" ------- */
+  .header[data-sticky-state='active'] .header__underlay-closed {
+    box-shadow: var(--nav-scroll-shadow);
+  }
+
+  @media screen and (max-width: 749px) {
+    .header[data-sticky-state='active'] .header__underlay-closed {
+      box-shadow: var(--nav-scroll-shadow-mobile);
+    }
+  }
 {% endstylesheet %}
 
 {% unless request.design_mode %}

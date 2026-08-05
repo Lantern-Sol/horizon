@@ -85,6 +85,41 @@
     },
     {
       "type": "header",
+      "content": "Shape & icon"
+    },
+    {
+      "type": "checkbox",
+      "id": "pill",
+      "label": "Pill shape (fully rounded)",
+      "default": false,
+      "visible_if": "{{ block.settings.style_class != 'button-unstyled' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrow_icon",
+      "label": "Show trailing icon",
+      "default": false,
+      "visible_if": "{{ block.settings.style_class != 'button-unstyled' }}"
+    },
+    {
+      "type": "select",
+      "id": "icon_style",
+      "label": "Trailing icon",
+      "options": [
+        {
+          "value": "arrow",
+          "label": "Arrow (top right)"
+        },
+        {
+          "value": "download",
+          "label": "Download"
+        }
+      ],
+      "default": "arrow",
+      "visible_if": "{{ block.settings.show_arrow_icon }}"
+    },
+    {
+      "type": "header",
       "content": "t:content.size"
     },
     {

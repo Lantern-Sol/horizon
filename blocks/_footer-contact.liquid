@@ -1,0 +1,99 @@
+{% comment %}
+  Sana 2026 footer "Company" column — address, email and phone rendered with the
+  same markup contract as blocks/menu.liquid (accordion-custom + menu classes),
+  so it picks up the footer's column/accordion styling for free.
+  Figma: Column 4 169:1019 (desktop) / menu Item "COMPANY" 228:1054 (mobile)
+{% endcomment %}
+
+{% liquid
+  assign block_settings = block.settings
+  assign heading = block_settings.heading
+
+  assign phone_href = block_settings.phone | remove: ' ' | remove: '(' | remove: ')' | remove: '-' | remove: '.'
+%}
+
+{% capture contact_accordion_children %}
+  <details
+    class="menu__details spacing-style"
+    data-testid="menu-details"
+    {{ block.shopify_attributes }}
+  >
+    <summary class="menu__heading{% if heading == blank %} menu__heading--empty{% endif %}">
+      <span class="menu__heading__default">{{ heading }}</span>
+      <span class="menu__heading__accordion">
+        {{ heading }}
+        <span class="menu__heading__toggle svg-wrapper icon-caret icon-animated">
+          {{- 'icon-caret.svg' | inline_asset_content -}}
+        </span>
+      </span>
+    </summary>
+
+    <nav
+      class="details-content"
+      {% if heading == blank %}
+        aria-label="Contact information"
+      {% endif %}
+    >
+      <ul class="list-unstyled">
+        {% if block_settings.address != blank %}
+          <li class="menu__item paragraph">{{ block_settings.address }}</li>
+        {% endif %}
+        {% if block_settings.email != blank %}
+          <li class="menu__item paragraph">
+            <a href="mailto:{{ block_settings.email }}">{{ block_settings.email }}</a>
+          </li>
+        {% endif %}
+        {% if block_settings.phone != blank %}
+          <li class="menu__item paragraph">
+            <a href="tel:{{ phone_href }}">{{ block_settings.phone }}</a>
+          </li>
+        {% endif %}
+      </ul>
+    </nav>
+  </details>
+{% endcapture %}
+{% render 'accordion-custom-component',
+  children: contact_accordion_children,
+  class: 'menu menu--accordion menu--contact',
+  disable_on_desktop: true,
+  open_by_default_on_desktop: true,
+  disable_on_mobile: false,
+  open_by_default_on_mobile: false
+%}
+
+{% stylesheet %}
+  .menu--contact .menu__item p {
+    margin: 0;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Company info",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Company"
+    },
+    {
+      "type": "richtext",
+      "id": "address",
+      "label": "Address",
+      "default": "<p>Sana Packaging,<br>Denver, CO 80211</p>"
+    },
+    {
+      "type": "text",
+      "id": "email",
+      "label": "Email"
+    },
+    {
+      "type": "text",
+      "id": "phone",
+      "label": "Phone"
+    }
+  ]
+}
+{% endschema %}

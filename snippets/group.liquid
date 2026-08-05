@@ -75,6 +75,7 @@
       layout-panel-flex
       layout-panel-flex--{{ settings.content_direction | default: 'column' }}
       {% if settings.vertical_on_mobile %} mobile-column{% endif %}
+      {% if settings.reverse_on_mobile %} layout-panel-flex--reverse-mobile{% endif %}
     "
     style="{% render 'layout-panel-style', settings: settings %}"
   >
@@ -83,6 +84,15 @@
 </div>
 
 {% stylesheet %}
+  /* Doubled class so this beats base.css's `.mobile-column { flex-flow: column nowrap }`,
+     which has equal specificity and later source order. */
+  @media screen and (max-width: 749px) {
+    .layout-panel-flex--reverse-mobile.layout-panel-flex--reverse-mobile {
+      flex-direction: column-reverse;
+      flex-wrap: nowrap;
+    }
+  }
+
   .group-block__link {
     position: absolute;
     inset: 0;

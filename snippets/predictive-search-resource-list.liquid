@@ -1,0 +1,46 @@
+{%- doc -%}
+  Renders a group of non-product predictive search results as a stacked link list.
+
+  Collections, pages and articles used to render as bordered, horizontally
+  scrolling cards. Pages have no imagery and collections only borrow their
+  products' thumbnails, so those cards read as broken boxes inside the Sana
+  search panel. The panel's own design language (Figma Sana_nav_dropdown_search
+  2001:1233 / 2001:1241) is a labelled heading over a stack of plain links, so
+  these groups follow it and the product grid stays the only visual block.
+
+  @param {string} title - The heading for the group.
+  @param {object[]} resources - The resources to display.
+  @param {string} resource_type - The type of resource: 'collection', 'page' or 'article'.
+{%- enddoc -%}
+
+<div
+  class="predictive-search-results__resource-group"
+  data-resource-type="{{ resource_type }}"
+>
+  <h4
+    id="predictive-search-{{ resource_type }}"
+    class="predictive-search-results__title"
+  >
+    {{ title }}
+  </h4>
+
+  <ul
+    class="predictive-search-results__list predictive-search-results__links list-unstyled"
+    aria-labelledby="predictive-search-{{ resource_type }}"
+  >
+    {%- for resource in resources -%}
+      <li
+        class="predictive-search-results__link-item"
+        ref="resultsItems[]"
+        on:keydown="/onSearchKeyDown"
+      >
+        <a
+          class="predictive-search-results__link"
+          href="{{ resource.url }}"
+        >
+          {{- resource.title -}}
+        </a>
+      </li>
+    {%- endfor -%}
+  </ul>
+</div>

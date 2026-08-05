@@ -422,23 +422,29 @@ class PredictiveSearchComponent extends Component {
      * when #closeResults is called and therefore the height is animated */
     const viewedProducts = RecentlyViewed.getProducts();
 
-    if (viewedProducts.length > 0) {
+    /* The default view can be menus-only, in which case there is no products
+       container to prepend into. Recently viewed is an enhancement either way,
+       so every failure here falls through to the morph rather than aborting it —
+       otherwise clearing the input would leave the results on screen. */
+    const collectionElement = parsedEmptySectionMarkup.querySelector('#predictive-search-products');
+
+    if (viewedProducts.length > 0 && collectionElement) {
       const recentlyViewedMarkup = await this.#getRecentlyViewedProductsMarkup();
-      if (!recentlyViewedMarkup) return;
+      const recentlyViewedProductsHtml = recentlyViewedMarkup
+        ? new DOMParser()
+            .parseFromString(recentlyViewedMarkup, 'text/html')
+            .getElementById('predictive-search-products')
+        : null;
 
-      const parsedRecentlyViewedMarkup = new DOMParser().parseFromString(recentlyViewedMarkup, 'text/html');
-      const recentlyViewedProductsHtml = parsedRecentlyViewedMarkup.getElementById('predictive-search-products');
-      if (!recentlyViewedProductsHtml) return;
-
-      for (const child of recentlyViewedProductsHtml.children) {
-        if (child instanceof HTMLElement) {
-          child.setAttribute('ref', 'recentlyViewedWrapper');
+      if (recentlyViewedProductsHtml) {
+        for (const child of recentlyViewedProductsHtml.children) {
+          if (child instanceof HTMLElement) {
+            child.setAttribute('ref', 'recentlyViewedWrapper');
+          }
         }
-      }
 
-      const collectionElement = parsedEmptySectionMarkup.querySelector('#predictive-search-products');
-      if (!collectionElement) return;
-      collectionElement.prepend(...recentlyViewedProductsHtml.children);
+        collectionElement.prepend(...recentlyViewedProductsHtml.children);
+      }
     }
 
     if (abortController.signal.aborted) return;

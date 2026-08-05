@@ -1,0 +1,27 @@
+.Quieter-sec-left .checklist {
+    border-radius: 6px;
+    border: 1px solid #1F3F5E;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    background: #08214f;
+    gap: 0;
+    padding: 20px;
+}
+.Quieter-sec-left .checklist .checklist__item {
+    width: 48%;
+}
+.Quieter-sec-left .checklist span.checklist__text {
+    font-size: 14px;
+    color: #B0B8C3;
+    font-family:var(--font-paragraph--family);
+}
+.Quieter-sec-left .checklist .checklist__item label.checklist__label span.checklist__box {
+    opacity: 0;
+}
+.Quieter-sec-left .checklist .checklist__item label.checklist__label {
+    background: url(/cdn/shop/files/Microplastics.svg?v=1779462567);
+    background-repeat: no-repeat;
+    background-position: left center;
+    min-height: 35px;
+}

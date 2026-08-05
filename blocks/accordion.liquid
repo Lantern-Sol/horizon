@@ -1,5 +1,22 @@
 {% assign block_settings = block.settings %}
 
+{%- capture accordion_rows -%}
+  {% content_for 'blocks' %}
+{%- endcapture -%}
+
+{% liquid
+  # Rows remove themselves when the product has nothing to put in them. Once every row has
+  # gone the wrapper would still paint its dividers, border and padding around nothing, so
+  # the accordion goes with them. The editor always renders, so rows stay reachable there.
+  assign accordion_rows_stripped = accordion_rows | strip
+
+  assign render_accordion = false
+  if accordion_rows_stripped != blank or request.design_mode or request.visual_preview_mode
+    assign render_accordion = true
+  endif
+%}
+
+{%- if render_accordion -%}
 {% render 'contrast-override',
   background_color: block_settings.background_color,
   text_color: block_settings.text_color,
@@ -7,8 +24,27 @@
 %}
 
 <div
-  class="accordion accordion--{{ block.id }} accordion--{{ block_settings.icon }} border-style spacing-style{% if block_settings.background_color != blank or block_settings.text_color != blank %} color-custom-{{ block.id }}{% endif %}{% if block_settings.background_color != blank %} accordion--custom-background{% endif %}{% if block_settings.dividers %} accordion--dividers{% endif %}"
+  class="accordion accordion--{{ block.id }} accordion--{{ block_settings.icon }} border-style spacing-style{% if block_settings.background_color != blank or block_settings.text_color != blank %} color-custom-{{ block.id }}{% endif %}{% if block_settings.background_color != blank %} accordion--custom-background{% endif %}{% if block_settings.dividers %} accordion--dividers{% endif %}{% if block_settings.row_style == 'cards' %} accordion--cards{% endif %}"
   style="
+    {%- if block_settings.row_style == 'cards' -%}
+      --accordion-row-background: {{ block_settings.row_background_color | default: 'transparent' }};
+      --accordion-row-radius: {{ block_settings.row_corner_radius }}px;
+      --accordion-row-padding: {{ block_settings.row_padding }}px;
+      --accordion-row-padding-mobile: {{ block_settings.row_padding_mobile }}px;
+      --accordion-row-gap: {{ block_settings.row_gap }}px;
+      --accordion-row-inner-gap: {{ block_settings.row_inner_gap }}px;
+      --accordion-icon-size: {{ block_settings.icon_chip_size }}px;
+      --accordion-icon-background: {{ block_settings.icon_chip_color | default: 'transparent' }};
+      --accordion-caret-icon: url('{{ 'icon-caret-right.svg' | asset_url }}');
+      {%- comment -%}
+        The chip's default face is the two gradients from the design. A chosen icon background is
+        a deliberate override, so it clears them rather than sitting invisible underneath.
+      {%- endcomment -%}
+      {%- if block_settings.icon_chip_color != blank -%}
+        --accordion-icon-fill: none;
+        --accordion-icon-border: none;
+      {%- endif -%}
+    {%- endif -%}
     --summary-font-family: var(--font-{{ block_settings.type_preset }}--family);
      --summary-font-style: var(--font-{{ block_settings.type_preset }}--style);
      --summary-font-weight: bold;
@@ -21,10 +57,121 @@
   "
   {{ block.shopify_attributes }}
 >
-  {% content_for 'blocks' %}
+  {{ accordion_rows }}
 </div>
 
 {% render 'accordion-styles' %}
+{%- endif -%}
+
+{% stylesheet %}
+  /* Card rows: each row becomes its own surface instead of one divided list. */
+  .accordion--cards {
+    display: flex;
+    flex-direction: column;
+    gap: var(--accordion-row-gap);
+  }
+
+  .accordion--cards accordion-custom {
+    display: block;
+    padding: var(--accordion-row-padding);
+    border-radius: var(--accordion-row-radius);
+    background-color: var(--accordion-row-background);
+  }
+
+  /* The list style draws rules between rows, which would double up on the card edges.
+     accordion-styles.liquid's between-row selectors tie on specificity and win on source
+     order, so the class is repeated here to outrank them. */
+  .accordion--cards.accordion--cards.accordion--dividers accordion-custom .details,
+  .accordion--cards.accordion--cards.accordion--dividers accordion-custom:first-child .details,
+  .accordion--cards.accordion--cards.accordion--dividers accordion-custom:last-child .details {
+    border-block: none;
+  }
+
+  /* The summary carries its own block padding for the list style; under cards the card
+     already supplies that, so it would double up. Class repeated to outrank the source rule. */
+  .accordion--cards.accordion--cards .details__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--accordion-row-inner-gap);
+    padding-block: 0;
+  }
+
+  /* Under cards, "dividers" means the rule between the question and its answer. */
+  .accordion--cards.accordion--dividers .details[open] .details-content {
+    margin-block-start: var(--accordion-row-inner-gap);
+    padding-block-start: var(--accordion-row-inner-gap);
+    border-block-start: 1px solid var(--color-border);
+  }
+
+  /*
+    Chip face, from the design: a mint fill running up-left, ringed by a 1px gradient that
+    deepens toward the bottom-right. Both are expressed against the artwork's 44px frame so
+    the whole chip scales from the one size setting.
+  */
+  .accordion--cards {
+    --accordion-icon-border-width: 1px;
+    --accordion-icon-fill: linear-gradient(333.43deg, var(--color-teal-200) 0%, var(--color-teal-50) 94.44%);
+    --accordion-icon-border: linear-gradient(158.45deg, var(--color-teal-200) 0%, var(--color-teal-400) 100%);
+    --accordion-icon-color: var(--color-teal-500);
+  }
+
+  .accordion--cards .details__header :is(.icon-caret, .icon-plus) {
+    position: relative;
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: var(--accordion-icon-size);
+    height: var(--accordion-icon-size);
+    border: var(--accordion-icon-border-width) solid transparent;
+    border-radius: calc(var(--accordion-icon-size) * 10 / 44);
+    background-color: var(--accordion-icon-background);
+    background-image: var(--accordion-icon-fill), var(--accordion-icon-border);
+    background-origin: border-box;
+    /* Fill stops at the padding box, ring fills the border box — the standard gradient-border
+       sandwich, which needs the transparent border above to leave the ring somewhere to paint. */
+    background-clip: padding-box, border-box;
+  }
+
+  /*
+    The design's chevron points right and swings down as the row opens, rather than the shared
+    caret's down/up flip. It is painted as a mask so _accordion-row.liquid — which inlines the
+    same icon-caret.svg for every accordion in the theme — needs no change.
+  */
+  .accordion--cards .details__header .icon-caret > svg {
+    display: none;
+  }
+
+  .accordion--cards .details__header .icon-caret::after {
+    content: '';
+    /* Pulled out to the border box, since absolute insets resolve against the padding box.
+       That maps the 44-unit artwork onto the chip 1:1 at the design's size. */
+    position: absolute;
+    inset: calc(-1 * var(--accordion-icon-border-width));
+    background-color: var(--accordion-icon-color);
+    mask: var(--accordion-caret-icon) center / 100% 100% no-repeat;
+    transition: transform var(--animation-speed) var(--animation-easing);
+  }
+
+  .accordion--cards .details[open] .details__header .icon-caret::after {
+    transform: rotate(90deg);
+  }
+
+  /* Both glyphs are always in the markup and accordion-styles hides the unused one; the
+     chip rule above is more specific and would otherwise reveal both. */
+  .accordion--cards.accordion--caret .details__header .icon-plus,
+  .accordion--cards.accordion--plus .details__header .icon-caret {
+    display: none;
+  }
+
+  @media screen and (max-width: 749px) {
+    .accordion--cards accordion-custom {
+      padding: var(--accordion-row-padding-mobile);
+    }
+  }
+{% endstylesheet %}
 
 {% schema %}
 {
@@ -52,6 +199,103 @@
         }
       ],
       "default": "caret"
+    },
+    {
+      "type": "select",
+      "id": "row_style",
+      "label": "Row style",
+      "info": "Cards give each row its own background and corner radius instead of one divided list.",
+      "options": [
+        {
+          "value": "list",
+          "label": "List"
+        },
+        {
+          "value": "cards",
+          "label": "Cards"
+        }
+      ],
+      "default": "list"
+    },
+    {
+      "type": "color",
+      "id": "row_background_color",
+      "label": "Row background",
+      "default": "#ffffff",
+      "visible_if": "{{ block.settings.row_style == 'cards' }}"
+    },
+    {
+      "type": "range",
+      "id": "row_corner_radius",
+      "label": "Row corner radius",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 20,
+      "visible_if": "{{ block.settings.row_style == 'cards' }}"
+    },
+    {
+      "type": "range",
+      "id": "row_padding",
+      "label": "Row padding",
+      "min": 0,
+      "max": 80,
+      "step": 1,
+      "unit": "px",
+      "default": 32,
+      "visible_if": "{{ block.settings.row_style == 'cards' }}"
+    },
+    {
+      "type": "range",
+      "id": "row_padding_mobile",
+      "label": "Row padding (mobile)",
+      "min": 0,
+      "max": 80,
+      "step": 1,
+      "unit": "px",
+      "default": 24,
+      "visible_if": "{{ block.settings.row_style == 'cards' }}"
+    },
+    {
+      "type": "range",
+      "id": "row_gap",
+      "label": "Gap between rows",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 16,
+      "visible_if": "{{ block.settings.row_style == 'cards' }}"
+    },
+    {
+      "type": "range",
+      "id": "row_inner_gap",
+      "label": "Gap between question and answer",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 24,
+      "visible_if": "{{ block.settings.row_style == 'cards' }}"
+    },
+    {
+      "type": "color",
+      "id": "icon_chip_color",
+      "label": "Icon background",
+      "placeholder": "t:settings.default",
+      "visible_if": "{{ block.settings.row_style == 'cards' }}"
+    },
+    {
+      "type": "range",
+      "id": "icon_chip_size",
+      "label": "Icon size",
+      "min": 24,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "default": 44,
+      "visible_if": "{{ block.settings.row_style == 'cards' }}"
     },
     {
       "type": "checkbox",

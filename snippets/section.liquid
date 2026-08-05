@@ -35,7 +35,7 @@
 
 <div class="section-background color-custom-{{ section_id }}"></div>
 <div
-  class="section section--{{ section.settings.section_width }} color-custom-{{ section_id }}{% if has_floating_media %} section--has-floating-media{% endif %}{% if section.settings.floating_media_hide_mobile %} section--floating-media-hide-mobile{% endif %}"
+  class="section section--{{ section.settings.section_width }} color-custom-{{ section_id }}{% if section.settings.product_faq_style %} section--product-faq{% endif %}{% if section.settings.subfooter_icons_style %} section--subfooter-icons{% endif %}{% if section.settings.customization_panels_style %} section--customization-panels{% endif %}{% if section.settings.klaviyo_reviews_style %} section--klaviyo-reviews{% endif %}{% if has_floating_media %} section--has-floating-media{% endif %}{% if section.settings.floating_media_hide_mobile %} section--floating-media-hide-mobile{% endif %}"
   data-testid="ui-test-section"
 
   {% if request.visual_preview_mode %}
@@ -199,6 +199,7 @@
         layout-panel-flex--{{ section.settings.content_direction }}
         section-content-wrapper
         {% if section.settings.vertical_on_mobile %} mobile-column{% endif %}
+        {% if section.settings.clip_content %} section-content-wrapper--clip{% endif %}
       "
       style="
         {% render 'layout-panel-style', settings: section.settings %}
@@ -214,6 +215,11 @@
 {% stylesheet %}
   .section-wrapper {
     --section-height-offset: 0px;
+  }
+
+  /* Crops blocks that use negative margins to bleed past the section edge. */
+  .section-content-wrapper--clip {
+    overflow: hidden;
   }
 
   .section[data-shopify-visual-preview] {

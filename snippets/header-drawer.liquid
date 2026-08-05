@@ -47,6 +47,25 @@
   fetchpriority="low"
 ></script>
 
+{%- comment -%}
+  Wordmark texture across the bottom of the drawer — Figma 2001:1979 (root) and
+  2001:2028 (submenu). Each panel in Figma carries its own copy, and it has to
+  work that way here too: a submenu paints an opaque background over the panel
+  below it, so a single copy at drawer level would disappear the moment one
+  opened.
+
+  Figma draws this as outlines rather than live text, and the shape matters: it
+  is wider than the drawer and bleeds 23px past its bottom edge, so the
+  letterforms are clipped. Matching that with live text would mean guessing
+  Geom's cap-height ratio, and the glyphs would jump when the webfont swaps in,
+  so the exported vector is used as-is.
+{%- endcomment -%}
+{%- capture drawer_wordmark -%}
+  <span class="svg-wrapper menu-drawer__watermark" aria-hidden="true">
+    {{- 'nav-drawer-wordmark.svg' | inline_asset_content -}}
+  </span>
+{%- endcapture -%}
+
 <header-drawer
   class="header-drawer {{ class }}"
   style="--menu-image-border-radius: {{ image_border_radius }}px; --resource-card-corner-radius: {{ image_border_radius }}px;"
@@ -64,10 +83,10 @@
       on:click="/toggle"
     >
       <span class="svg-wrapper header-drawer-icon header-drawer-icon--open">
-        {{- 'icon-menu.svg' | inline_asset_content -}}
+        {{- 'icon-nav-menu.svg' | inline_asset_content -}}
       </span>
       <span class="svg-wrapper header-drawer-icon header-drawer-icon--close">
-        {{- 'icon-close.svg' | inline_asset_content -}}
+        {{- 'icon-nav-close.svg' | inline_asset_content -}}
       </span>
     </summary>
     <div
@@ -79,16 +98,47 @@
         {% endif %}
       "
     >
-      <button
-        class="button close-button menu-drawer__close-button focus-inset"
-        type="button"
-        aria-label="{{ 'actions.close' | t }}"
-        on:click="/close"
-      >
-        <span class="svg-wrapper header-drawer-icon header-drawer-icon--close">
-          {{- 'icon-close.svg' | inline_asset_content -}}
-        </span>
-      </button>
+      {%- comment -%}
+        Drawer header — Figma 2001:1938. The drawer covers the whole viewport
+        on mobile, so it carries its own logo and close control rather than
+        relying on the header bar showing through underneath.
+      {%- endcomment -%}
+      <div class="menu-drawer__header">
+        {%- liquid
+          # The drawer is dark, so prefer the merchant's inverse logo. With none
+          # set, the standard mark is knocked out to white — that flattens any
+          # accent colour in the mark, but legibility wins over fidelity here.
+          assign drawer_logo = settings.logo_inverse
+          assign drawer_logo_class = 'menu-drawer__logo-image'
+          if drawer_logo == blank
+            assign drawer_logo = settings.logo
+            assign drawer_logo_class = 'menu-drawer__logo-image menu-drawer__logo-image--knockout'
+          endif
+        -%}
+        <a
+          href="{{ routes.root_url }}"
+          class="menu-drawer__logo"
+          aria-label="{{ 'accessibility.home_logo_alt' | t: store_name: shop.name }}"
+        >
+          {% render 'image',
+            image: drawer_logo,
+            class: drawer_logo_class,
+            height: 41,
+            alt_text_fallback: shop.name,
+            text_fallback: shop.name
+          %}
+        </a>
+        <button
+          class="button-unstyled close-button menu-drawer__close-button focus-inset"
+          type="button"
+          aria-label="{{ 'actions.close' | t }}"
+          on:click="/close"
+        >
+          <span class="svg-wrapper header-drawer-icon header-drawer-icon--close">
+            {{- 'icon-nav-close.svg' | inline_asset_content -}}
+          </span>
+        </button>
+      </div>
       <nav
         class="menu-drawer__navigation"
         style="
@@ -125,8 +175,8 @@
                       on:click="header-drawer/open/submenu"
                     >
                       <span class="menu-drawer__menu-item-text wrap-text">{{ link.title | escape }}</span>
-                      <span class="svg-wrapper icon-caret icon-caret--forward">
-                        {{- 'icon-caret.svg' | inline_asset_content -}}
+                      <span class="svg-wrapper icon-caret icon-caret--forward menu-drawer__chevron">
+                        {{- 'icon-nav-chevron-right.svg' | inline_asset_content -}}
                       </span>
                     </summary>
                     <div
@@ -142,8 +192,8 @@
                             on:click="header-drawer/back"
                             aria-label="{{ 'actions.back_to' | t: title: link.title }}"
                           >
-                            <span class="svg-wrapper icon-caret icon-caret--backward">
-                              {{- 'icon-caret.svg' | inline_asset_content -}}
+                            <span class="svg-wrapper icon-caret icon-caret--backward menu-drawer__chevron">
+                              {{- 'icon-nav-chevron-right.svg' | inline_asset_content -}}
                             </span>
                             <span class="menu-drawer__menu-item-text wrap-text">{{ link.title | escape }}</span>
                           </button>
@@ -154,7 +204,7 @@
                             on:click="header-drawer/close"
                           >
                             <span class="svg-wrapper header-drawer-icon header-drawer-icon--close">
-                              {{- 'icon-close.svg' | inline_asset_content -}}
+                              {{- 'icon-nav-close.svg' | inline_asset_content -}}
                             </span>
                           </button>
                         </div>
@@ -188,6 +238,26 @@
                               assign featured_products_collection = collection_linklist.object
                             endif
                           endif
+
+                          # Trailing action row — Figma 2001:2019. The submenu ends with a
+                          # link to a listing ("Shop All"), and the link just above it is
+                          # promoted to a pill, so both are lifted out of the list and
+                          # rendered as one row underneath it.
+                          assign has_submenu_cta = false
+                          assign has_submenu_pill = false
+                          assign submenu_cta = link.links.last
+                          case submenu_cta.type
+                            when 'catalog_link', 'collections_link', 'collection_link'
+                              assign has_submenu_cta = true
+                          endcase
+                          if has_submenu_cta and link.links.size > 1
+                            assign submenu_pill_position = link.links.size | minus: 1
+                            assign submenu_pill_index = submenu_pill_position | minus: 1
+                            assign submenu_pill = link.links[submenu_pill_index]
+                            if submenu_pill.links == blank
+                              assign has_submenu_pill = true
+                            endif
+                          endif
                         %}
                         <ul
                           class="menu-drawer__menu menu-drawer__menu--childlist{% if render_link_image and link.levels == 1 %} menu-drawer__menu--grid{% endif %}"
@@ -203,6 +273,13 @@
                                 if featured_handles_csv contains handle_pattern
                                   assign skip_childlink = true
                                 endif
+                              endif
+                              # Both members of the trailing action row are rendered below the list.
+                              if has_submenu_cta and forloop.last
+                                assign skip_childlink = true
+                              endif
+                              if has_submenu_pill and forloop.index == submenu_pill_position
+                                assign skip_childlink = true
                               endif
                             -%}
                             {%- if skip_childlink -%}{% continue %}{%- endif -%}
@@ -380,6 +457,43 @@
                           {%- endfor -%}
                         </ul>
 
+                        {%- comment -%}
+                          Trailing action row — Figma 2001:2019. Mirrors the root drawer's
+                          Cart/Login row: a bright pill followed by an arrow call to action.
+                        {%- endcomment -%}
+                        {%- if has_submenu_cta -%}
+                          <div class="menu-drawer__submenu-actions">
+                            {%- if has_submenu_pill -%}
+                              <a
+                                id="HeaderDrawer-{{ link.handle }}-{{ submenu_pill.handle }}"
+                                href="{{ submenu_pill.url }}"
+                                class="menu-drawer__action menu-drawer__action--pill focus-inset"
+                                {% if submenu_pill.current %}
+                                  aria-current="page"
+                                {% endif %}
+                              >
+                                <span>{{ submenu_pill.title | escape }}</span>
+                              </a>
+                            {%- endif -%}
+                            <a
+                              id="HeaderDrawer-{{ link.handle }}-{{ submenu_cta.handle }}"
+                              href="{{ submenu_cta.url }}"
+                              class="menu-drawer__action menu-drawer__action--cta focus-inset"
+                              {% if submenu_cta.current %}
+                                aria-current="page"
+                              {% endif %}
+                            >
+                              <span>{{ submenu_cta.title | escape }}</span>
+                              <span
+                                class="svg-wrapper menu-drawer__cta-arrow"
+                                aria-hidden="true"
+                              >
+                                {{- 'icon-nav-arrow-top-right.svg' | inline_asset_content -}}
+                              </span>
+                            </a>
+                          </div>
+                        {%- endif -%}
+
                         {% if featured_collections.size > 0 or featured_products_collection.products_count > 0 %}
                           <div
                             class="menu-drawer__featured-content menu-drawer__featured-content--childlist"
@@ -421,6 +535,7 @@
                           </div>
                         {% endif %}
                       </div>
+                      {{ drawer_wordmark }}
                     </div>
                   </details>
                 {%- else -%}
@@ -565,48 +680,79 @@
                     form_style: form_style,
                     form_id: block.id
                   %}
+                  {{ drawer_wordmark }}
                 </div>
               </details>
             </drawer-localization-component>
           {% endif %}
         {%- endif -%}
 
-        {%- if data_header_drawer_type == 'mobile-drawer' and shop.customer_accounts_enabled -%}
-          <div class="menu-drawer__account-wrapper menu-drawer__animated-element color-{{ settings.popover_color_scheme }}">
-            <shopify-account menu="{{ section.settings.customer_account_menu }}">
-              {% if customer %}
-                <div class="account-button__fallback"></div>
-              {% else %}
+        {%- comment -%}
+          Drawer call-to-action block — Figma 2001:1964. A Cart pill and the
+          account control sit on one row, with a register prompt beneath.
+        {%- endcomment -%}
+        {%- if data_header_drawer_type == 'mobile-drawer' -%}
+          <div class="menu-drawer__actions menu-drawer__animated-element">
+            <a
+              href="{{ routes.cart_url }}"
+              class="menu-drawer__action menu-drawer__action--cart"
+            >
+              <span>{{ 'content.cart_title' | t }}</span>
+              <span
+                class="svg-wrapper menu-drawer__action-icon"
+                aria-hidden="true"
+              >
+                {{- 'icon-nav-cart.svg' | inline_asset_content -}}
+              </span>
+            </a>
+
+            {%- if shop.customer_accounts_enabled -%}
+              <div class="menu-drawer__account-wrapper menu-drawer__action menu-drawer__action--account color-{{ settings.popover_color_scheme }}">
+                <shopify-account menu="{{ section.settings.customer_account_menu }}">
+                  {% if customer %}
+                    <div class="account-button__fallback"></div>
+                  {% else %}
+                    {%- comment -%}
+                      Label and glyph share a single slotted element. shopify-account lays
+                      out its own shadow DOM around the slot, so two sibling slotted spans
+                      are spaced and aligned by markup the theme can't reach — which is why
+                      the icon drifted off the label's centre line (Figma 2001:1967).
+                    {%- endcomment -%}
+                    <span
+                      slot="signed-out-avatar"
+                      class="menu-drawer__account-trigger"
+                    >
+                      <span class="menu-drawer__account-label">Login</span>
+                      <span
+                        class="svg-wrapper menu-drawer__account-icon"
+                        aria-hidden="true"
+                      >
+                        {{- 'icon-nav-account.svg' | inline_asset_content -}}
+                      </span>
+                    </span>
+                  {% endif %}
+                </shopify-account>
+              </div>
+            {%- endif -%}
+          </div>
+
+          {%- if shop.customer_accounts_enabled and customer == blank -%}
+            <div class="menu-drawer__register menu-drawer__animated-element">
+              <p class="menu-drawer__register-prompt">Don’t have an account?</p>
+              <a
+                href="{{ routes.account_register_url }}"
+                class="menu-drawer__register-link"
+              >
+                Create Account
                 <span
-                  slot="signed-out-avatar"
-                  class="menu-drawer__account-icon"
+                  class="svg-wrapper menu-drawer__register-arrow"
                   aria-hidden="true"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="15"
-                    height="17"
-                    viewBox="0 0 15 17"
-                    fill="none"
-                    class="account-button__icon"
-                  >
-                    <path
-                      stroke="currentColor"
-                      stroke-linejoin="round"
-                      stroke-width="var(--icon-stroke-width)"
-                      d="M10.375 3.813a3.063 3.063 0 1 1-6.125 0 3.063 3.063 0 0 1 6.125 0ZM7.313 9.5c-3.667 0-6.24 2.691-6.563 6.125h13.125C13.552 12.191 10.979 9.5 7.312 9.5Z"
-                    />
-                  </svg>
+                  {{- 'icon-nav-arrow-top-right.svg' | inline_asset_content -}}
                 </span>
-                <span
-                  slot="signed-out-avatar"
-                  class="menu-drawer__account-label"
-                >
-                  Login
-                </span>
-              {% endif %}
-            </shopify-account>
-          </div>
+              </a>
+            </div>
+          {%- endif -%}
         {%- endif -%}
       </div>
 
@@ -668,6 +814,8 @@
           </ul>
         </div>
       {% endif %}
+
+      {{ drawer_wordmark }}
     </div>
     <div
       class="menu-drawer__backdrop"
@@ -1392,5 +1540,421 @@
 
   .drawer-localization .language-selector .svg-wrapper.icon-caret svg {
     transform: none;
+  }
+
+  /* ================================================================
+     Sana 2026 mobile drawer
+     Figma: Sana_nav_mobile_dropdown 2001:1936 (root)
+            Sana_nav_mobile_dropdown_products 2001:1981 (submenu)
+     ================================================================ */
+
+  /* Figma sizes the mobile bar off the logo (24 + 49 + 24 = 97). The stock
+     60px drawer minimum would make the bar taller than that. */
+  .header__drawer {
+    /* stylelint-disable-next-line length-zero-no-unit */
+    --header-drawer-min-height: 0px;
+  }
+
+  .header__icon--summary .header-drawer-icon,
+  .menu-drawer .header-drawer-icon {
+    width: var(--nav-icon-size);
+    height: var(--nav-icon-size);
+  }
+
+  .header__icon--summary .header-drawer-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .menu-drawer-container .header__icon--summary {
+    position: relative;
+    padding: 0;
+    color: currentcolor;
+  }
+
+  /* Figma's controls are 24px boxes. Restore a 44px tap target without
+     letting it grow the bar. */
+  .menu-drawer-container .header__icon--summary::after,
+  .header .header-actions__action::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    translate: -50% -50%;
+    width: var(--minimum-touch-target);
+    height: var(--minimum-touch-target);
+  }
+
+  .header .header-actions__action {
+    position: relative;
+  }
+
+  /* The trigger only ever shows the hamburger now: the drawer covers the bar
+     and supplies its own close control. */
+  .menu-drawer-container .header__icon--summary .header-drawer-icon--close {
+    display: none;
+  }
+
+  .menu-drawer,
+  .menu-drawer__submenu {
+    background: var(--nav-drawer-background);
+    color: var(--nav-drawer-foreground);
+
+    /* The panels only ever scroll vertically — sideways movement is always a
+       bleed (the wordmark) or a stray wide child, never navigation. */
+    overflow-x: clip;
+  }
+
+  /* Figma's drawer covers the whole viewport, header bar included. */
+  @media screen and (max-width: 749px) {
+    .menu-drawer {
+      top: 0;
+      height: 100dvh;
+    }
+
+    .menu-drawer__backdrop {
+      top: 0;
+      height: 100dvh;
+    }
+  }
+
+  #header-component[data-menu-style='drawer'] .menu-drawer {
+    top: 0;
+    height: 100dvh;
+  }
+
+  /* ---- Drawer header (logo + close) — Figma 2001:1938 ------------ */
+  .menu-drawer__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--gap-md);
+    padding: var(--nav-bar-padding-mobile);
+    flex-shrink: 0;
+  }
+
+  .menu-drawer__logo {
+    display: flex;
+    align-items: center;
+  }
+
+  .menu-drawer__logo-image {
+    height: 2.5625rem; /* 41 */
+    width: auto;
+    object-fit: contain;
+  }
+
+  .menu-drawer__logo-image--knockout {
+    filter: brightness(0) invert(1);
+  }
+
+  /* The stock close button is display:none — the drawer used to sit below the
+     header bar and borrow its control. */
+  .menu-drawer .menu-drawer__close-button,
+  .menu-drawer .menu-drawer__nav-buttons .menu-drawer__close-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    width: auto;
+    height: auto;
+    color: var(--nav-drawer-muted);
+    background: transparent;
+  }
+
+  .menu-drawer .menu-drawer__close-button .svg-wrapper,
+  .menu-drawer .menu-drawer__close-button svg {
+    width: 1.6875rem; /* 27 */
+    height: 1.375rem; /* 22 */
+  }
+
+  /* ---- Link list — Figma "Nav Links" 2001:1945 ------------------- */
+  .menu-drawer__navigation {
+    /* `position: static` hands the submenu's containing block back to
+       .menu-drawer, so a submenu covers the whole drawer — logo row included —
+       as in Figma 2001:1983. The stock rule scopes it to the nav area instead. */
+    position: static;
+    flex: 0 0 auto;
+  }
+
+  .menu-drawer .menu-drawer__menu {
+    padding-inline: var(--nav-bar-padding-mobile);
+    margin-block-start: 0;
+  }
+
+  .menu-drawer .menu-drawer__menu.has-submenu {
+    margin-block-end: 0;
+  }
+
+  .menu-drawer .menu-drawer__menu > .menu-drawer__list-item {
+    min-height: 0;
+  }
+
+  .menu-drawer .menu-drawer__menu-item {
+    padding-block: var(--nav-link-padding-block-mobile);
+    padding-inline: 0;
+    min-height: 0;
+  }
+
+  .menu-drawer .menu-drawer__menu-item--mainlist,
+  .menu-drawer .menu-drawer__menu-item--parent,
+  .menu-drawer .menu-drawer__menu-item--child {
+    font-family: var(--font-heading--family);
+    font-size: var(--nav-link-size-mobile);
+    font-weight: var(--nav-link-weight);
+    line-height: var(--nav-link-line-height);
+    letter-spacing: var(--nav-link-letter-spacing);
+    text-transform: none;
+    color: var(--nav-drawer-foreground);
+    min-height: 0;
+  }
+
+  .menu-drawer .menu-drawer__menu-item--mainlist:hover,
+  .menu-drawer .menu-drawer__menu-item--parent:hover,
+  .menu-drawer .menu-drawer__menu-item--child:hover {
+    color: var(--nav-drawer-accent);
+  }
+
+  .menu-drawer .menu-drawer__chevron {
+    padding-inline-start: var(--padding-md);
+    color: var(--nav-drawer-muted);
+  }
+
+  .menu-drawer .menu-drawer__cta-arrow,
+  .menu-drawer .menu-drawer__cta-arrow svg {
+    width: 0.9375rem; /* 15 */
+    height: 0.9375rem;
+    padding: 0;
+    flex-shrink: 0;
+  }
+
+  /* The exported asset already points right, so drop the rotation base.css
+     applies to the theme's down-caret. */
+  .menu-drawer .menu-drawer__chevron svg {
+    width: 0.4602rem; /* 7.364 */
+    height: 0.7955rem; /* 12.728 */
+    transform: none;
+  }
+
+  .menu-drawer .icon-caret--backward.menu-drawer__chevron {
+    padding-inline: 0 var(--padding-sm);
+  }
+
+  .menu-drawer .icon-caret--backward.menu-drawer__chevron svg {
+    transform: rotate(180deg);
+  }
+
+  /* ---- Submenu panels — Figma 2001:1982 -------------------------- */
+  .menu-drawer .menu-drawer__nav-buttons {
+    padding: var(--nav-bar-padding-mobile);
+    padding-block-end: 0;
+  }
+
+  .menu-drawer .menu-drawer__back-button {
+    padding: 0;
+    gap: 0;
+    font-family: var(--font-heading--family);
+    font-size: var(--nav-link-size-mobile);
+    font-weight: var(--nav-link-weight);
+    line-height: var(--nav-link-line-height);
+    letter-spacing: var(--nav-link-letter-spacing);
+    color: var(--nav-drawer-foreground);
+  }
+
+  .menu-drawer .menu-drawer__back-button > .svg-wrapper {
+    width: auto;
+    height: auto;
+    margin-right: 0;
+  }
+
+  /* Rule above the submenu list — Figma 2001:1993. */
+  .menu-drawer .menu-drawer__menu--childlist {
+    border-block-start: 1px solid rgb(var(--color-white-rgb) / var(--opacity-20));
+    padding-block-start: var(--padding-sm);
+    margin-block-start: var(--nav-bar-padding-mobile);
+
+    /* The stock rule grows the list to fill the panel, which would push the
+       action row below onto the drawer's bottom edge. Figma runs it straight
+       on from the last link instead. */
+    flex-grow: 0;
+  }
+
+  /* ---- Submenu action row — Figma 2001:2019 --------------------- */
+  .menu-drawer__submenu-actions {
+    display: flex;
+    align-items: center;
+    padding-block: var(--nav-bar-padding-mobile);
+    padding-inline: var(--nav-bar-padding-mobile);
+  }
+
+  /* ---- Call-to-action block — Figma 2001:1964 -------------------- */
+  .menu-drawer__utility-links {
+    /* Figma runs this straight on from the link list rather than pinning it
+       to the bottom of the drawer. */
+    margin-block: 0;
+    margin-inline-start: 0;
+    padding-inline: var(--nav-bar-padding-mobile);
+
+    /* Figma 2001:1962 — 32px of air either side of the rule, then the action
+       block (2001:1964) adds its own 16px. */
+    padding-block-start: 3rem;
+    margin-block-start: 2rem;
+    border-block-start: 1px solid rgb(var(--color-white-rgb) / var(--opacity-20));
+    gap: 1.5rem; /* 24 */
+  }
+
+  .menu-drawer__actions {
+    display: flex;
+    align-items: center;
+  }
+
+  .menu-drawer__action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem; /* 10 */
+    padding: 0.875rem 1.75rem; /* 14 / 28 */
+    border-radius: 5rem; /* 80 */
+    font-family: var(--font-heading--family);
+    font-size: 1rem; /* 16 */
+    font-weight: var(--nav-link-weight);
+    line-height: normal;
+    letter-spacing: var(--nav-link-letter-spacing);
+    text-decoration: none;
+    color: var(--nav-drawer-foreground);
+  }
+
+  .menu-drawer__action--cart,
+  .menu-drawer__action--pill {
+    background-color: var(--nav-drawer-accent);
+    color: var(--color-teal-800);
+  }
+
+  .menu-drawer__action-icon,
+  .menu-drawer__action-icon svg {
+    width: 1rem; /* 16 */
+    height: 1rem;
+  }
+
+  /* The wrapper carries the popover colour scheme so shopify-account's own
+     dialog is themed; the trigger itself has to stay on the dark panel. */
+  .menu-drawer .menu-drawer__account-wrapper {
+    /* shopify-account's shadow button is a 44px touch target in its own right,
+       so padding here stacks on top of it and the control ends up 72px tall
+       against Figma's 52 — which is what threw the label and glyph off the Cart
+       pill's centre line. The padding moves to the slotted trigger below, where
+       it grows that button from the inside instead. */
+    padding: 0;
+    background: transparent;
+  }
+
+  .menu-drawer .menu-drawer__account-wrapper,
+  .menu-drawer .menu-drawer__account-wrapper shopify-account,
+  .menu-drawer .menu-drawer__account-trigger,
+  .menu-drawer .menu-drawer__account-label,
+  .menu-drawer .menu-drawer__account-icon {
+    color: var(--nav-drawer-foreground);
+  }
+
+  /* Padding, gap and alignment live here rather than on shopify-account or the
+     wrapper: the label and the glyph are slotted into its shadow DOM, so only
+     rules on their shared parent reach them (Figma 2001:1967). */
+  .menu-drawer .menu-drawer__account-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem; /* 10 */
+    padding: 0.875rem 1.75rem; /* 14 / 28 */
+  }
+
+  .menu-drawer .menu-drawer__account-icon {
+    margin-inline-end: 0;
+    flex-shrink: 0;
+  }
+
+  .menu-drawer .menu-drawer__account-icon,
+  .menu-drawer .menu-drawer__account-icon svg {
+    width: var(--nav-icon-size);
+    height: var(--nav-icon-size);
+  }
+
+  .menu-drawer .menu-drawer__account-label {
+    font-family: var(--font-heading--family);
+    font-size: 1rem;
+    font-weight: var(--nav-link-weight);
+    line-height: normal;
+    letter-spacing: var(--nav-link-letter-spacing);
+    text-transform: none;
+  }
+
+  /* ---- Register prompt — Figma 2001:1971 ------------------------- */
+  .menu-drawer__register {
+    padding-block-end: var(--padding-2xl);
+  }
+
+  .menu-drawer__register-prompt {
+    font-family: var(--font-body--family);
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: var(--line-height--150);
+    color: var(--nav-drawer-muted);
+    margin: 0;
+  }
+
+  .menu-drawer__register-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding-block: var(--nav-panel-item-padding-block);
+    font-family: var(--font-heading--family);
+    font-size: 1rem;
+    font-weight: var(--nav-link-weight);
+    line-height: normal;
+    letter-spacing: var(--nav-link-letter-spacing);
+    color: var(--nav-drawer-foreground);
+    text-decoration: none;
+  }
+
+  .menu-drawer__register-arrow,
+  .menu-drawer__register-arrow svg {
+    width: 0.9375rem; /* 15 */
+    height: 0.9375rem;
+  }
+
+  /* ---- Wordmark texture — Figma 2001:1979 ------------------------ */
+
+  /* The wordmark overhangs the drawer on three sides — 417x105 against a
+     393-wide frame, sitting 23px below the bottom edge so the letterforms are
+     cut off. The drawer is transformed while open, which makes it the
+     containing block for this fixed child, so an oversized box here would be
+     scrollable overflow rather than a bleed. The wrapper therefore fits the
+     drawer exactly and clips the oversized glyph inside it. */
+  .menu-drawer .menu-drawer__watermark {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 5.125rem; /* 105 - 23 */
+    overflow: clip;
+    pointer-events: none;
+    user-select: none;
+
+    /* A negative index paints above the panel's own background but still under
+       its links, so the wordmark stays a backdrop rather than an overlay on
+       short viewports where the two would meet. */
+    z-index: var(--layer-lowest);
+    color: var(--color-teal-600);
+    opacity: var(--opacity-20);
+    mix-blend-mode: screen;
+  }
+
+  /* Beats the drawer's blanket icon sizing (.menu-drawer svg). */
+  .menu-drawer .menu-drawer__watermark svg {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    translate: -50% 0;
+    width: 26.0625rem; /* 417 */
+    height: 6.5625rem; /* 105 */
   }
 {% endstylesheet %}

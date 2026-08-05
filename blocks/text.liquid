@@ -145,6 +145,22 @@
           "label": "t:options.h7"
         },
         {
+          "value": "display-stat",
+          "label": "Display / Stat"
+        },
+        {
+          "value": "text-label-lg",
+          "label": "Label / Large"
+        },
+        {
+          "value": "text-label",
+          "label": "Label / Default"
+        },
+        {
+          "value": "text-body-lg",
+          "label": "Body / Large"
+        },
+        {
           "value": "custom",
           "label": "t:options.custom"
         }
@@ -293,6 +309,10 @@
         {
           "value": "3.5rem",
           "label": "56px"
+        },
+        {
+          "value": "4rem",
+          "label": "64px"
         },
         {
           "value": "4.5rem",
@@ -488,6 +508,10 @@
           "label": "32px"
         },
         {
+          "value": "2.25rem",
+          "label": "36px"
+        },
+        {
           "value": "2.5rem",
           "label": "40px"
         },
@@ -498,6 +522,10 @@
         {
           "value": "3.5rem",
           "label": "56px"
+        },
+        {
+          "value": "4rem",
+          "label": "64px"
         },
         {
           "value": "4.5rem",
@@ -566,6 +594,54 @@
       "max": 50,
       "step": 1,
       "visible_if": "{{ block.settings.background }}"
+    },
+    {
+      "type": "header",
+      "content": "Margin"
+    },
+    {
+      "type": "paragraph",
+      "content": "Negative values pull the text outwards, letting oversized display text bleed past the section edge. Turn on \"Clip overflowing content\" in the section to crop the part that spills out."
+    },
+    {
+      "type": "range",
+      "id": "margin-block-start",
+      "label": "t:settings.top",
+      "min": -200,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin-block-end",
+      "label": "t:settings.bottom",
+      "min": -200,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin-inline-start",
+      "label": "t:settings.left",
+      "min": -200,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin-inline-end",
+      "label": "t:settings.right",
+      "min": -200,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 0
     },
     {
       "type": "header",

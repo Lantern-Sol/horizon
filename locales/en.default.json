@@ -171,7 +171,14 @@
     "blog_details_separator": "|",
     "cart_estimated_total": "Estimated total",
     "cart_title": "Cart",
+    // Cart drawer heading, which spells the line count out inline — Figma "Cart: 1 Item"
+    "cart_title_with_count": {
+      "one": "Cart: {{ count }} Item",
+      "other": "Cart: {{ count }} Items"
+    },
     "cart_subtotal": "Subtotal",
+    // Cart drawer recommendations heading
+    "cart_recommendations_title": "You May Also Like",
     "cart_total": "Cart total",
     "checkout": "Check out",
     "collection_placeholder": "Collection title",
@@ -271,6 +278,11 @@
     "variant": "Variant",
     "variant_total": "Variant total",
     "view_cart": "View cart",
+    // Cart drawer footer actions — title case per Figma
+    "proceed_to_checkout": "Proceed to Checkout",
+    "view_cart_titlecase": "View Cart",
+    // Cart drawer recommendation card action
+    "view_product": "View",
     "your_cart": "Your cart",
     "items_added_to_cart": {
       "one": "1 item added to cart",

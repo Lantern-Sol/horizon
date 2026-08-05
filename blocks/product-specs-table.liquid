@@ -1,0 +1,177 @@
+{%- liquid
+  assign block_settings = block.settings
+  assign product_ref = closest.product
+
+  # Read specs from a JSON metafield (array of {label, value} objects)
+  # Namespace: custom | Key: product_specs_table
+  assign specs_raw = product_ref.metafields.custom.product_specs_table.value
+
+  # Fallback: nothing to render when no specs are set
+  assign has_specs = false
+  unless specs_raw == blank or specs_raw == empty
+    assign has_specs = true
+  endunless
+
+  assign doc_url = product_ref.metafields.custom.product_specs_doc_url
+  assign doc_label = product_ref.metafields.custom.product_specs_doc_label | default: block_settings.doc_label
+
+  assign show_placeholder = false
+  if has_specs == false
+    if block_settings.show_sample_content or request.visual_preview_mode or request.design_mode
+      assign show_placeholder = true
+    endif
+  endif
+-%}
+
+{%- if has_specs or show_placeholder -%}
+  {% render 'product-data-table-styles' %}
+
+  <div
+    class="product-specs-table spacing-style"
+    style="{% render 'spacing-style', settings: block_settings %}"
+    {{ block.shopify_attributes }}
+  >
+    <table class="product-data-table product-data-table--pairs">
+      <thead>
+        <tr>
+          <th scope="col">{{ block_settings.label_heading | escape }}</th>
+          <th scope="col">{{ block_settings.value_heading | escape }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {%- if has_specs -%}
+          {%- for row in specs_raw -%}
+            <tr>
+              <th scope="row">{{- row.label | escape -}}</th>
+              <td>{{- row.value | escape -}}</td>
+            </tr>
+          {%- endfor -%}
+        {%- else -%}
+          {%- comment -%} Theme-editor placeholder rows {%- endcomment -%}
+          {%- assign placeholder_rows = 'Length,Opening diameter,Color,Locking mechanism,Case Quantity,Pallet Quantity,Material,Manufacturing'
+            | split: ','
+          -%}
+          {%- assign placeholder_vals = '116mm|19mm|white & black|pop-top|1,000 units|36,000 units (36 cases)|PCR polypropylene (#5 recyclable)|made in the USA'
+            | split: '|'
+          -%}
+          {%- for label in placeholder_rows -%}
+            <tr>
+              <th scope="row">{{- label -}}</th>
+              <td>{{- placeholder_vals[forloop.index0] -}}</td>
+            </tr>
+          {%- endfor -%}
+        {%- endif -%}
+      </tbody>
+    </table>
+
+    {%- if doc_url != blank or block_settings.show_doc_link -%}
+      <a
+        href="{{ doc_url | default: '#' }}"
+        class="product-data-table__doc-link"
+        {% if block_settings.doc_new_tab %}
+          target="_blank"
+          rel="noopener noreferrer"
+        {% endif %}
+      >
+        {{- doc_label | default: 'View Full Product Specs & Technical Drawings' -}}
+        <span class="product-data-table__doc-icon" aria-hidden="true">
+          {{- 'icon-download.svg' | inline_asset_content -}}
+        </span>
+      </a>
+    {%- endif -%}
+  </div>
+{% endif %}
+
+{% stylesheet %}
+  .product-specs-table {
+    width: 100%;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Product Specs Table",
+  "tag": null,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Specs rows are driven by the 'product_specs_table' metafield (custom namespace, JSON type — array of {label, value} objects). The download link uses 'product_specs_doc_url' and 'product_specs_doc_label' metafields."
+    },
+    {
+      "type": "header",
+      "content": "Table"
+    },
+    {
+      "type": "text",
+      "id": "label_heading",
+      "label": "Label column heading",
+      "default": "Spec Type"
+    },
+    {
+      "type": "text",
+      "id": "value_heading",
+      "label": "Value column heading",
+      "default": "Product Spec"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sample_content",
+      "label": "Show sample specs on the storefront",
+      "info": "Renders the design's example rows when the product has no 'product_specs_table' metafield. Turn this off once real specs are in place — the theme editor always shows the sample.",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Download link"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_doc_link",
+      "label": "Show document link",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "doc_label",
+      "label": "Link text (fallback)",
+      "default": "View Full Product Specs & Technical Drawings"
+    },
+    {
+      "type": "checkbox",
+      "id": "doc_new_tab",
+      "label": "Open in new tab",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Specs Table",
+      "category": "Product"
+    }
+  ]
+}
+{% endschema %}

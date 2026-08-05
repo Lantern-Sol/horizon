@@ -1,0 +1,473 @@
+{%- doc -%}
+  Sana 2026 cart drawer footer.
+
+  Figma: Sana_nav_dropdown_cart 2001:1061 / 2001:1066 (desktop)
+         Sana_nav_mobile_dropdown_cart 2001:2182 / 2001:2188 (mobile)
+
+  A tax note beside the subtotal, then the "Proceed to Checkout" / "View Cart"
+  pair. The cart page keeps `cart-summary` — this is drawer-only, because the
+  design drops the estimated-total row in favour of a subtotal stack.
+
+  Cart note and discount code are not in the Figma frame, but they are merchant
+  settings: they render above the subtotal only when the merchant enabled them,
+  so a default store matches the design exactly.
+
+  @param {string} [section_id] - The section ID, forwarded to the discount component.
+{%- enddoc -%}
+
+{%- liquid
+  if settings.currency_code_enabled_cart_total
+    assign subtotal_price = cart.total_price | money_with_currency
+  else
+    assign subtotal_price = cart.total_price | money
+  endif
+-%}
+
+<div class="cart-drawer-summary">
+  {%- if cart.cart_level_discount_applications.size > 0 -%}
+    <ul
+      class="cart-drawer-summary__discounts"
+      role="list"
+      aria-label="{{ 'content.discounts' | t }}"
+    >
+      {%- for discount in cart.cart_level_discount_applications -%}
+        <li class="cart-drawer-summary__discount">
+          <span class="cart-drawer-summary__discount-label">
+            {{- 'icon-discount.svg' | inline_asset_content -}}
+            {{ discount.title | escape }}
+          </span>
+          <span class="cart-drawer-summary__discount-value">
+            -{{ discount.total_allocated_amount | money -}}
+          </span>
+        </li>
+      {%- endfor -%}
+    </ul>
+  {%- endif -%}
+
+  {% if settings.show_cart_note or settings.show_add_discount_code %}
+    <div class="cart-actions">
+      {% if settings.show_cart_note %}
+        <script
+          type="module"
+          src="{{ 'cart-note.js' | asset_url }}"
+        ></script>
+
+        <cart-note style="display: flex;">
+          {% capture cart_note_accordion_children %}
+            <details
+              {% if settings.cart_note_open_by_default %}
+                open
+              {% endif %}
+            >
+              <summary class="cart-note__summary">
+                <span class="cart-note__label cart-primary-typography">
+                  {{ 'content.seller_note' | t }}
+                </span>
+
+                <span class="cart-totals__icon">
+                  {{- 'icon-plus.svg' | inline_asset_content -}}
+                </span>
+              </summary>
+
+              <div class="details-content cart-note__inner">
+                <label
+                  for="cart-note"
+                  class="visually-hidden"
+                >
+                  {{- 'content.seller_note' | t -}}
+                </label>
+                <textarea
+                  form="cart-form"
+                  on:input="/updateCartNote"
+                  id="cart-note"
+                  class="cart-note__instructions"
+                  name="note"
+                  data-skip-node-update
+                >{{ cart.note }}</textarea>
+              </div>
+            </details>
+          {% endcapture %}
+          {% render 'accordion-custom-component',
+            children: cart_note_accordion_children,
+            class: 'cart-note',
+            open_by_default_on_desktop: settings.cart_note_open_by_default,
+            open_by_default_on_mobile: settings.cart_note_open_by_default
+          %}
+        </cart-note>
+      {% endif %}
+
+      {% if settings.show_cart_note and settings.show_add_discount_code %}
+        <div class="cart-actions__divider"></div>
+      {% endif %}
+
+      {% if settings.show_add_discount_code %}
+        {% liquid
+          assign discount_codes = cart.cart_level_discount_applications | where: 'type', 'discount_code' | map: 'title'
+          for item in cart.items
+            for allocation in item.line_level_discount_allocations
+              if allocation.discount_application.type == 'discount_code'
+                assign discount_codes = item.line_level_discount_allocations | slice: forloop.index0 | map: 'discount_application' | map: 'title' | concat: discount_codes
+              endif
+            endfor
+          endfor
+
+          assign discount_codes = discount_codes | uniq
+
+          if discount_codes.size == 0
+            assign disclosure_expanded = false
+          else
+            assign disclosure_expanded = true
+          endif
+        %}
+
+        {% capture cart_discount_accordion_children %}
+          <details
+            {% if disclosure_expanded %}
+              open
+            {% endif %}
+          >
+            <summary class="cart-discount__summary">
+              <span class="cart-discount__label cart-primary-typography">{{ 'content.discount' | t }}</span>
+
+              <span class="cart-totals__icon">
+                {{- 'icon-plus.svg' | inline_asset_content -}}
+              </span>
+            </summary>
+
+            <div class="details-content">
+              <div id="cart-drawer-discount-disclosure">
+                <cart-discount-component
+                  {% if section_id != blank %}
+                    data-section-id="{{ section_id }}"
+                  {% endif %}
+                >
+                  <div class="cart-discount__content">
+                    <form
+                      on:submit="/applyDiscount"
+                      onsubmit="return false;"
+                      class="cart-discount__form"
+                    >
+                      <label
+                        for="cart-drawer-discount"
+                        class="visually-hidden"
+                      >
+                        {{- 'accessibility.discount' | t -}}
+                      </label>
+                      <input
+                        id="cart-drawer-discount"
+                        class="cart-discount__input"
+                        type="text"
+                        name="discount"
+                        size="8"
+                        placeholder="{{ 'content.discount_code' | t }}"
+                        required
+                        data-skip-node-update
+                      >
+                      <button
+                        type="submit"
+                        class="button cart-discount__button"
+                      >
+                        {{ 'actions.apply' | t }}
+                      </button>
+                    </form>
+                  </div>
+                  <div
+                    class="cart-discount__error hidden"
+                    role="alert"
+                    ref="cartDiscountError"
+                  >
+                    <span class="svg-wrapper">
+                      {{- 'icon-error.svg' | inline_asset_content -}}
+                    </span>
+                    <small
+                      class="cart-discount__error-text cart-primary-typography hidden"
+                      ref="cartDiscountErrorDiscountCode"
+                    >
+                      {{ 'content.discount_code_error' | t: code: 'test' }}
+                    </small>
+                    <small
+                      class="cart-discount__error-text cart-primary-typography hidden"
+                      ref="cartDiscountErrorShipping"
+                    >
+                      {{ 'content.shipping_discount_error' | t }}
+                    </small>
+                  </div>
+                  <ul class="cart-discount__codes">
+                    {% for discount_code in discount_codes %}
+                      <li
+                        class="cart-discount__pill"
+                        data-discount-code="{{ discount_code }}"
+                        aria-label="{{ 'accessibility.discount_applied' | t: code: discount_code }}"
+                      >
+                        <p class="cart-discount__pill-code">
+                          {{ discount_code }}
+                        </p>
+                        <button
+                          type="button"
+                          on:click="/removeDiscount"
+                          class="cart-discount__pill-remove svg-wrapper svg-wrapper--smaller button-unstyled"
+                          aria-label="{{ 'actions.remove_discount' | t: code: discount_code }}"
+                        >
+                          {{- 'icon-filters-close.svg' | inline_asset_content -}}
+                        </button>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </cart-discount-component>
+              </div>
+            </div>
+          </details>
+        {% endcapture %}
+        {% render 'accordion-custom-component', children: cart_discount_accordion_children, class: 'cart-discount' %}
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <div class="cart-drawer-summary__totals">
+    <div class="cart-drawer-summary__tax">
+      {% render 'tax-info', has_discounts_enabled: settings.show_add_discount_code %}
+    </div>
+
+    <div
+      class="cart-drawer-summary__subtotal"
+      role="status"
+    >
+      <span class="cart-drawer-summary__subtotal-label">{{ 'content.cart_subtotal' | t }}:</span>
+      <text-component
+        ref="cartTotal"
+        value="{{ subtotal_price | strip_html }}"
+        class="cart-drawer-summary__subtotal-value"
+        {% comment %} Used by the payment_terms web component {% endcomment %}
+        data-testid="cart-total-value"
+        data-cart-subtotal
+      >
+        {{ subtotal_price }}
+      </text-component>
+    </div>
+  </div>
+
+  {% if settings.show_installments %}
+    <div class="cart-drawer-summary__installments">
+      {% form 'cart', cart %}
+        {{ form | payment_terms }}
+      {% endform %}
+    </div>
+  {% endif %}
+
+  <div class="cart-drawer-summary__ctas">
+    <button
+      type="submit"
+      id="checkout"
+      class="button cart__checkout-button cart-drawer-summary__checkout"
+      name="checkout"
+      form="cart-form"
+      {% if cart == empty %}
+        disabled
+      {% endif %}
+    >
+      <span class="button-text">{{ 'content.proceed_to_checkout' | t }}</span>
+    </button>
+
+    <a
+      href="{{ routes.cart_url }}"
+      class="button button-secondary cart-drawer-summary__view-cart"
+    >
+      <span class="button-text">{{ 'content.view_cart_titlecase' | t }}</span>
+      <span class="cart-drawer-summary__view-cart-icon svg-wrapper">
+        {{- 'icon-nav-arrow-top-right.svg' | inline_asset_content -}}
+      </span>
+    </a>
+  </div>
+
+  {% if additional_checkout_buttons and settings.show_accelerated_checkout_buttons %}
+    <div class="additional-checkout-buttons additional-checkout-buttons--vertical">
+      {{ content_for_additional_checkout_buttons }}
+    </div>
+  {% endif %}
+</div>
+
+{% stylesheet %}
+  .cart-drawer-summary {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-md);
+    width: 100%;
+  }
+
+  .cart-drawer-summary__discounts {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-2xs);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 1rem;
+    color: var(--color-teal-800);
+  }
+
+  .cart-drawer-summary__discount {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .cart-drawer-summary__discount-label {
+    display: flex;
+    align-items: center;
+    gap: var(--gap-2xs);
+  }
+
+  .cart-drawer-summary__discount-label svg {
+    width: var(--icon-size-sm);
+    height: var(--icon-size-sm);
+  }
+
+  /* Figma 2001:1061 — tax note on the left, subtotal stack on the right. */
+  .cart-drawer-summary__totals {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--gap-lg);
+    padding-block: 0.5rem; /* 8 */
+    color: var(--color-teal-800);
+  }
+
+  .cart-drawer-summary__tax {
+    max-width: 13.1875rem; /* 211 */
+    font-family: var(--font-body--family);
+    font-size: 1rem; /* 16 */
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  .cart-drawer-summary__tax small {
+    font-size: inherit;
+  }
+
+  .cart-drawer-summary__tax a {
+    color: inherit;
+    text-decoration-line: underline;
+  }
+
+  .cart-drawer-summary__subtotal {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    text-align: start;
+  }
+
+  .cart-drawer-summary__subtotal-label {
+    font-family: var(--font-body--family);
+    font-size: 1rem; /* 16 */
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  .cart-drawer-summary__subtotal-value {
+    font-family: var(--font-heading--family);
+    font-size: 1.5rem; /* 24 */
+    font-weight: 600;
+    line-height: 1.3;
+    white-space: nowrap;
+  }
+
+  .cart-drawer-summary__installments {
+    color: var(--color-teal-800);
+    font-size: var(--font-size--2xs);
+  }
+
+  /* Figma 2001:1066 — two equal pills side by side on desktop, stacked on mobile. */
+  .cart-drawer-summary__ctas {
+    display: flex;
+    gap: 0.875rem; /* 14 */
+    width: 100%;
+  }
+
+  /* Equal halves of the row, so both pills land on Figma's 222px. */
+  .cart-drawer-summary__ctas > * {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  :is(.cart-drawer-summary__checkout, .cart-drawer-summary__view-cart) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem; /* 10 */
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    padding-block: 0.875rem; /* 14 */
+    padding-inline: 1.75rem; /* 28 */
+    border-radius: 5rem; /* 80 */
+    font-family: var(--font-heading--family);
+    font-size: 1rem; /* 16 */
+    font-weight: 600;
+    line-height: normal;
+    letter-spacing: var(--letter-spacing--002);
+    text-align: center;
+    text-decoration: none;
+    box-shadow: none;
+  }
+
+  .cart-drawer-summary__checkout {
+    background-color: var(--color-teal-800);
+    color: var(--color-white);
+    border: none;
+  }
+
+  .cart-drawer-summary__checkout:hover:not(:disabled) {
+    background-color: var(--color-teal-700);
+  }
+
+  .cart-drawer-summary__view-cart {
+    background-color: transparent;
+    color: var(--color-teal-800);
+    border: 1px solid var(--color-teal-800);
+  }
+
+  /* This button sets `color` directly rather than through --button-color, so the
+     radial hover fill in base.css can't swap the text for it — without this the
+     label would stay teal-800 against a teal-800 fill and vanish. The background
+     is left to the fill; a tint here would sit under it and never be seen. */
+  .cart-drawer-summary__view-cart:hover {
+    color: var(--color-white);
+  }
+
+  .cart-drawer-summary__view-cart-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 0.9375rem; /* 15 */
+    height: 0.9375rem; /* 15 */
+    flex-shrink: 0;
+  }
+
+  .cart-drawer-summary__view-cart-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  @media screen and (max-width: 749px) {
+    .cart-drawer-summary__tax {
+      max-width: 10.625rem; /* 170 */
+    }
+
+    .cart-drawer-summary__subtotal-value {
+      font-size: 1.125rem; /* 18 */
+      line-height: 1.5;
+    }
+
+    .cart-drawer-summary__ctas {
+      flex-direction: column;
+      gap: 1rem; /* 16 */
+    }
+
+    /* Once the row is a column, `flex-basis: 0` would size the pills' height
+       instead of their width and collapse them onto their own padding. */
+    .cart-drawer-summary__ctas > * {
+      flex: 0 0 auto;
+      width: 100%;
+    }
+  }
+{% endstylesheet %}

@@ -114,10 +114,23 @@
         echo '<li class="mega-menu__column ' | append: span_class | append: '">'
       endif
     %}
+    {% liquid
+      # The Figma dropdown card closes with a call-to-action row ("Shop All ↗",
+      # 2001:485). The menu already carries that as an ordinary last link
+      # pointing at a listing, so promote that link instead of inventing a
+      # separate setting for it. Only applies to the text/card layout.
+      assign is_submenu_cta = false
+      if menu_content_type == 'text' and forloop.last and link.links == blank
+        case link.type
+          when 'catalog_link', 'collections_link', 'collection_link'
+            assign is_submenu_cta = true
+        endcase
+      endif
+    %}
     <div>
       <a
         href="{{ link.url }}"
-        class="mega-menu__link {% if link.links != blank %}mega-menu__link--parent{% endif %}"
+        class="mega-menu__link {% if link.links != blank %}mega-menu__link--parent{% endif %}{% if is_submenu_cta %} mega-menu__link--cta{% endif %}"
       >
         {% if menu_content_type == 'collection_images' %}
           {%- capture collection_image_sizes -%}
@@ -142,7 +155,11 @@
         <span class="wrap-text">
           {{- link.title -}}
         </span>
-        {%- if link.links != blank -%}
+        {%- if is_submenu_cta -%}
+          <span class="svg-wrapper mega-menu__link-arrow">
+            {{- 'icon-nav-arrow-top-right.svg' | inline_asset_content -}}
+          </span>
+        {%- elsif link.links != blank -%}
           {% render 'icon-chevron-down' %}
         {%- endif -%}
       </a>

@@ -95,6 +95,168 @@
       grid-column: 1 / -1;
     }
   }
+
+  /* ================================================================
+     Sana 2026 footer
+     Figma: Footer 169:951 (desktop)
+            Footer 227:938 (mobile)
+
+     Two top-level blocks: the brand group (logo, description, social
+     chips) and the links group (three menu columns + the Company info
+     block). The grid override below replaces the stock equal-column
+     layout with the Figma 350px / max-content split.
+     ================================================================ */
+
+  .section:has(> .footer-content) {
+    /* Figma page margin is 80px at the 1440 anchor, matching the header
+       nav's --nav-bar-padding-inline, not the theme's 50px default. */
+    --page-margin: 5rem; /* 80 */
+  }
+
+  .footer-content.footer-content {
+    /* Top divider between the newsletter card and the footer columns
+       (Figma Divider 169:964). */
+    border-block-start: 1px solid var(--color-sea-grey-100);
+  }
+
+  @media screen and (min-width: 750px) and (max-width: 989px) {
+    /* Tablet: brand row above the link columns. */
+    .footer-content.footer-content {
+      grid-template-columns: 1fr;
+    }
+
+    .footer-content > .group-block:last-child .group-block-content {
+      flex-wrap: wrap;
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    .footer-content.footer-content {
+      grid-template-columns: 21.875rem max-content; /* 350 / hug */
+      justify-content: space-between;
+    }
+  }
+
+  /* --- Menu columns: eyebrow headings + 14px links ------------------ */
+  .footer-content .menu__heading {
+    padding: 0;
+    font-family: var(--font-geom--family);
+    font-size: 0.875rem; /* 14 */
+    font-weight: 500;
+    line-height: 1.3;
+    letter-spacing: 0.3em; /* UI/Eyebrow tracking */
+    text-transform: uppercase;
+    color: var(--color-teal-500);
+  }
+
+  /* The stock rule above pins the default-heading span to the heading
+     role weight (700); the eyebrow is Medium. */
+  .footer-content .menu__heading__default {
+    font-weight: inherit;
+  }
+
+  .footer-content .menu:not(:has(.menu__heading--empty)) .details-content {
+    --spacing--size: 0.875rem; /* 14 — heading to first link */
+  }
+
+  .footer-content .menu__item + .menu__item {
+    --spacing--size: 0.875rem; /* 14 — link to link */
+    margin-block-end: 0;
+  }
+
+  /* The child selector covers richtext items (the Company address renders a
+     `<p>` inside the item), which base.css `.paragraph > *` would otherwise
+     reset to the foreground color and the default paragraph size. */
+  .footer-content .menu__item.paragraph,
+  .footer-content .menu__item.paragraph > * {
+    font-size: 0.875rem; /* 14 */
+    line-height: 1.5;
+    color: var(--color-sea-grey-700);
+  }
+
+  .footer-content .menu__item a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .footer-content .menu__item a:hover {
+    color: var(--color-teal-500);
+  }
+
+  /* --- Brand column -------------------------------------------------- */
+  .footer-content .image-block {
+    width: 9.5rem; /* 152 — the Sana logo */
+  }
+
+  /* --- Social chips (Figma Social Links 169:974) --------------------- */
+  /* 29.48px circles, teal border, light gradient fill, teal-800 glyphs.
+     The glyph SVGs are authored in chip space, so they render full-bleed. */
+  .footer-content .social-icons__wrapper {
+    gap: 0.5rem; /* 8 */
+    justify-content: flex-start;
+  }
+
+  .footer-content .social-icons__icon-wrapper,
+  .footer-content .social-icons__icon-wrapper:has(.social-icons__icon path) {
+    width: 1.8427rem; /* 29.48 */
+    height: 1.8427rem; /* 29.48 */
+  }
+
+  .footer-content .social-icons__icon-wrapper > a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 1px solid var(--color-teal-200);
+    background: linear-gradient(-26.57deg, var(--color-teal-200) 6%, var(--color-teal-50) 75%);
+    color: var(--color-teal-800);
+  }
+
+  .footer-content .social-icons__icon-wrapper > a:hover {
+    /* Darker gradient from the Figma hover chip (169:975). */
+    background: linear-gradient(-26.57deg, var(--color-teal-400) 6%, var(--color-teal-200) 94%);
+  }
+
+  .footer-content .social-icons__icon-wrapper:has(.social-icons__icon path) .social-icons__icon {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* --- Mobile: accordion card (Figma menu 228:1018) ------------------ */
+  @media screen and (max-width: 749px) {
+    .section:has(> .footer-content) {
+      --page-margin: 1rem; /* 16 */
+    }
+
+    .footer-content.footer-content {
+      padding-block: 2rem; /* 32 */
+    }
+
+    .footer-content > .group-block:last-child {
+      background-color: var(--color-teal-50);
+      border: 1px solid var(--color-teal-200);
+      border-radius: 1rem; /* 16 */
+    }
+
+    .footer-content > .group-block:last-child .menu + .menu {
+      border-block-start: 1px solid var(--color-teal-200);
+    }
+
+    .footer-content .menu--accordion .menu__heading {
+      padding: 1.5rem 2rem; /* 24 / 32 */
+    }
+
+    .footer-content .menu.menu--accordion:not(:has(.menu__heading--empty)) .details-content {
+      margin-block-start: 0;
+      padding: 0 2rem 1.5rem; /* 0 / 32 / 24 */
+    }
+
+    .footer-content .menu--accordion .menu__item + .menu__item {
+      --spacing--size: 0.5rem; /* 8 */
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}

@@ -123,6 +123,36 @@
     {{ accent_font_bold_italic | font_face: font_display: 'swap' }}
   {% endif %}
 
+  {%- comment -%}
+    Geom — the theme's default typeface, self-hosted from assets/.
+    Variable font with a single wght axis covering 300–900, so one file per
+    style serves every weight the theme asks for.
+
+    Geom is not part of Shopify's font library, so it cannot be selected in the
+    theme editor's font pickers. It is applied by overriding the --font-*--family
+    variables below; the pickers still drive weight and style. To hand the family
+    back to the pickers, remove these @font-face rules and the four --font-*--family
+    overrides in the "Font families" block.
+
+    Licensed under the SIL Open Font License 1.1 — see LICENSE-Geom.txt at the
+    repo root. Designed by Thanos Poulakidas.
+  {%- endcomment -%}
+  @font-face {
+    font-family: 'Geom';
+    src: url('{{ 'geom-variable.woff2' | asset_url }}') format('woff2');
+    font-weight: 300 900;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Geom';
+    src: url('{{ 'geom-italic-variable.woff2' | asset_url }}') format('woff2');
+    font-weight: 300 900;
+    font-style: italic;
+    font-display: swap;
+  }
+
   @media only screen and (max-width: 1440px) and (min-width: 750px) { 
     html {
       font-size: calc(16 * 100vw / 1440);
@@ -167,18 +197,37 @@
     --letter-spacing-md: 0.13em;
 
     /* Font families */
-    --font-body--family: {{ settings.type_body_font.family }}, {{ settings.type_body_font.fallback_families }};
+    /* Geom is the theme default for every role — see the @font-face rules above. */
+    --font-geom--family: 'Geom', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+    {%- comment -%}
+      Role weights are pinned to the Figma spec rather than read from the font pickers.
+
+      Figma needs 700 for H1/H2 but 600 for H3/H4/H5, and the engine derives a preset's weight
+      from its ROLE — so the roles have to carry 700 and 600 respectively. Shopify's pickers
+      cannot express Geom at all (see the @font-face block above), which already made them
+      family-inert; pinning weight here keeps the whole scale deterministic instead of depending
+      on which Inter weight happens to be selected.
+
+      The --font-<role>--weight names are unchanged, so all seven direct readers and the
+      var(--font-{{ role }}--weight) interpolation sites keep resolving.
+
+      accent stays 700 deliberately: no preset routes to it, but 'jumbo-text' reads it via
+      var(--font-{{ block_settings.font | default: 'accent' }}--weight), so lowering it would
+      quietly drop every default jumbo block from Bold to Medium.
+    {%- endcomment -%}
+    --font-body--family: var(--font-geom--family);
     --font-body--style: {{ settings.type_body_font.style }};
-    --font-body--weight: {{ settings.type_body_font.weight }};
-    --font-subheading--family: {{ settings.type_subheading_font.family }}, {{ settings.type_subheading_font.fallback_families }};
+    --font-body--weight: 400;
+    --font-subheading--family: var(--font-geom--family);
     --font-subheading--style: {{ settings.type_subheading_font.style }};
-    --font-subheading--weight: {{ settings.type_subheading_font.weight }};
-    --font-heading--family: {{ settings.type_heading_font.family }}, {{ settings.type_heading_font.fallback_families }};
+    --font-subheading--weight: 600;
+    --font-heading--family: var(--font-geom--family);
     --font-heading--style: {{ settings.type_heading_font.style }};
-    --font-heading--weight: {{ settings.type_heading_font.weight }};
-    --font-accent--family: {{ settings.type_accent_font.family }}, {{ settings.type_accent_font.fallback_families }};
+    --font-heading--weight: 700;
+    --font-accent--family: var(--font-geom--family);
     --font-accent--style: {{ settings.type_accent_font.style }};
-    --font-accent--weight: {{ settings.type_accent_font.weight }};
+    --font-accent--weight: 700;
 
     /* Margin sizes */
     --font-h1--spacing: 0.25em;
@@ -245,6 +294,32 @@
     --line-height--body-tight: 1.2;
     --line-height--body-normal: 1.4;
     --line-height--body-loose: 1.6;
+
+    {%- comment -%}
+      Figma leading + tracking steps, named by their numeric value.
+
+      These are ADDITIVE. The nine {display|heading|body}-{tight|normal|loose} names above keep
+      their original values on purpose: their names are composed at runtime in several places
+      (e.g. 'typography-style' builds var(--line-height--{{ type }}-{{ step }}) from block
+      settings), so re-valuing them would silently change type that no Figma style governs.
+      Figma-driven presets point at the numeric steps below instead.
+
+      Letter-spacing: Figma states tracking as a PERCENTAGE, so 1% -> 0.01em, 30% -> 0.3em.
+    {%- endcomment -%}
+    --line-height--095: 0.95;
+    --line-height--100: 1;
+    --line-height--110: 1.1;
+    --line-height--115: 1.15;
+    --line-height--120: 1.2;
+    --line-height--125: 1.25;
+    --line-height--130: 1.3;
+    --line-height--150: 1.5;
+    --line-height--auto: normal;
+
+    --letter-spacing--000: 0em;
+    --letter-spacing--001: 0.01em;
+    --letter-spacing--002: 0.02em;
+    --letter-spacing--030: 0.3em;
 
     /* Typography presets */
     {% liquid
@@ -384,15 +459,82 @@
     --menu-font-2xl--size: 1.75rem;
     --menu-font-2xl--line-height: calc(1.1 + 0.5 * min(16 / 28));
 
-    /* Colors */
-    --color-error: #8B0000;
-    --color-success: #006400;
+    {%- comment -%}
+      Navigation — Figma "Navigation/Desktop" (2001:385) and "Navigation/Mobile" (2001:1842).
+
+      1rem is exactly 16px at BOTH Figma anchors (the html font-size rules above pin it to
+      100vw/1440 on desktop and 100vw/393 on mobile), so every rem value here renders as the
+      literal Figma pixel size at its anchor and scales with the rest of the page in between.
+      The px comments are the Figma values, not a second source of truth.
+
+      These are additive: nothing below re-values an existing token. The header reads these
+      instead of --menu-* so the merchant-facing menu typography settings stay independent.
+    {%- endcomment -%}
+
+    /* Bar — desktop */
+    --nav-bar-padding-inline: 5rem; /* 80 */
+    --nav-bar-padding-block: 1.5rem; /* 24 */
+    --nav-bar-gap: 4rem; /* 64 */
+    --nav-logo-height: 3.875rem; /* 62 */
+    --nav-icon-size: 1.5rem; /* 24 */
+    --nav-actions-gap: 1.25rem; /* 20 */
+
+    /* Bar — mobile */
+    --nav-bar-padding-mobile: 1.5rem; /* 24 */
+    --nav-logo-height-mobile: 3.0625rem; /* 49 */
+    --nav-actions-gap-mobile: 1.125rem; /* 18 */
+
+    /* Top-level link — Figma style "UI/Nav" (18/1.25, +2% tracking, SemiBold) */
+    --nav-link-size: 1.125rem; /* 18 */
+    --nav-link-weight: 600;
+    --nav-link-line-height: var(--line-height--125);
+    --nav-link-letter-spacing: var(--letter-spacing--002);
+    --nav-link-padding-inline: 1.5rem; /* 24 */
+    --nav-link-padding-block: 0.625rem; /* 10 */
+    --nav-link-radius: 3.125rem; /* 50 */
+
+    /* Top-level link — Figma style "Mobile/UI/Nav" (20/1.25) */
+    --nav-link-size-mobile: 1.25rem; /* 20 */
+    --nav-link-padding-block-mobile: 1rem; /* 16 */
+
+    /* Menu dropdown card */
+    --nav-panel-radius: 1.5rem; /* 24 */
+    --nav-panel-padding-inline: 2rem; /* 32 */
+    --nav-panel-padding-block-end: 1.75rem; /* 28 */
+    --nav-panel-item-padding-block: 0.5rem; /* 8 */
+    --nav-panel-background: var(--color-white);
+    --nav-panel-link-color: var(--color-teal-800);
+    --nav-panel-link-color-hover: var(--color-teal-500);
+
+    /* Utility panels — search / account / cart */
+    --nav-utility-background: var(--color-sand-50);
+    --nav-utility-shadow: -10px 4px 20px rgb(0 0 0 / 0.14);
+    --nav-utility-field-background: rgb(230 215 195 / 0.5); /* sand-200 @ 50% */
+    --nav-utility-field-radius: 0.5rem; /* 8 */
+    --nav-utility-width: 32.625rem; /* 522 */
+    --nav-utility-width-search: 29.25rem; /* 468 */
+
+    /* Sticky / scrolled bar */
+    --nav-scroll-shadow: 0 10px 20px rgb(0 0 0 / 0.12);
+    --nav-scroll-shadow-mobile: 0 10px 20px rgb(0 0 0 / 0.32);
+
+    /* Mobile drawer */
+    --nav-drawer-background: linear-gradient(180deg, var(--color-teal-800) 0%, var(--color-teal-600) 100%);
+    --nav-drawer-foreground: var(--color-white);
+    --nav-drawer-muted: var(--color-teal-200);
+    --nav-drawer-accent: var(--color-teal-300);
+
+    /* Colors
+       Status values come from the Figma "Alert & Status" group — see 'color-tokens'.
+       Stock states reuse the status ramp so in/low/out read as success/warning/disabled. */
+    --color-error: var(--color-status-error);
+    --color-success: var(--color-status-success);
     --color-white: #FFFFFF;
     --color-white-rgb: 255 255 255;
     --color-black: #000000;
-    --color-instock: #3ED660;
-    --color-lowstock: #EE9441;
-    --color-outofstock: #C8C8C8;
+    --color-instock: var(--color-status-success);
+    --color-lowstock: var(--color-status-warning);
+    --color-outofstock: var(--color-status-disabled);
 
     /* Opacity */
     --opacity-5: 0.05;
@@ -502,6 +644,43 @@
     --animation-timing-default: cubic-bezier(0, 0, 0.2, 1);
     --animation-timing-fade-in: cubic-bezier(0.16, 1, 0.3, 1);
     --animation-timing-fade-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Radial hover fill */
+    /*
+      Timing for the radial button fill in base.css; override on a section (or a single button)
+      to tune it. A quint-ish curve like cubic-bezier(0.3, 1, 0.3, 1) covers most of the distance
+      in the first few frames and reads as a snap however long you make it, so the glide comes
+      from the gentler cubic ease-out, not just duration.
+
+      These live on :root rather than on the .button rule they used to sit in because bespoke
+      section CTAs opt in with .button-fill alone. Undefined custom properties make the whole
+      `transition` declaration invalid at computed-value time — not ignored, but reset to
+      `all 0s` — which silently killed the fill on exactly the buttons that opted in.
+    */
+    --button-fill-speed: 0.75s;
+    --button-fill-easing: cubic-bezier(0.33, 1, 0.68, 1);
+
+    /* Trailing arrow glyph */
+    /*
+      Buttons that end in the up-right arrow (icon-arrow-top-right.svg and its small twin) all
+      share one hover motion: the glyph swings 45deg clockwise off its rest diagonal round to due
+      east, plus a 2px nudge in the new direction of travel. It is the one asset rotated rather
+      than a second arrow swapped in — that is what lets it animate at all, and it is why the
+      hover transform carries the rotation instead of only a translate.
+
+      Started life on the Custom Packaging banner CTA. Kept here so every arrow button reads the
+      same and a new section inherits it by referencing these two vars rather than re-deriving
+      the motion. Sites that draw the arrow at a different scale still share the timing.
+    */
+    --button-arrow-speed: 0.25s;
+    --button-arrow-easing: ease;
+    --button-arrow-hover-transform: translate(2px, 0) rotate(45deg);
+    --button-arrow-transition: transform var(--button-arrow-speed) var(--button-arrow-easing);
+
+    /* The arrow still turns to horizontal on hover — it just snaps rather than swinging. */
+    @media (prefers-reduced-motion: reduce) {
+      --button-arrow-speed: 0s;
+    }
 
     /* View transitions */
     /* View transition old */
@@ -660,6 +839,213 @@
     --cart-secondary-font-family: var(--font-{{ settings.cart_price_font }}--family);
     --cart-secondary-font-style: var(--font-{{ settings.cart_price_font }}--style);
     --cart-secondary-font-weight: var(--font-{{ settings.cart_price_font }}--weight);
+
+    {%- comment -%}
+      Figma styles that have no h1-h7/paragraph equivalent.
+
+      Token name = the Figma path, lowercased: Display/Hero -> --font-display-hero--*,
+      UI/Label/Large -> --font-label-lg--*. Sizes are px/16 rem, which is pixel-exact at both
+      Figma anchors because html{font-size} resolves to exactly 16px at 393px and at 1440px.
+
+      Buttons use line-height: normal — Figma reports them as "Auto", which the variable export
+      serialises as the bogus value 100.
+    {%- endcomment -%}
+
+    /* Display */
+    --font-display-hero--size: 4rem;
+    --font-display-hero--weight: 700;
+    --font-display-hero--line-height: var(--line-height--100);
+    --font-display-hero--letter-spacing: var(--letter-spacing--001);
+    --font-display-stat--size: 4.5rem;
+    --font-display-stat--weight: 700;
+    --font-display-stat--line-height: var(--line-height--095);
+    --font-display-stat--letter-spacing: var(--letter-spacing--000);
+    --font-display-quote--size: 1.625rem;
+    --font-display-quote--weight: 400;
+    --font-display-quote--line-height: var(--line-height--150);
+    --font-display-quote--letter-spacing: var(--letter-spacing--000);
+
+    /* Body ramp — weight is applied per utility class (400 / 500 / 600) */
+    --font-body-xl--size: 1.5rem;
+    --font-body-xl--line-height: var(--line-height--130);
+    --font-body-lg--size: 1.125rem;
+    --font-body-lg--line-height: var(--line-height--150);
+    --font-body-md--size: 1rem;
+    --font-body-md--line-height: var(--line-height--150);
+    --font-body-sm--size: 0.875rem;
+    --font-body-sm--line-height: var(--line-height--150);
+
+    /* UI */
+    --font-eyebrow--size: 0.875rem;
+    --font-eyebrow--weight: 500;
+    --font-eyebrow--line-height: var(--line-height--130);
+    --font-eyebrow--letter-spacing: var(--letter-spacing--030);
+    --font-nav--size: 1.125rem;
+    --font-nav--weight: 600;
+    --font-nav--line-height: var(--line-height--125);
+    --font-nav--letter-spacing: var(--letter-spacing--002);
+    --font-label--size: 1.125rem;
+    --font-label--weight: 600;
+    --font-label--line-height: var(--line-height--125);
+    --font-label--letter-spacing: var(--letter-spacing--000);
+    --font-label-lg--size: 1.5rem;
+    --font-label-lg--weight: 600;
+    --font-label-lg--line-height: var(--line-height--120);
+    --font-label-lg--letter-spacing: var(--letter-spacing--000);
+    --font-button-lg--size: 1.25rem;
+    --font-button-md--size: 1rem;
+    --font-button-sm--size: 0.875rem;
+    --font-button--weight: 600;
+    --font-button--line-height: var(--line-height--auto);
+    --font-button--letter-spacing: var(--letter-spacing--002);
+  }
+
+  {%- comment -%}
+    Mobile band — the second column of the Figma spec.
+
+    Deliberately a TOP-LEVEL @media rather than nesting inside :root. Nesting does work in this
+    file (there are precedents above), but if CSS Nesting ever fails to apply the failure is
+    silent and every preset renders at its desktop size on mobile. This form has no such
+    dependency.
+
+    749px matches the breakpoint where html{font-size} switches to its 393px-anchored calc(),
+    so these rem values are pixel-exact at 393px.
+
+    Only values that actually differ from desktop are restated.
+  {%- endcomment -%}
+  @media only screen and (max-width: 749px) {
+    :root {
+      /* Headings — Figma Mobile/Heading */
+      --font-size--h1: 2.25rem;
+      --font-size--h2: 2rem;
+      --font-size--h3: 1.5rem;
+      --font-size--h4: 1.25rem;
+      --font-size--h5: 1.125rem;
+
+      /* H3/H4 also tighten on mobile (1.2 -> 1.1, 1.25 -> 1.2) */
+      --font-h3--line-height: var(--line-height--110);
+      --font-h4--line-height: var(--line-height--120);
+
+      /* Display — Figma Mobile/Display */
+      --font-display-hero--size: 2.5rem;
+      --font-display-hero--line-height: var(--line-height--110);
+      --font-display-stat--size: 4rem;
+      --font-display-quote--size: 1.5rem;
+      --font-display-quote--line-height: var(--line-height--130);
+
+      /* UI — Figma Mobile/UI/Nav */
+      --font-nav--size: 1.25rem;
+    }
+  }
+
+  {%- comment -%}
+    Utility classes so the styles above are applicable to real content without new markup
+    plumbing. Named .display-hero rather than .hero: a .hero class already exists in
+    'sections/hero.liquid' and the bare name would collide.
+  {%- endcomment -%}
+  .display-hero,
+  .display-stat,
+  .display-quote,
+  .text-eyebrow,
+  .text-nav,
+  .text-label,
+  .text-label-lg,
+  .text-body-xl,
+  .text-body-lg,
+  .text-body-md,
+  .text-body-sm {
+    font-family: var(--font-geom--family);
+    font-style: normal;
+  }
+
+  .display-hero {
+    font-size: var(--font-display-hero--size);
+    font-weight: var(--font-display-hero--weight);
+    line-height: var(--font-display-hero--line-height);
+    letter-spacing: var(--font-display-hero--letter-spacing);
+  }
+
+  .display-stat {
+    font-size: var(--font-display-stat--size);
+    font-weight: var(--font-display-stat--weight);
+    line-height: var(--font-display-stat--line-height);
+    letter-spacing: var(--font-display-stat--letter-spacing);
+  }
+
+  .display-quote {
+    font-size: var(--font-display-quote--size);
+    font-weight: var(--font-display-quote--weight);
+    line-height: var(--font-display-quote--line-height);
+    letter-spacing: var(--font-display-quote--letter-spacing);
+  }
+
+  .text-eyebrow {
+    font-size: var(--font-eyebrow--size);
+    font-weight: var(--font-eyebrow--weight);
+    line-height: var(--font-eyebrow--line-height);
+    letter-spacing: var(--font-eyebrow--letter-spacing);
+    text-transform: uppercase;
+  }
+
+  .text-nav {
+    font-size: var(--font-nav--size);
+    font-weight: var(--font-nav--weight);
+    line-height: var(--font-nav--line-height);
+    letter-spacing: var(--font-nav--letter-spacing);
+  }
+
+  .text-label {
+    font-size: var(--font-label--size);
+    font-weight: var(--font-label--weight);
+    line-height: var(--font-label--line-height);
+  }
+
+  .text-label-lg {
+    font-size: var(--font-label-lg--size);
+    font-weight: var(--font-label-lg--weight);
+    line-height: var(--font-label-lg--line-height);
+  }
+
+  .text-body-xl {
+    font-size: var(--font-body-xl--size);
+    line-height: var(--font-body-xl--line-height);
+  }
+
+  .text-body-lg {
+    font-size: var(--font-body-lg--size);
+    line-height: var(--font-body-lg--line-height);
+  }
+
+  .text-body-md {
+    font-size: var(--font-body-md--size);
+    line-height: var(--font-body-md--line-height);
+  }
+
+  .text-body-sm {
+    font-size: var(--font-body-sm--size);
+    line-height: var(--font-body-sm--line-height);
+  }
+
+  /* Body weight variants — Figma ships each body size in Regular / Medium / SemiBold */
+  .text-w-regular {
+    font-weight: 400;
+  }
+
+  .text-w-medium {
+    font-weight: 500;
+  }
+
+  .text-w-semibold {
+    font-weight: 600;
+  }
+
+  /* Figma Body/SM italic */
+  .text-body-sm-italic {
+    font-family: var(--font-geom--family);
+    font-size: var(--font-body-sm--size);
+    font-style: italic;
+    font-weight: 400;
+    line-height: var(--line-height--130);
   }
 {% endstyle %}
 

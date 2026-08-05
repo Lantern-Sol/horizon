@@ -1,17 +1,33 @@
+{% liquid
+  assign is_hero = false
+  if section.settings.slideshow_style == 'hero'
+    assign is_hero = true
+  endif
+%}
+
 {% if section.blocks.size > 1 %}
-  {% if section.settings.display_mode == 'full_frame' %}
+  {% if section.settings.display_mode == 'full_frame' or is_hero %}
     {% assign autoplay = section.settings.autoplay %}
   {% else %}
     {% assign autoplay = false %}
   {% endif %}
+  {% liquid
+    # Hero style: dots sit below the media and no play/pause buttons are shown
+    assign controls_autoplay = autoplay
+    assign controls_on_media = true
+    if is_hero
+      assign controls_autoplay = false
+      assign controls_on_media = false
+    endif
+  %}
   {% capture controls %}
     {%- render 'slideshow-controls',
       style: section.settings.slideshow_controls_style,
-      autoplay: autoplay,
+      autoplay: controls_autoplay,
       item_count: section.blocks.size,
       show_arrows: false,
       arrows_on_media: true,
-      controls_on_media: true,
+      controls_on_media: controls_on_media,
       pagination_position: 'center',
       icon_style: section.settings.icons_style,
       custom_icon: section.settings.custom_icon,
@@ -30,7 +46,9 @@
 
 {% liquid
   assign section_width_class = ''
-  if section.settings.display_mode == 'with_hints'
+  if is_hero
+    assign section_width_class = 'section--full-width slideshow-section--hero'
+  elsif section.settings.display_mode == 'with_hints'
     assign section_width_class = 'section--page-width'
     if section.settings.full_frame_on_mobile
       assign section_width_class = section_width_class | append: ' section--mobile-full-width'
@@ -43,13 +61,21 @@
   if section.blocks.size == 1
     assign slideshow_class = slideshow_class | append: ' slideshow--single-media'
   endif
-  if section.settings.display_mode == 'with_hints'
+  if is_hero
+    assign slideshow_class = slideshow_class | append: ' slideshow--hero'
+  elsif section.settings.display_mode == 'with_hints'
     assign slideshow_class = slideshow_class | append: ' slideshow--with-hints'
     if section.settings.full_frame_on_mobile
       assign slideshow_class = slideshow_class | append: ' slideshow--with-hints--mobile-full-frame'
     else
       assign slideshow_class = slideshow_class | append: ' slideshow--with-hints--mobile-with-hints'
     endif
+  endif
+
+  assign slide_size = section.settings.slide_height
+  if is_hero
+    # Hero slides control their own height via --hero-slide-height
+    assign slide_size = nil
   endif
 
   assign show_arrows = true
@@ -80,7 +106,7 @@
 ></div>
 <div
   class="slideshow-section spacing-style section {{ section_width_class }}{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %} disable-section-top-offset"
-  style="{% render 'spacing-padding', settings: section.settings %}; --slideshow-gap: {{ section.settings.slideshow_gap }}px;{% if rounded_slide_corners %} --corner-radius: {{ section.settings.corner_radius }}px;{% endif %}"
+  style="{% render 'spacing-padding', settings: section.settings %}; --slideshow-gap: {{ section.settings.slideshow_gap }}px;{% if rounded_slide_corners %} --corner-radius: {{ section.settings.corner_radius }}px;{% endif %}{% if is_hero %} --hero-slide-height: {{ section.settings.hero_slide_height }}px; --hero-slide-height-mobile: {{ section.settings.hero_slide_height_mobile }}px; --hero-slide-radius: 24px; --hero-slide-radius-mobile: 18px; --hero-slide-padding: 48px; --hero-slide-padding-mobile: 40px 32px; --hero-slide-margin: {{ section.settings.hero_slide_margin }}px; --hero-slide-margin-mobile: 0px; --hero-slide-gap: {{ section.settings.hero_slide_gap }}px; --hero-slide-gap-mobile: 16px;{% endif %}"
 >
   <h2 class="visually-hidden">{{ 'accessibility.slideshow' | t }}</h2>
   {% render 'slideshow',
@@ -93,7 +119,7 @@
     autoplay_speed: section.settings.autoplay_speed,
     slides: slides,
     slide_count: section.blocks.size,
-    slide_size: section.settings.slide_height,
+    slide_size: slide_size,
     custom_icon: section.settings.custom_icon,
     custom_icon_width: section.settings.custom_icon_width,
     slides_to_show: section.settings.slides_to_show,
@@ -155,6 +181,93 @@
       }
     }
 
+    /*
+     * Hero style — Figma "Section/Hero" (169:314 desktop / 191:305 mobile).
+     * Centered slide with neighbors peeking, teal pagination dots below.
+     */
+    &.slideshow-section--hero {
+      background-color: var(--color-background);
+
+      .slideshow--hero {
+        grid-column: 1 / -1;
+        gap: 24px;
+
+        @media screen and (min-width: 750px) {
+          gap: 32px;
+        }
+      }
+
+      .slideshow--hero slideshow-slides {
+        padding-inline: calc(var(--hero-slide-margin-mobile) + var(--hero-slide-gap-mobile));
+        scroll-padding-inline: calc(var(--hero-slide-margin-mobile) + var(--hero-slide-gap-mobile));
+        gap: var(--hero-slide-gap-mobile);
+
+        @media screen and (min-width: 750px) {
+          padding-inline: calc(var(--hero-slide-margin) + var(--hero-slide-gap));
+          scroll-padding-inline: calc(var(--hero-slide-margin) + var(--hero-slide-gap));
+          gap: var(--hero-slide-gap);
+        }
+      }
+
+      .slideshow--hero slideshow-slide {
+        width: calc(100vw - (var(--hero-slide-margin-mobile) + var(--hero-slide-gap-mobile)) * 2);
+        border-radius: var(--hero-slide-radius-mobile);
+
+        @media screen and (min-width: 750px) {
+          width: calc(100vw - (var(--hero-slide-margin) + var(--hero-slide-gap)) * 2);
+          border-radius: var(--hero-slide-radius);
+        }
+      }
+
+      .slideshow--hero.slideshow--single-media slideshow-slides {
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      .slideshow--hero slideshow-controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Pagination dots — solid teal-800 active, teal-400 outline otherwise (Figma Scrolls/button) */
+      .slideshow--hero .slideshow-controls__dots {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .slideshow--hero .slideshow-controls__dots > li {
+        display: block;
+        list-style: none;
+      }
+
+      .slideshow--hero .slideshow-controls__dots .slideshow-control {
+        width: 12px;
+        height: 12px;
+        padding: 0;
+        border: 1px solid var(--color-teal-400, #5bc5ad);
+        border-radius: 50%;
+        background-color: transparent;
+        font-size: 0;
+        line-height: 0;
+        color: transparent;
+        cursor: pointer;
+        transition:
+          background-color var(--animation-speed, 0.2s) ease,
+          border-color var(--animation-speed, 0.2s) ease;
+      }
+
+      .slideshow--hero .slideshow-controls__dots .slideshow-control[aria-selected='true'] {
+        background-color: var(--color-teal-800, #064c4d);
+        border-color: var(--color-teal-800, #064c4d);
+      }
+    }
+
     @media screen and (min-width: 750px) {
       .slideshow--with-hints {
         gap: var(--slideshow-gap, 0);
@@ -198,12 +311,76 @@
   "blocks": [
     {
       "type": "_slide"
+    },
+    {
+      "type": "_hero-slide"
     }
   ],
   "disabled_on": {
     "groups": ["header", "footer"]
   },
   "settings": [
+    {
+      "type": "select",
+      "id": "slideshow_style",
+      "label": "Style",
+      "options": [
+        {
+          "value": "default",
+          "label": "Default"
+        },
+        {
+          "value": "hero",
+          "label": "Hero"
+        }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "range",
+      "id": "hero_slide_height",
+      "label": "Hero: desktop slide height",
+      "min": 500,
+      "max": 700,
+      "step": 2,
+      "unit": "px",
+      "default": 586,
+      "visible_if": "{{ section.settings.slideshow_style == 'hero' }}"
+    },
+    {
+      "type": "range",
+      "id": "hero_slide_height_mobile",
+      "label": "Hero: mobile slide height",
+      "min": 450,
+      "max": 550,
+      "step": 1,
+      "unit": "px",
+      "default": 517,
+      "visible_if": "{{ section.settings.slideshow_style == 'hero' }}"
+    },
+    {
+      "type": "range",
+      "id": "hero_slide_margin",
+      "label": "Hero: desktop side preview",
+      "info": "How much of the neighboring slides peeks in from the edges.",
+      "min": 25,
+      "max": 125,
+      "step": 1,
+      "unit": "px",
+      "default": 55,
+      "visible_if": "{{ section.settings.slideshow_style == 'hero' }}"
+    },
+    {
+      "type": "range",
+      "id": "hero_slide_gap",
+      "label": "Hero: gap between slides",
+      "min": 0,
+      "max": 48,
+      "step": 1,
+      "unit": "px",
+      "default": 24,
+      "visible_if": "{{ section.settings.slideshow_style == 'hero' }}"
+    },
     {
       "type": "select",
       "id": "display_mode",
@@ -511,7 +688,7 @@
       "id": "autoplay",
       "label": "t:settings.auto_rotate_slides",
       "default": false,
-      "visible_if": "{{ section.settings.display_mode == 'full_frame' }}"
+      "visible_if": "{{ section.settings.display_mode == 'full_frame' or section.settings.slideshow_style == 'hero' }}"
     },
     {
       "type": "range",
@@ -522,7 +699,7 @@
       "step": 1,
       "unit": "s",
       "default": 4,
-      "visible_if": "{{ section.settings.display_mode == 'full_frame' and section.settings.autoplay }}"
+      "visible_if": "{{ section.settings.autoplay and section.settings.display_mode == 'full_frame' or section.settings.slideshow_style == 'hero' and section.settings.autoplay }}"
     },
     {
       "type": "header",
@@ -708,6 +885,290 @@
         "icons_style": "arrows_large",
         "icons_shape": "none",
         "slideshow_controls_style": "none"
+      }
+    },
+    {
+      "name": "Hero slideshow",
+      "category": "t:categories.banners",
+      "blocks": {
+        "slide_1": {
+          "type": "_hero-slide",
+          "blocks": {
+            "content": {
+              "type": "group",
+              "name": "t:names.group",
+              "settings": {
+                "content_direction": "row",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "space-between",
+                "vertical_alignment": "flex-end",
+                "gap": 32,
+                "use_mobile_gap": true,
+                "mobile_gap": 24,
+                "width": "fill",
+                "width_mobile": "fill"
+              },
+              "blocks": {
+                "text_content": {
+                  "type": "group",
+                  "name": "t:names.group",
+                  "settings": {
+                    "content_direction": "column",
+                    "gap": 16,
+                    "use_mobile_gap": true,
+                    "mobile_gap": 8,
+                    "width": "custom",
+                    "custom_width": 65,
+                    "width_mobile": "fill"
+                  },
+                  "blocks": {
+                    "heading": {
+                      "type": "text",
+                      "name": "t:names.heading",
+                      "settings": {
+                        "text": "<h2>Full-Service<br/>Cannabis Packaging</h2>",
+                        "width": "100%",
+                        "max_width": "none",
+                        "type_preset": "custom",
+                        "font": "var(--font-heading--family)",
+                        "enable_custom_font_weight": true,
+                        "weight": "700",
+                        "font_size": "4rem",
+                        "line_height": "custom",
+                        "custom_line_height": 1,
+                        "type_preset_mobile": "custom",
+                        "mobile_font_size": "2.5rem",
+                        "mobile_custom_line_height": 1.1,
+                        "text_color": "#ffffff"
+                      }
+                    },
+                    "subheading": {
+                      "type": "text",
+                      "settings": {
+                        "text": "<p>Quick turnaround, endless customization, no hidden fees</p>",
+                        "width": "100%",
+                        "max_width": "none",
+                        "type_preset": "custom",
+                        "font": "var(--font-body--family)",
+                        "font_size": "1.5rem",
+                        "line_height": "custom",
+                        "custom_line_height": 1.3,
+                        "type_preset_mobile": "custom",
+                        "mobile_font_size": "1.125rem",
+                        "mobile_custom_line_height": 1.5,
+                        "text_color": "#ffffff"
+                      }
+                    }
+                  },
+                  "block_order": ["heading", "subheading"]
+                },
+                "button": {
+                  "type": "button",
+                  "settings": {
+                    "label": "Request Samples",
+                    "style_class": "button-custom",
+                    "custom_button_background": "#ffffff29",
+                    "custom_button_text": "#ffffff",
+                    "custom_button_border": "#ffffff",
+                    "width_mobile": "custom",
+                    "custom_width_mobile": 100
+                  }
+                }
+              },
+              "block_order": ["text_content", "button"]
+            }
+          },
+          "block_order": ["content"]
+        },
+        "slide_2": {
+          "type": "_hero-slide",
+          "blocks": {
+            "content": {
+              "type": "group",
+              "name": "t:names.group",
+              "settings": {
+                "content_direction": "row",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "space-between",
+                "vertical_alignment": "flex-end",
+                "gap": 32,
+                "use_mobile_gap": true,
+                "mobile_gap": 24,
+                "width": "fill",
+                "width_mobile": "fill"
+              },
+              "blocks": {
+                "text_content": {
+                  "type": "group",
+                  "name": "t:names.group",
+                  "settings": {
+                    "content_direction": "column",
+                    "gap": 16,
+                    "use_mobile_gap": true,
+                    "mobile_gap": 8,
+                    "width": "custom",
+                    "custom_width": 65,
+                    "width_mobile": "fill"
+                  },
+                  "blocks": {
+                    "heading": {
+                      "type": "text",
+                      "name": "t:names.heading",
+                      "settings": {
+                        "text": "<h2>Full-Service<br/>Cannabis Packaging</h2>",
+                        "width": "100%",
+                        "max_width": "none",
+                        "type_preset": "custom",
+                        "font": "var(--font-heading--family)",
+                        "enable_custom_font_weight": true,
+                        "weight": "700",
+                        "font_size": "4rem",
+                        "line_height": "custom",
+                        "custom_line_height": 1,
+                        "type_preset_mobile": "custom",
+                        "mobile_font_size": "2.5rem",
+                        "mobile_custom_line_height": 1.1,
+                        "text_color": "#ffffff"
+                      }
+                    },
+                    "subheading": {
+                      "type": "text",
+                      "settings": {
+                        "text": "<p>Quick turnaround, endless customization, no hidden fees</p>",
+                        "width": "100%",
+                        "max_width": "none",
+                        "type_preset": "custom",
+                        "font": "var(--font-body--family)",
+                        "font_size": "1.5rem",
+                        "line_height": "custom",
+                        "custom_line_height": 1.3,
+                        "type_preset_mobile": "custom",
+                        "mobile_font_size": "1.125rem",
+                        "mobile_custom_line_height": 1.5,
+                        "text_color": "#ffffff"
+                      }
+                    }
+                  },
+                  "block_order": ["heading", "subheading"]
+                },
+                "button": {
+                  "type": "button",
+                  "settings": {
+                    "label": "Request Samples",
+                    "style_class": "button-custom",
+                    "custom_button_background": "#ffffff29",
+                    "custom_button_text": "#ffffff",
+                    "custom_button_border": "#ffffff",
+                    "width_mobile": "custom",
+                    "custom_width_mobile": 100
+                  }
+                }
+              },
+              "block_order": ["text_content", "button"]
+            }
+          },
+          "block_order": ["content"]
+        },
+        "slide_3": {
+          "type": "_hero-slide",
+          "blocks": {
+            "content": {
+              "type": "group",
+              "name": "t:names.group",
+              "settings": {
+                "content_direction": "row",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "space-between",
+                "vertical_alignment": "flex-end",
+                "gap": 32,
+                "use_mobile_gap": true,
+                "mobile_gap": 24,
+                "width": "fill",
+                "width_mobile": "fill"
+              },
+              "blocks": {
+                "text_content": {
+                  "type": "group",
+                  "name": "t:names.group",
+                  "settings": {
+                    "content_direction": "column",
+                    "gap": 16,
+                    "use_mobile_gap": true,
+                    "mobile_gap": 8,
+                    "width": "custom",
+                    "custom_width": 65,
+                    "width_mobile": "fill"
+                  },
+                  "blocks": {
+                    "heading": {
+                      "type": "text",
+                      "name": "t:names.heading",
+                      "settings": {
+                        "text": "<h2>Full-Service<br/>Cannabis Packaging</h2>",
+                        "width": "100%",
+                        "max_width": "none",
+                        "type_preset": "custom",
+                        "font": "var(--font-heading--family)",
+                        "enable_custom_font_weight": true,
+                        "weight": "700",
+                        "font_size": "4rem",
+                        "line_height": "custom",
+                        "custom_line_height": 1,
+                        "type_preset_mobile": "custom",
+                        "mobile_font_size": "2.5rem",
+                        "mobile_custom_line_height": 1.1,
+                        "text_color": "#ffffff"
+                      }
+                    },
+                    "subheading": {
+                      "type": "text",
+                      "settings": {
+                        "text": "<p>Quick turnaround, endless customization, no hidden fees</p>",
+                        "width": "100%",
+                        "max_width": "none",
+                        "type_preset": "custom",
+                        "font": "var(--font-body--family)",
+                        "font_size": "1.5rem",
+                        "line_height": "custom",
+                        "custom_line_height": 1.3,
+                        "type_preset_mobile": "custom",
+                        "mobile_font_size": "1.125rem",
+                        "mobile_custom_line_height": 1.5,
+                        "text_color": "#ffffff"
+                      }
+                    }
+                  },
+                  "block_order": ["heading", "subheading"]
+                },
+                "button": {
+                  "type": "button",
+                  "settings": {
+                    "label": "Request Samples",
+                    "style_class": "button-custom",
+                    "custom_button_background": "#ffffff29",
+                    "custom_button_text": "#ffffff",
+                    "custom_button_border": "#ffffff",
+                    "width_mobile": "custom",
+                    "custom_width_mobile": 100
+                  }
+                }
+              },
+              "block_order": ["text_content", "button"]
+            }
+          },
+          "block_order": ["content"]
+        }
+      },
+      "block_order": ["slide_1", "slide_2", "slide_3"],
+      "settings": {
+        "slideshow_style": "hero",
+        "display_mode": "full_frame",
+        "section_width": "full-width",
+        "icons_style": "none",
+        "slideshow_controls_style": "dots",
+        "autoplay": true,
+        "autoplay_speed": 5,
+        "padding-block-end": 32
       }
     }
   ]

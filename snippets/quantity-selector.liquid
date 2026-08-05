@@ -11,6 +11,7 @@
   @param {number} [min] - override the minimum quantity (e.g., 0 for quick order list)
   @param {block} [block] - The block object, used for Shopify editor attributes.
   @param {string} [wrapper_class] - Extra class for the wrapper, used to scope block-level CSS variable overrides so surface-level styles (e.g. quick-add modal) can override them.
+  @param {string} [stepper_style] - { 'chevron' } Renders the increment/decrement controls as a stacked chevron pair instead of plus/minus. Used by the Sana cart drawer (Figma 2001:1030).
 {%- enddoc -%}
 
 {% liquid
@@ -36,7 +37,7 @@
   ref="quantitySelectorWrapper"
 >
   <{{ component_name }}
-    class="quantity-selector{% if class %} {{ class }}{% endif %}"
+    class="quantity-selector{% if stepper_style == 'chevron' %} quantity-selector--chevron{% endif %}{% if class %} {{ class }}{% endif %}"
     data-variant-id="{{ variant.id }}"
     {% if line_index == null %}
       {{- block.shopify_attributes -}}
@@ -57,7 +58,11 @@
     >
       <span class="visually-hidden">{{ 'accessibility.decrease_quantity' | t }}</span
       ><span class="svg-wrapper icon-plus">
-        {{- 'icon-minus.svg' | inline_asset_content -}}
+        {%- if stepper_style == 'chevron' -%}
+          {{- 'icon-cart-stepper-chevron.svg' | inline_asset_content -}}
+        {%- else -%}
+          {{- 'icon-minus.svg' | inline_asset_content -}}
+        {%- endif -%}
       </span>
     </button>
     <input
@@ -95,7 +100,11 @@
     >
       <span class="visually-hidden">{{ 'accessibility.increase_quantity' | t }}</span
       ><span class="svg-wrapper icon-plus">
-        {{- 'icon-plus.svg' | inline_asset_content -}}
+        {%- if stepper_style == 'chevron' -%}
+          {{- 'icon-cart-stepper-chevron.svg' | inline_asset_content -}}
+        {%- else -%}
+          {{- 'icon-plus.svg' | inline_asset_content -}}
+        {%- endif -%}
       </span>
     </button>
   </{{ component_name }}>
