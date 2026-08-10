@@ -9,6 +9,23 @@
  */
 {
   "sections": {
+    "breadcrumbs": {
+      "type": "breadcrumbs",
+      "settings": {
+        "product_category_source": "auto",
+        "separator": "/",
+        "section_width": "page-width",
+        "padding-block-start": 24,
+        "padding-block-end": 8,
+        "padding-inline-start": 0,
+        "padding-inline-end": 0,
+        "use_mobile_padding": false,
+        "padding-block-start-mobile": 16,
+        "padding-block-end-mobile": 16,
+        "padding-inline-start-mobile": 0,
+        "padding-inline-end-mobile": 0
+      }
+    },
     "search": {
       "type": "search-header",
       "blocks": {
@@ -175,6 +192,7 @@
     }
   },
   "order": [
+    "breadcrumbs",
     "search",
     "main"
   ]

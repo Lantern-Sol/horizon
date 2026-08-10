@@ -21,8 +21,15 @@
   "
   {{ block.shopify_attributes }}
 >
-  {% content_for 'blocks' %}
+  {% capture ls_accordion_rows %}
+    {% content_for 'blocks' %}
+  {% endcapture %}
+  {{ ls_accordion_rows }}
 </div>
+
+{% if block_settings.enable_faq_schema %}
+  {% render 'ls-schema-faq', html: ls_accordion_rows %}
+{% endif %}
 
 {% render 'accordion-styles' %}
 
@@ -58,6 +65,13 @@
       "id": "dividers",
       "label": "t:settings.dividers",
       "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_faq_schema",
+      "label": "t:settings.enable_faq_schema",
+      "info": "t:info.enable_faq_schema",
+      "default": false
     },
     {
       "type": "color",

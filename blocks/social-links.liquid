@@ -16,6 +16,12 @@
   {% for link_key in social_links %}
     {% liquid
       assign link_url = block.settings[link_key]
+      # LS: fall back to the global social profile theme settings (SEO group),
+      # so block settings act as per-block overrides
+      if link_url == blank
+        assign global_link_key = link_key | replace: '_url', '_link' | prepend: 'social_'
+        assign link_url = settings[global_link_key]
+      endif
       assign render_icon = true
 
       if link_url != blank

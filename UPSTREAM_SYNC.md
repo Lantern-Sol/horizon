@@ -74,6 +74,20 @@ upstream release changes any of these, expect a conflict to resolve.
 **Snippets**
 - `snippets/dialog-popup-page.liquid`
 - `snippets/spacing-marging.liquid`
+- `snippets/ls-meta-tags.liquid` — SEO successor to upstream `meta-tags.liquid`.
+  **After every upstream merge**, run
+  `git diff <prev-sync>..upstream/main -- snippets/meta-tags.liquid` and port
+  relevant changes into `ls-meta-tags.liquid` (the upstream file itself merges
+  cleanly but is no longer rendered).
+- `snippets/ls-seo.liquid` — SEO orchestrator (robots meta + schema dispatch)
+- `snippets/ls-schema-organization.liquid`
+- `snippets/ls-schema-website.liquid`
+- `snippets/ls-schema-breadcrumbs.liquid` — trail logic mirrored with `sections/breadcrumbs.liquid`; keep in sync
+- `snippets/ls-product-schema.liquid`
+- `snippets/ls-schema-faq.liquid` — parses `<summary>` / `.details-content` markers from `blocks/_accordion-row.liquid`; those markers are load-bearing
+
+**Templates**
+- `templates/robots.txt.liquid` — Shopify-defaults passthrough with a per-store extension point
 
 **Assets**
 - `assets/component-parallax.js`
@@ -86,7 +100,7 @@ upstream release changes any of these, expect a conflict to resolve.
 
 | File                                    | LS change                                            |
 | --------------------------------------- | ---------------------------------------------------- |
-| `config/settings_schema.json`           | Branded as "Horizon: LS Mod" by Lantern Sol          |
+| `config/settings_schema.json`           | Branded as "Horizon: LS Mod"; "SEO" settings group   |
 | `assets/base.css`                       | Responsive mobile font-size for primary button       |
 | `sections/hero.liquid`                  | `parallax` + `hidden--mobile` modifier classes       |
 | `snippets/text.liquid`                  | `mobile_text` support + ® superscript replacement    |
@@ -94,7 +108,18 @@ upstream release changes any of these, expect a conflict to resolve.
 | `snippets/slideshow-controls.liquid`    | Expanded pagination/scroll-mode/arrow options        |
 | `snippets/theme-styles-variables.liquid`| Expanded font-weight variants (thin/extra-light/etc) |
 | `blocks/_product-card-gallery.liquid`   | `has_applied_colour_filter` logic                    |
-| `templates/product.json`                | LS-specific block layout                             |
+| `templates/product.json`                | LS-specific block layout; breadcrumbs section        |
+| `layout/theme.liquid`                   | Renders `ls-meta-tags` + `ls-seo` instead of `meta-tags` |
+| `layout/password.liquid`                | Renders `ls-meta-tags` instead of `meta-tags`        |
+| `sections/header.liquid`                | Hardcoded Organization JSON-LD **deleted** (moved to `ls-schema-organization`) — if an upstream merge re-adds it, delete it again; homepage hidden `<h1>` gated on `settings.seo_homepage_hidden_h1` |
+| `sections/product-information.liquid`   | `structured_data` script replaced by `{% render 'ls-product-schema' %}` |
+| `sections/featured-product.liquid`      | Same `ls-product-schema` swap                        |
+| `sections/featured-product-information.liquid` | Same `ls-product-schema` swap                 |
+| `sections/search-header.liquid`         | Heading tag `<h3>` → `<h1>` (search page had no h1)  |
+| `blocks/accordion.liquid`               | Captures rows for opt-in FAQ JSON-LD (`enable_faq_schema`) |
+| `blocks/social-links.liquid`            | Falls back to global `settings.social_*_link` (SEO group) |
+| `templates/*.json` (product, collection, article, blog, page, search) | `breadcrumbs` section wired first in order |
+| `locales/*.json` + `locales/*.schema.json` | LS SEO keys added to all locales (English values pending translation) |
 
 ## How this fork came to be
 
