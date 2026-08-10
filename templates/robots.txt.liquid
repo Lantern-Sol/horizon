@@ -3,26 +3,25 @@
 
   By default this reproduces Shopify's standard robots.txt exactly. It exists
   so per-store crawl rules can be added in code review rather than by editing
-  a generated file.
+  a generated file. Note: group.user_agent, rules, and sitemap render with
+  their own trailing newlines — keep the output tags untrimmed.
 
   To add store-specific rules, extend inside the relevant user-agent group,
   e.g. to block an extra path for all crawlers:
 
-    {%- if group.user_agent.value == '*' %}
-      Disallow: /pages/some-internal-page
-    {%- endif %}
+    {%- if group.user_agent.value == '*' -%}
+    {{ 'Disallow: /pages/some-internal-page' | append: newline }}
+    {%- endif -%}
 
   Keep changes minimal — Shopify's defaults already block cart, checkout,
-  search, and other thin/duplicate routes, and emit the sitemap reference.
+  search, and other thin/duplicate routes, and emit the sitemap references.
 {% endcomment %}
-{% for group in robots.default_groups %}
+{%- for group in robots.default_groups -%}
   {{- group.user_agent }}
-
-  {%- for rule in group.rules %}
+  {%- for rule in group.rules -%}
     {{ rule }}
-  {%- endfor %}
-
-  {%- if group.sitemap != blank %}
+  {%- endfor -%}
+  {%- if group.sitemap != blank -%}
     {{ group.sitemap }}
   {%- endif %}
-{% endfor %}
+{% endfor -%}
