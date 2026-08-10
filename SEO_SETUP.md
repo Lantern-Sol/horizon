@@ -90,6 +90,17 @@ the dynamic-source icon on **FAQ entries**, and connect the collection's
 **FAQs** metafield. One template — every collection renders its own FAQs.
 Blank questions are skipped; an unset metafield renders nothing.
 
+When wiring the dynamic source by hand in template JSON, the reference must end
+in `.value` or the template is rejected on upload:
+
+```json
+"faqs": "{{ closest.collection.metafields.custom.faqs.value }}"
+```
+
+This setup is live on the `ls-horizon-playground` store (definition, three
+sample Question - Answer entries, and the FAQs metafield populated on the
+Automated Collection) for testing.
+
 ## Metafield conventions
 
 The theme reads these metafields defensively — nothing breaks if they don't exist.
