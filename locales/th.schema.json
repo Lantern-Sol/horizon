@@ -205,6 +205,7 @@
     "disclosures": "การเปิดเผยข้อมูล"
   },
   "settings": {
+    "accordion_faqs": "FAQ entries",
     "seo_meta_description_fallback": "Fall back to store description",
     "seo_default_social_image": "Default social sharing image",
     "seo_twitter_handle": "X (Twitter) username",
@@ -1172,6 +1173,7 @@
     "disclosures": "การเปิดเผยข้อมูล"
   },
   "info": {
+    "accordion_faqs": "Question - Answer metaobject entries. Use the dynamic source picker to connect a metafield (e.g. the collection FAQs metafield) so each page shows its own FAQs.",
     "seo_meta_description_fallback": "Uses the store description when a page has no meta description of its own",
     "seo_default_social_image": "Shown in social sharing previews when a page has no image of its own",
     "seo_twitter_handle": "Used for X (Twitter) card attribution. Example: @yourstore",

@@ -228,6 +228,7 @@
     "work_quickly_to_ship": "<p>We will work quickly to ship your order as soon as possible. Once your order has shipped, you will receive an email with further information. Delivery times vary depending on your location.</p>"
   },
   "info": {
+    "accordion_faqs": "Question - Answer metaobject entries. Use the dynamic source picker to connect a metafield (e.g. the collection FAQs metafield) so each page shows its own FAQs.",
     "actions_display_style": "Icons are always used on mobile",
     "applies_on_image_only": "Applies to images only",
     "background_image_mobile": "Shown instead of the background image on mobile devices",
@@ -811,6 +812,7 @@
     "separator_dash": "Dash (–)"
   },
   "settings": {
+    "accordion_faqs": "FAQ entries",
     "accordion": "Accordion",
     "account": "Account",
     "actions_display_style": "Menu style",

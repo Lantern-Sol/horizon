@@ -66,6 +66,30 @@ defaults for every Social links block (block-level URLs override them).
 - **FAQ**: on any Accordion block, enable "Enable FAQ structured data" to emit
   `FAQPage` JSON-LD built from its rows. Enable it on **one** accordion per page.
 
+## Dynamic per-resource FAQs (metaobject-powered)
+
+For stores that need different FAQs per collection (or product/page) without a
+template per resource, the Accordion block has an optional **FAQ entries**
+setting (`metaobject_list` of `question_answer`). Rows from it render after any
+static rows, styled identically, and are included in the FAQ structured data
+when "Enable FAQ structured data" is on.
+
+One-time store setup (Settings → Custom data, or Admin API):
+
+1. **Metaobject definition** — type `question_answer`, name "Question - Answer",
+   storefront access **enabled** (required for Liquid to read entries):
+   - `question` — single line text, required (display name key)
+   - `answer` — rich text
+2. **Metafield definition** on Collections (and/or Products, Pages) —
+   `custom.faqs`, type **list of metaobject references → Question - Answer**.
+3. Populate: create Question - Answer entries under Content → Metaobjects, then
+   pick them in each collection's FAQs metafield.
+
+In the theme editor, on the collection template: add an Accordion block, click
+the dynamic-source icon on **FAQ entries**, and connect the collection's
+**FAQs** metafield. One template — every collection renders its own FAQs.
+Blank questions are skipped; an unset metafield renders nothing.
+
 ## Metafield conventions
 
 The theme reads these metafields defensively — nothing breaks if they don't exist.
