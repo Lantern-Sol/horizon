@@ -29,6 +29,7 @@
     "slider_label": "Jazdec"
   },
   "accessibility": {
+    "breadcrumbs": "Breadcrumbs",
     "play_model": "Prehrať 3D model",
     "play_video": "Prehrať video",
     "unit_price": "Jednotková cena",
@@ -132,6 +133,9 @@
     "zoom_media": "Nástroj na priblíženie {{ index }}"
   },
   "content": {
+    "breadcrumbs_home": "Home",
+    "meta_tagged": "tagged \"{{ tags }}\"",
+    "meta_page": "Page {{ page }}",
     "reviews": "recenz.",
     "no_results_found": "Nenašli sa žiadne výsledky",
     "language": "Jazyk",

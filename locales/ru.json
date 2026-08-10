@@ -29,6 +29,7 @@
     "slider_label": "Ползунок"
   },
   "accessibility": {
+    "breadcrumbs": "Breadcrumbs",
     "play_model": "Открыть объемную модель",
     "play_video": "Воспроизвести видео",
     "unit_price": "Цена за единицу",
@@ -132,6 +133,9 @@
     "zoom_media": "Увеличить медиафайл {{ index }}"
   },
   "content": {
+    "breadcrumbs_home": "Home",
+    "meta_tagged": "tagged \"{{ tags }}\"",
+    "meta_page": "Page {{ page }}",
     "reviews": "отз.",
     "no_results_found": "Результатов не найдено",
     "language": "Язык",

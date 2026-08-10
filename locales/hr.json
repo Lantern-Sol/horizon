@@ -29,6 +29,7 @@
     "slider_label": "Kliznik"
   },
   "accessibility": {
+    "breadcrumbs": "Breadcrumbs",
     "play_model": "Reproduciraj 3D model",
     "play_video": "Reproduciraj videozapis",
     "unit_price": "Jedinična cijena",
@@ -130,6 +131,9 @@
     "zoom_media": "Zoom medijskog sadržaja {{ index }}"
   },
   "content": {
+    "breadcrumbs_home": "Home",
+    "meta_tagged": "tagged \"{{ tags }}\"",
+    "meta_page": "Page {{ page }}",
     "reviews": "recenzije",
     "no_results_found": "Nema pronađenih rezultata",
     "language": "Jezik",

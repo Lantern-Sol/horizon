@@ -29,6 +29,7 @@
     "slider_label": "Csúszka"
   },
   "accessibility": {
+    "breadcrumbs": "Breadcrumbs",
     "play_model": "3D-modell lejátszása",
     "play_video": "Videó lejátszása",
     "unit_price": "Egységár",
@@ -128,6 +129,9 @@
     "zoom_media": "Médiaelem nagyítása ({{ index }})"
   },
   "content": {
+    "breadcrumbs_home": "Home",
+    "meta_tagged": "tagged \"{{ tags }}\"",
+    "meta_page": "Page {{ page }}",
     "reviews": "összegzés",
     "no_results_found": "Nincs találat",
     "language": "Nyelv",

@@ -57,6 +57,256 @@
     ]
   },
   {
+    "name": "t:names.seo",
+    "settings": [
+      {
+        "type": "header",
+        "content": "t:content.seo_metadata"
+      },
+      {
+        "type": "checkbox",
+        "id": "seo_meta_description_fallback",
+        "label": "t:settings.seo_meta_description_fallback",
+        "info": "t:info.seo_meta_description_fallback",
+        "default": true
+      },
+      {
+        "type": "image_picker",
+        "id": "seo_default_social_image",
+        "label": "t:settings.seo_default_social_image",
+        "info": "t:info.seo_default_social_image"
+      },
+      {
+        "type": "text",
+        "id": "seo_twitter_handle",
+        "label": "t:settings.seo_twitter_handle",
+        "info": "t:info.seo_twitter_handle"
+      },
+      {
+        "type": "header",
+        "content": "t:content.seo_indexing"
+      },
+      {
+        "type": "checkbox",
+        "id": "seo_noindex_search_page",
+        "label": "t:settings.seo_noindex_search_page",
+        "info": "t:info.seo_noindex_search_page",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "seo_noindex_filtered_collections",
+        "label": "t:settings.seo_noindex_filtered_collections",
+        "info": "t:info.seo_noindex_filtered_collections",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "seo_noindex_tag_pages",
+        "label": "t:settings.seo_noindex_tag_pages",
+        "info": "t:info.seo_noindex_tag_pages",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "t:content.seo_structured_data"
+      },
+      {
+        "type": "checkbox",
+        "id": "seo_schema_organization",
+        "label": "t:settings.seo_schema_organization",
+        "info": "t:info.seo_schema_organization",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "seo_organization_type",
+        "label": "t:settings.seo_organization_type",
+        "options": [
+          {
+            "value": "online_store",
+            "label": "t:options.seo_online_store"
+          },
+          {
+            "value": "organization",
+            "label": "t:options.seo_organization"
+          },
+          {
+            "value": "local_business",
+            "label": "t:options.seo_local_business"
+          }
+        ],
+        "default": "online_store",
+        "visible_if": "{{ settings.seo_schema_organization }}"
+      },
+      {
+        "type": "text",
+        "id": "seo_organization_name",
+        "label": "t:settings.seo_organization_name",
+        "info": "t:info.seo_organization_name",
+        "visible_if": "{{ settings.seo_schema_organization }}"
+      },
+      {
+        "type": "text",
+        "id": "seo_lb_street",
+        "label": "t:settings.seo_lb_street",
+        "visible_if": "{{ settings.seo_organization_type == 'local_business' }}"
+      },
+      {
+        "type": "text",
+        "id": "seo_lb_city",
+        "label": "t:settings.seo_lb_city",
+        "visible_if": "{{ settings.seo_organization_type == 'local_business' }}"
+      },
+      {
+        "type": "text",
+        "id": "seo_lb_region",
+        "label": "t:settings.seo_lb_region",
+        "visible_if": "{{ settings.seo_organization_type == 'local_business' }}"
+      },
+      {
+        "type": "text",
+        "id": "seo_lb_postal",
+        "label": "t:settings.seo_lb_postal",
+        "visible_if": "{{ settings.seo_organization_type == 'local_business' }}"
+      },
+      {
+        "type": "text",
+        "id": "seo_lb_country",
+        "label": "t:settings.seo_lb_country",
+        "info": "t:info.seo_lb_country",
+        "visible_if": "{{ settings.seo_organization_type == 'local_business' }}"
+      },
+      {
+        "type": "text",
+        "id": "seo_lb_phone",
+        "label": "t:settings.seo_lb_phone",
+        "visible_if": "{{ settings.seo_organization_type == 'local_business' }}"
+      },
+      {
+        "type": "textarea",
+        "id": "seo_lb_hours",
+        "label": "t:settings.seo_lb_hours",
+        "info": "t:info.seo_lb_hours",
+        "visible_if": "{{ settings.seo_organization_type == 'local_business' }}"
+      },
+      {
+        "type": "checkbox",
+        "id": "seo_schema_website",
+        "label": "t:settings.seo_schema_website",
+        "info": "t:info.seo_schema_website",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "seo_schema_breadcrumbs",
+        "label": "t:settings.seo_schema_breadcrumbs",
+        "info": "t:info.seo_schema_breadcrumbs",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "seo_breadcrumb_product_source",
+        "label": "t:settings.seo_breadcrumb_product_source",
+        "info": "t:info.seo_breadcrumb_product_source",
+        "options": [
+          {
+            "value": "auto",
+            "label": "t:options.seo_breadcrumb_auto"
+          },
+          {
+            "value": "category",
+            "label": "t:options.seo_breadcrumb_category"
+          },
+          {
+            "value": "type",
+            "label": "t:options.seo_breadcrumb_type"
+          },
+          {
+            "value": "collection",
+            "label": "t:options.seo_breadcrumb_collection"
+          }
+        ],
+        "default": "auto",
+        "visible_if": "{{ settings.seo_schema_breadcrumbs }}"
+      },
+      {
+        "type": "select",
+        "id": "seo_product_schema_mode",
+        "label": "t:settings.seo_product_schema_mode",
+        "info": "t:info.seo_product_schema_mode",
+        "options": [
+          {
+            "value": "extended",
+            "label": "t:options.seo_product_schema_extended"
+          },
+          {
+            "value": "shopify",
+            "label": "t:options.seo_product_schema_shopify"
+          },
+          {
+            "value": "off",
+            "label": "t:options.seo_product_schema_off"
+          }
+        ],
+        "default": "extended"
+      },
+      {
+        "type": "checkbox",
+        "id": "seo_homepage_hidden_h1",
+        "label": "t:settings.seo_homepage_hidden_h1",
+        "info": "t:info.seo_homepage_hidden_h1",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "t:content.seo_social_profiles",
+        "info": "t:info.seo_social_profiles"
+      },
+      {
+        "type": "url",
+        "id": "social_facebook_link",
+        "label": "t:settings.social_facebook_link"
+      },
+      {
+        "type": "url",
+        "id": "social_instagram_link",
+        "label": "t:settings.social_instagram_link"
+      },
+      {
+        "type": "url",
+        "id": "social_youtube_link",
+        "label": "t:settings.social_youtube_link"
+      },
+      {
+        "type": "url",
+        "id": "social_tiktok_link",
+        "label": "t:settings.social_tiktok_link"
+      },
+      {
+        "type": "url",
+        "id": "social_twitter_link",
+        "label": "t:settings.social_twitter_link"
+      },
+      {
+        "type": "url",
+        "id": "social_linkedin_link",
+        "label": "t:settings.social_linkedin_link"
+      },
+      {
+        "type": "url",
+        "id": "social_pinterest_link",
+        "label": "t:settings.social_pinterest_link"
+      },
+      {
+        "type": "textarea",
+        "id": "seo_sameas_extra",
+        "label": "t:settings.seo_sameas_extra",
+        "info": "t:info.seo_sameas_extra"
+      }
+    ]
+  },
+  {
     "name": "t:names.colors",
     "settings": [
       {
