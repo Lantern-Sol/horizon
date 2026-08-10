@@ -1,0 +1,28 @@
+{% doc %}
+  WebSite structured data (JSON-LD) with a SearchAction, making the store
+  eligible for a sitelinks search box. Rendered on the home page only,
+  via 'ls-seo'.
+{% enddoc %}
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": {{ shop.url | append: '#website' | json }},
+    "name": {{ shop.name | json }},
+    "url": {{ shop.url | json }},
+    {%- if settings.seo_schema_organization %}
+    "publisher": {
+      "@id": {{ shop.url | append: '#organization' | json }}
+    },
+    {%- endif %}
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "{{ shop.url }}{{ routes.search_url }}?q={search_term_string}"
+      },
+      "query-input": "required name=search_term_string"
+    }
+  }
+</script>

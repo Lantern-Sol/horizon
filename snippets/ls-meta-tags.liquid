@@ -1,0 +1,168 @@
+{% doc %}
+  LS successor to 'meta-tags'. Renders all meta tags for the page including
+  Open Graph, Twitter Cards, and SEO tags, driven by the "SEO" theme settings.
+
+  After merging upstream, diff snippets/meta-tags.liquid against its previous
+  revision and port relevant changes here (see UPSTREAM_SYNC.md).
+
+  @param {object} [product] - The product object, available on product pages for price meta tags.
+{% enddoc %}
+
+<meta charset="utf-8">
+<meta
+  http-equiv="X-UA-Compatible"
+  content="IE=edge"
+>
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1"
+>
+<meta
+  name="view-transition"
+  content="same-origin"
+>
+<meta
+  name="theme-color"
+  content="rgb({{ settings.page_background_color.rgb }})"
+>
+
+{%- liquid
+  assign og_title = page_title | default: shop.name
+  assign og_url = canonical_url | default: request.origin
+  assign og_type = 'website'
+  assign og_description = page_description | default: shop.description | default: shop.name
+  assign og_image = page_image | default: settings.seo_default_social_image | default: settings.logo
+
+  if request.page_type == 'product'
+    assign og_type = 'product'
+  elsif request.page_type == 'article'
+    assign og_type = 'article'
+  elsif request.page_type == 'password'
+    assign og_url = request.origin
+  endif
+%}
+
+<meta
+  property="og:site_name"
+  content="{{ shop.name }}"
+>
+<meta
+  property="og:url"
+  content="{{ og_url }}"
+>
+<meta
+  property="og:title"
+  content="{{ og_title | escape }}"
+>
+<meta
+  property="og:type"
+  content="{{ og_type }}"
+>
+<meta
+  property="og:description"
+  content="{{ og_description | escape }}"
+>
+<meta
+  property="og:locale"
+  content="{{ request.locale.iso_code | replace: '-', '_' }}"
+>
+
+{%- if og_image -%}
+  <meta
+    property="og:image"
+    content="https:{{ og_image | image_url }}"
+  >
+  <meta
+    property="og:image:secure_url"
+    content="https:{{ og_image | image_url }}"
+  >
+  <meta
+    property="og:image:width"
+    content="{{ og_image.width }}"
+  >
+  <meta
+    property="og:image:height"
+    content="{{ og_image.height }}"
+  >
+  <meta
+    property="og:image:alt"
+    content="{{ og_image.alt | default: og_title | escape }}"
+  >
+{%- endif -%}
+
+{%- if request.page_type == 'product' -%}
+  <meta
+    property="og:price:amount"
+    content="{{ product.price | money_without_currency | strip_html }}"
+  >
+  <meta
+    property="og:price:currency"
+    content="{{ cart.currency.iso_code }}"
+  >
+{%- endif -%}
+
+{%- liquid
+  assign twitter_handle = settings.seo_twitter_handle | remove: '@' | strip
+  if twitter_handle == blank and settings.social_twitter_link != blank
+    assign twitter_handle = settings.social_twitter_link | split: '.com/' | last | remove: '/'
+  endif
+-%}
+{%- if twitter_handle != blank -%}
+  <meta
+    name="twitter:site"
+    content="{{ twitter_handle | prepend: '@' }}"
+  >
+{%- endif -%}
+<meta
+  name="twitter:card"
+  content="summary_large_image"
+>
+<meta
+  name="twitter:title"
+  content="{{ og_title | escape }}"
+>
+<meta
+  name="twitter:description"
+  content="{{ og_description | escape }}"
+>
+{%- if og_image -%}
+  <meta
+    name="twitter:image"
+    content="https:{{ og_image | image_url }}"
+  >
+  <meta
+    name="twitter:image:alt"
+    content="{{ og_image.alt | default: og_title | escape }}"
+  >
+{%- endif -%}
+
+{%- liquid
+  assign joined_tags = current_tags | join: ', '
+-%}
+<title>
+  {{ page_title }}
+  {%- if current_tags %} &ndash; {{ 'content.meta_tagged' | t: tags: joined_tags }}{% endif -%}
+  {%- if current_page != 1 %} &ndash; {{ 'content.meta_page' | t: page: current_page }}{% endif -%}
+  {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+</title>
+
+{%- liquid
+  assign canonical_override = product.metafields.custom.seo_canonical_url.value | default: collection.metafields.custom.seo_canonical_url.value | default: page.metafields.custom.seo_canonical_url.value | default: article.metafields.custom.seo_canonical_url.value
+-%}
+<link
+  rel="canonical"
+  href="{{ canonical_override | default: canonical_url }}"
+>
+
+{%- liquid
+  assign meta_description = page_description
+  if meta_description == blank and settings.seo_meta_description_fallback
+    assign meta_description = shop.description
+  endif
+-%}
+{% if meta_description != blank %}
+  <meta
+    name="description"
+    content="{{ meta_description | strip_html | truncate: 320 | escape }}"
+  >
+{% endif %}
