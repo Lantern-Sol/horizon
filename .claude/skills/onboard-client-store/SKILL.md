@@ -32,22 +32,31 @@ ask the user for the admin URL or handle rather than guessing.
 ## Step 2 — Authenticate the Shopify CLI against the store
 
 ```bash
-shopify store auth --store <handle>.myshopify.com --scopes read_themes,read_metaobject_definitions,write_metaobject_definitions,read_metaobjects,write_metaobjects,read_products,write_products
+shopify store auth --store <handle>.myshopify.com --scopes read_themes,read_metaobject_definitions,write_metaobject_definitions,read_metaobjects,write_metaobjects,read_products,write_products,read_online_store_pages,write_online_store_pages,read_content,write_content
 ```
 
 This opens the browser for a one-time app authorization using the user's
 existing Shopify session. If the session is headless or the browser can't open,
 show the user the command to run themselves and continue once they confirm.
 `write_*` scopes are requested up front so the create step doesn't need a
-second auth round-trip; the audit itself only reads.
+second auth round-trip; the audit itself only reads. The scope list is exact:
+product/collection metafield definitions ride on `write_products`, but PAGE
+needs `write_online_store_pages` and ARTICLE needs `write_content` — without
+them those two definitions fail with a generic namespace-access error.
 
 ## Step 3 — Audit the store (read-only)
 
 ```bash
 shopify store execute -s <handle>.myshopify.com --query-file .claude/skills/onboard-client-store/graphql/audit.graphql -j
+shopify store execute -s <handle>.myshopify.com --query-file .claude/skills/onboard-client-store/graphql/audit-theme.graphql -j
 ```
 
-The query returns shop identity (name, plan, primary domain), the live theme,
+The theme check is a separate query on purpose: the CLI treats any GraphQL
+error as fatal for the whole operation, so a token missing `read_themes` would
+otherwise sink the entire audit. If the theme query fails on scope, note the
+live theme as "unknown (no read_themes)" and keep going — it's informational.
+
+The queries return shop identity (name, plan, primary domain), the live theme,
 and every definition the SEO baseline can use. Summarize as a checklist:
 
 | Item | Expected | Why it matters |

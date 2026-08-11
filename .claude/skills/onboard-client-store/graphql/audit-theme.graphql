@@ -1,0 +1,9 @@
+query {
+  themes(first: 5, roles: [MAIN]) {
+    nodes {
+      id
+      name
+      updatedAt
+    }
+  }
+}

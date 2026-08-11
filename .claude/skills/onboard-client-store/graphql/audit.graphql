@@ -11,13 +11,6 @@ query {
       url
     }
   }
-  themes(first: 5, roles: [MAIN]) {
-    nodes {
-      id
-      name
-      updatedAt
-    }
-  }
   questionAnswerDefinition: metaobjectDefinitionByType(type: "question_answer") {
     id
     name
