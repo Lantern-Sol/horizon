@@ -29,6 +29,7 @@
     "slider_label": "Carrousel"
   },
   "accessibility": {
+    "breadcrumbs": "Breadcrumbs",
     "play_model": "Jouer le modèle 3D",
     "play_video": "Lire la vidéo",
     "unit_price": "Prix unitaire",
@@ -130,6 +131,9 @@
     "zoom_media": "Zoom du support multimédia {{ index }}"
   },
   "content": {
+    "breadcrumbs_home": "Home",
+    "meta_tagged": "tagged \"{{ tags }}\"",
+    "meta_page": "Page {{ page }}",
     "reviews": "avis",
     "language": "Langue",
     "localization_region_and_language": "Région et langue",

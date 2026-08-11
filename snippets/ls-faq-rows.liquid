@@ -1,0 +1,46 @@
+{% doc %}
+  Renders metaobject-driven FAQ rows inside an accordion block, using the
+  same markup as blocks/_accordion-row.liquid so styling and the
+  ls-schema-faq parser work identically for static and dynamic rows.
+
+  The list usually comes from the accordion block's "faqs" metaobject_list
+  setting, connected in the theme editor to a resource metafield (e.g. the
+  collection metafield custom.faqs, type list.metaobject_reference of
+  question_answer) as a dynamic source — so one template renders different
+  FAQs per collection/product/page.
+
+  Rows with a blank question are skipped. Answers render via metafield_tag,
+  which handles rich text metaobject fields.
+
+  @param {object[]} faqs - question_answer metaobject entries (fields: question, answer)
+{% enddoc %}
+
+{%- for faq in faqs -%}
+  {%- liquid
+    assign faq_question = faq.question.value
+    if faq_question == blank
+      continue
+    endif
+  -%}
+  {%- capture ls_faq_row_children -%}
+    <details
+      class="details"
+      data-testid="accordion-details"
+    >
+      <summary class="details__header">
+        {{ faq_question | escape }}
+        <span class="svg-wrapper icon-caret icon-animated">
+          {{- 'icon-caret.svg' | inline_asset_content -}}
+        </span>
+        <span class="svg-wrapper icon-plus">
+          {{- 'icon-plus.svg' | inline_asset_content -}}
+        </span>
+      </summary>
+
+      <div class="details-content">
+        {{ faq.answer | metafield_tag }}
+      </div>
+    </details>
+  {%- endcapture -%}
+  {% render 'accordion-custom-component', children: ls_faq_row_children %}
+{%- endfor -%}

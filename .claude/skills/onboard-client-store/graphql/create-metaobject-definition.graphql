@@ -1,0 +1,20 @@
+mutation {
+  metaobjectDefinitionCreate(definition: {
+    name: "Question - Answer"
+    type: "question_answer"
+    displayNameKey: "question"
+    access: { storefront: PUBLIC_READ }
+    fieldDefinitions: [
+      { key: "question", name: "Question", type: "single_line_text_field", required: true }
+      { key: "answer", name: "Answer", type: "rich_text_field" }
+    ]
+  }) {
+    metaobjectDefinition {
+      id
+    }
+    userErrors {
+      field
+      message
+    }
+  }
+}

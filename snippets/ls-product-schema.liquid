@@ -1,0 +1,96 @@
+{% doc %}
+  Product structured data (JSON-LD). Behavior is controlled by the
+  "Product structured data" SEO theme setting (seo_product_schema_mode):
+
+  - extended (default): complete LS-authored Product node including
+    AggregateRating (from the standard reviews.* metafields written by most
+    review apps), offer availability, and brand. Replaces Shopify's
+    structured_data filter output — the two are never emitted together,
+    because duplicate Product entities fail rich result validation.
+  - shopify: Shopify's built-in structured_data filter output (previous
+    theme behavior).
+  - off: nothing — for stores where a review/SEO app injects its own
+    Product JSON-LD.
+
+  @param {object} product - The product to describe.
+{% enddoc %}
+
+{%- liquid
+  assign schema_mode = settings.seo_product_schema_mode | default: 'extended'
+-%}
+
+{%- if product != blank -%}
+  {%- if schema_mode == 'shopify' -%}
+    <script type="application/ld+json">
+      {{ product | structured_data }}
+    </script>
+  {%- elsif schema_mode == 'extended' -%}
+    {%- liquid
+      assign rating_value = product.metafields.reviews.rating.value.rating
+      assign rating_scale_max = product.metafields.reviews.rating.value.scale_max | default: 5
+      assign rating_count = product.metafields.reviews.rating_count.value | default: 0
+      assign current_variant = product.selected_or_first_available_variant
+      assign product_url = shop.url | append: product.url
+
+      assign image_list_json = ''
+      assign image_count = 0
+      for media in product.media
+        if media.media_type == 'image' and image_count < 5
+          assign image_json = media.preview_image | image_url: width: 1200 | prepend: 'https:' | json
+          assign image_list_json = image_list_json | append: image_json | append: ','
+          assign image_count = image_count | plus: 1
+        endif
+      endfor
+      assign image_list_json = image_list_json | remove_last: ','
+    -%}
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "@id": {{ product_url | append: '#product' | json }},
+        "name": {{ product.title | json }},
+        "url": {{ product_url | json }}
+        {%- if product.description != blank %},
+        "description": {{ product.description | strip_html | truncate: 500 | json }}
+        {%- endif %}
+        {%- if image_list_json != blank %},
+        "image": [{{ image_list_json }}]
+        {%- endif %}
+        {%- if current_variant.sku != blank %},
+        "sku": {{ current_variant.sku | json }}
+        {%- endif %}
+        {%- if current_variant.barcode != blank %},
+        "gtin": {{ current_variant.barcode | json }}
+        {%- endif %}
+        {%- if product.vendor != blank %},
+        "brand": {
+          "@type": "Brand",
+          "name": {{ product.vendor | json }}
+        }
+        {%- endif %}
+        {%- if rating_value != blank and rating_count > 0 %},
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": {{ rating_value | json }},
+          "bestRating": {{ rating_scale_max | json }},
+          "ratingCount": {{ rating_count | json }}
+        }
+        {%- endif %},
+        "offers": {
+          {%- if product.price_varies %}
+          "@type": "AggregateOffer",
+          "lowPrice": {{ product.price_min | divided_by: 100.0 | json }},
+          "highPrice": {{ product.price_max | divided_by: 100.0 | json }},
+          "offerCount": {{ product.variants.size | json }},
+          {%- else %}
+          "@type": "Offer",
+          "price": {{ product.price | divided_by: 100.0 | json }},
+          {%- endif %}
+          "priceCurrency": {{ cart.currency.iso_code | json }},
+          "availability": {% if product.available %}"https://schema.org/InStock"{% else %}"https://schema.org/OutOfStock"{% endif %},
+          "url": {{ product_url | json }}
+        }
+      }
+    </script>
+  {%- endif -%}
+{%- endif -%}

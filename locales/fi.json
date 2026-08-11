@@ -29,6 +29,7 @@
     "slider_label": "Liukusäädin"
   },
   "accessibility": {
+    "breadcrumbs": "Breadcrumbs",
     "play_model": "Toista 3D-malli",
     "play_video": "Toista video",
     "unit_price": "Yksikköhinta",
@@ -128,6 +129,9 @@
     "zoom_media": "Lähennä mediasisältö: {{ index }}"
   },
   "content": {
+    "breadcrumbs_home": "Home",
+    "meta_tagged": "tagged \"{{ tags }}\"",
+    "meta_page": "Page {{ page }}",
     "reviews": "arvostelua",
     "language": "Kieli",
     "localization_region_and_language": "Alue ja kieli",

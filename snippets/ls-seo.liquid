@@ -1,0 +1,51 @@
+{% doc %}
+  LS SEO orchestrator — rendered once from the <head> in layout/theme.liquid.
+  Emits robots directives and structured data based on the "SEO" theme settings.
+  Not rendered from layout/password.liquid.
+
+  Note: the native `seo.hidden` metafield is handled by Shopify itself via
+  content_for_header (noindex + sitemap exclusion) and is not duplicated here.
+{% enddoc %}
+
+{%- liquid
+  assign ls_noindex = false
+
+  if request.page_type == 'search' and settings.seo_noindex_search_page
+    assign ls_noindex = true
+  endif
+
+  if current_tags and settings.seo_noindex_tag_pages
+    assign ls_noindex = true
+  endif
+
+  if request.page_type == 'collection' and settings.seo_noindex_filtered_collections
+    for filter in collection.filters
+      if filter.active_values.size > 0
+        assign ls_noindex = true
+        break
+      endif
+      if filter.type == 'price_range'
+        if filter.min_value.value != blank or filter.max_value.value != blank
+          assign ls_noindex = true
+          break
+        endif
+      endif
+    endfor
+  endif
+-%}
+
+{%- if ls_noindex -%}
+  <meta name="robots" content="noindex, follow">
+{%- endif -%}
+
+{%- if settings.seo_schema_organization -%}
+  {%- render 'ls-schema-organization' -%}
+{%- endif -%}
+
+{%- if settings.seo_schema_website and request.page_type == 'index' -%}
+  {%- render 'ls-schema-website' -%}
+{%- endif -%}
+
+{%- if settings.seo_schema_breadcrumbs and request.page_type != 'index' -%}
+  {%- render 'ls-schema-breadcrumbs' -%}
+{%- endif -%}

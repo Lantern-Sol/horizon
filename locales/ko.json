@@ -29,6 +29,7 @@
     "slider_label": "슬라이더"
   },
   "accessibility": {
+    "breadcrumbs": "Breadcrumbs",
     "play_model": "3D 모델 재생",
     "play_video": "동영상 재생",
     "unit_price": "단가",
@@ -128,6 +129,9 @@
     "zoom_media": "{{ index }} 미디어 확대/축소"
   },
   "content": {
+    "breadcrumbs_home": "Home",
+    "meta_tagged": "tagged \"{{ tags }}\"",
+    "meta_page": "Page {{ page }}",
     "reviews": "리뷰",
     "language": "언어",
     "localization_region_and_language": "지역 및 언어",

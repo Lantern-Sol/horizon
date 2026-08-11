@@ -29,6 +29,7 @@
     "slider_label": "Kaydırıcı"
   },
   "accessibility": {
+    "breadcrumbs": "Breadcrumbs",
     "play_model": "3B modeli oynat",
     "play_video": "Videoyu oynat",
     "unit_price": "Birim fiyatı",
@@ -128,6 +129,9 @@
     "zoom_media": "Medyayı yakınlaştır: {{ index }}"
   },
   "content": {
+    "breadcrumbs_home": "Home",
+    "meta_tagged": "tagged \"{{ tags }}\"",
+    "meta_page": "Page {{ page }}",
     "reviews": "değerlendirme",
     "language": "Dil",
     "localization_region_and_language": "Bölge ve dil",

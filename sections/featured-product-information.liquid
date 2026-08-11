@@ -1,6 +1,4 @@
-<script type="application/ld+json">
-  {{ section.settings.product | structured_data }}
-</script>
+{% render 'ls-product-schema', product: section.settings.product %}
 
 {% capture media_gallery %}
   {% content_for 'block',

@@ -1,0 +1,60 @@
+{% doc %}
+  FAQPage structured data (JSON-LD), extracted from a rendered accordion.
+
+  Parses the captured accordion HTML on the stable markers produced by
+  blocks/_accordion-row.liquid: <summary> (question) and the
+  .details-content wrapper inside <details> (answer). If that markup
+  changes, update this parser to match.
+
+  Emits nothing when no valid question/answer pair is found. Rendered
+  from blocks/accordion.liquid when its "Enable FAQ structured data"
+  setting is on — enable it on one accordion per page only.
+
+  @param {string} html - Captured rendered accordion rows.
+{% enddoc %}
+
+{%- liquid
+  assign faq_entities = ''
+  assign row_chunks = html | split: '<summary'
+
+  for row_chunk in row_chunks
+    if forloop.first
+      continue
+    endif
+
+    # Rebuild a complete <summary> element so strip_html removes the tag,
+    # its attributes, and any inner icon markup in one pass.
+    assign question_part = row_chunk | split: '</summary>' | first
+    assign question_html = '<summary' | append: question_part | append: '</summary>'
+    assign question_text = question_html | strip_html | strip
+
+    assign answer_part = row_chunk | split: '</summary>' | last
+    assign answer_text = ''
+    if answer_part contains 'details-content">'
+      assign answer_text = answer_part | split: 'details-content">' | last | split: '</details>' | first | strip_html | strip | truncate: 1000
+    endif
+
+    if question_text != blank and answer_text != blank
+      capture faq_entity
+        echo '{"@type":"Question","name":'
+        echo question_text | json
+        echo ',"acceptedAnswer":{"@type":"Answer","text":'
+        echo answer_text | json
+        echo '}}'
+      endcapture
+      assign faq_entities = faq_entities | append: faq_entity | append: ','
+    endif
+  endfor
+
+  assign faq_entities = faq_entities | remove_last: ','
+-%}
+
+{%- if faq_entities != blank -%}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [{{ faq_entities }}]
+    }
+  </script>
+{%- endif -%}

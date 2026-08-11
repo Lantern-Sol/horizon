@@ -1,8 +1,13 @@
+{% comment %}
+  LS: the breadcrumb trail logic below is intentionally mirrored in
+  snippets/ls-schema-breadcrumbs.liquid (BreadcrumbList JSON-LD, emitted from
+  the head even when this section is hidden). Keep the two in sync.
+{% endcomment %}
 {%- liquid
   assign separator = section.settings.separator
   assign home_label = section.settings.home_label
   if home_label == blank
-    assign home_label = 'Home'
+    assign home_label = 'content.breadcrumbs_home' | t
   endif
 -%}
 
@@ -17,7 +22,7 @@
 >
   <nav
     class="breadcrumbs__nav"
-    aria-label="Breadcrumb"
+    aria-label="{{ 'accessibility.breadcrumbs' | t }}"
   >
     <ol class="breadcrumbs__list">
       <li class="breadcrumbs__item">
@@ -107,7 +112,7 @@
 
         {%- when 'search' -%}
           <li class="breadcrumbs__item" aria-current="page">
-            <span class="breadcrumbs__current">{{ 'general.search.title' | t | default: 'Search' }}</span>
+            <span class="breadcrumbs__current">{{ 'content.search' | t }}</span>
           </li>
 
         {%- else -%}
@@ -171,7 +176,7 @@
 
 {% schema %}
 {
-  "name": "Breadcrumbs",
+  "name": "t:names.breadcrumbs",
   "tag": "section",
   "class": "shopify-section--breadcrumbs",
   "disabled_on": {
@@ -181,31 +186,30 @@
     {
       "type": "text",
       "id": "home_label",
-      "label": "Home label",
-      "default": "Home"
+      "label": "t:settings.breadcrumb_home_label"
     },
     {
       "type": "select",
       "id": "product_category_source",
-      "label": "Product category source",
-      "info": "What to show between Home and the product name on product pages.",
+      "label": "t:settings.breadcrumb_product_category_source",
+      "info": "t:info.breadcrumb_product_category_source",
       "options": [
-        { "value": "auto", "label": "Auto (Category → Type → Collection)" },
-        { "value": "category", "label": "Product category (admin taxonomy)" },
-        { "value": "type", "label": "Product type" },
-        { "value": "collection", "label": "Collection" }
+        { "value": "auto", "label": "t:options.seo_breadcrumb_auto" },
+        { "value": "category", "label": "t:options.seo_breadcrumb_category" },
+        { "value": "type", "label": "t:options.seo_breadcrumb_type" },
+        { "value": "collection", "label": "t:options.seo_breadcrumb_collection" }
       ],
       "default": "auto"
     },
     {
       "type": "select",
       "id": "separator",
-      "label": "Separator",
+      "label": "t:settings.breadcrumb_separator",
       "options": [
-        { "value": "/", "label": "Slash (/)" },
-        { "value": ">", "label": "Chevron (>)" },
-        { "value": "•", "label": "Dot (•)" },
-        { "value": "–", "label": "Dash (–)" }
+        { "value": "/", "label": "t:options.separator_slash" },
+        { "value": ">", "label": "t:options.separator_chevron" },
+        { "value": "•", "label": "t:options.separator_dot" },
+        { "value": "–", "label": "t:options.separator_dash" }
       ],
       "default": "/"
     },
@@ -271,12 +275,12 @@
     },
     {
       "type": "header",
-      "content": "Mobile padding"
+      "content": "t:content.mobile_padding"
     },
     {
       "type": "checkbox",
       "id": "use_mobile_padding",
-      "label": "Use mobile padding",
+      "label": "t:settings.use_mobile_padding",
       "default": false
     },
     {
@@ -326,7 +330,7 @@
   ],
   "presets": [
     {
-      "name": "Breadcrumbs",
+      "name": "t:names.breadcrumbs",
       "category": "t:categories.other_sections"
     }
   ]

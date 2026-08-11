@@ -29,6 +29,7 @@
     "slider_label": "Bild"
   },
   "accessibility": {
+    "breadcrumbs": "Breadcrumbs",
     "play_model": "Spela 3D-modell",
     "play_video": "Spela video",
     "unit_price": "Enhetspris",
@@ -128,6 +129,9 @@
     "zoom_media": "Zooma media {{ index }}"
   },
   "content": {
+    "breadcrumbs_home": "Home",
+    "meta_tagged": "tagged \"{{ tags }}\"",
+    "meta_page": "Page {{ page }}",
     "reviews": "recensioner",
     "language": "Språk",
     "localization_region_and_language": "Region och språk",

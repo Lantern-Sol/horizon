@@ -1,0 +1,122 @@
+{% doc %}
+  Organization structured data (JSON-LD), rendered in <head> via 'ls-seo'.
+  The @type is controlled by the "Organization type" SEO theme setting:
+  OnlineStore (default), Organization, or LocalBusiness.
+
+  sameAs is built from the global social profile settings plus the
+  "Additional profile URLs" textarea (one URL per line).
+{% enddoc %}
+
+{%- liquid
+  assign org_type = 'OnlineStore'
+  if settings.seo_organization_type == 'organization'
+    assign org_type = 'Organization'
+  elsif settings.seo_organization_type == 'local_business'
+    assign org_type = 'LocalBusiness'
+  endif
+
+  assign org_name = settings.seo_organization_name | default: shop.name
+
+  # Space-separated accumulator (URLs cannot contain literal spaces)
+  assign same_as_urls = ''
+  if settings.social_facebook_link != blank
+    assign same_as_urls = same_as_urls | append: settings.social_facebook_link | append: ' '
+  endif
+  if settings.social_instagram_link != blank
+    assign same_as_urls = same_as_urls | append: settings.social_instagram_link | append: ' '
+  endif
+  if settings.social_youtube_link != blank
+    assign same_as_urls = same_as_urls | append: settings.social_youtube_link | append: ' '
+  endif
+  if settings.social_tiktok_link != blank
+    assign same_as_urls = same_as_urls | append: settings.social_tiktok_link | append: ' '
+  endif
+  if settings.social_twitter_link != blank
+    assign same_as_urls = same_as_urls | append: settings.social_twitter_link | append: ' '
+  endif
+  if settings.social_linkedin_link != blank
+    assign same_as_urls = same_as_urls | append: settings.social_linkedin_link | append: ' '
+  endif
+  if settings.social_pinterest_link != blank
+    assign same_as_urls = same_as_urls | append: settings.social_pinterest_link | append: ' '
+  endif
+  if settings.seo_sameas_extra != blank
+    assign extra_lines = settings.seo_sameas_extra | strip | newline_to_br | split: '<br />'
+    for extra_line in extra_lines
+      assign extra_url = extra_line | strip
+      if extra_url != blank
+        assign same_as_urls = same_as_urls | append: extra_url | append: ' '
+      endif
+    endfor
+  endif
+  assign same_as_list = same_as_urls | strip | split: ' '
+
+  assign has_address = false
+  if settings.seo_lb_street != blank or settings.seo_lb_city != blank
+    assign has_address = true
+  endif
+-%}
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": {{ org_type | json }},
+    "@id": {{ shop.url | append: '#organization' | json }},
+    "name": {{ org_name | json }},
+    "url": {{ shop.url | json }}
+    {%- if settings.logo %},
+    "logo": {{ settings.logo | image_url: width: 500 | prepend: "https:" | json }}
+    {%- endif %}
+    {%- if shop.description != blank %},
+    "description": {{ shop.description | strip_html | json }}
+    {%- endif %}
+    {%- if same_as_list.first != blank %},
+    "sameAs": [
+      {%- for same_as_url in same_as_list -%}
+        {{ same_as_url | json }}{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    ]
+    {%- endif %}
+    {%- if org_type == 'LocalBusiness' %}
+      {%- if has_address %},
+    "address": {
+      "@type": "PostalAddress"
+      {%- if settings.seo_lb_street != blank %},
+      "streetAddress": {{ settings.seo_lb_street | json }}
+      {%- endif %}
+      {%- if settings.seo_lb_city != blank %},
+      "addressLocality": {{ settings.seo_lb_city | json }}
+      {%- endif %}
+      {%- if settings.seo_lb_region != blank %},
+      "addressRegion": {{ settings.seo_lb_region | json }}
+      {%- endif %}
+      {%- if settings.seo_lb_postal != blank %},
+      "postalCode": {{ settings.seo_lb_postal | json }}
+      {%- endif %}
+      {%- if settings.seo_lb_country != blank %},
+      "addressCountry": {{ settings.seo_lb_country | json }}
+      {%- endif %}
+    }
+      {%- endif %}
+      {%- if settings.seo_lb_phone != blank %},
+    "telephone": {{ settings.seo_lb_phone | json }}
+      {%- endif %}
+      {%- if settings.seo_lb_hours != blank %},
+    "openingHours": [
+      {%- liquid
+        assign hours_lines = settings.seo_lb_hours | strip | newline_to_br | split: '<br />'
+        assign hours_output = ''
+        for hours_line in hours_lines
+          assign hours_entry = hours_line | strip
+          if hours_entry != blank
+            assign hours_json = hours_entry | json
+            assign hours_output = hours_output | append: hours_json | append: ','
+          endif
+        endfor
+      -%}
+      {{- hours_output | remove_last: ',' -}}
+    ]
+      {%- endif %}
+    {%- endif %}
+  }
+</script>

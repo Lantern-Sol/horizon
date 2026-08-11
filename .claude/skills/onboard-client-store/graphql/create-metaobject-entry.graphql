@@ -1,0 +1,12 @@
+mutation($mo: MetaobjectCreateInput!) {
+  metaobjectCreate(metaobject: $mo) {
+    metaobject {
+      id
+      handle
+    }
+    userErrors {
+      field
+      message
+    }
+  }
+}

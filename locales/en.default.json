@@ -9,6 +9,7 @@
  */
 {
   "accessibility": {
+    "breadcrumbs": "Breadcrumbs",
     "account": "Account",
     "active_filters": "Active filters:",
     "cart": "Cart",
@@ -161,6 +162,9 @@
     }
   },
   "content": {
+    "breadcrumbs_home": "Home",
+    "meta_tagged": "tagged \"{{ tags }}\"",
+    "meta_page": "Page {{ page }}",
     "cancel": "Cancel",
     "discount": "Discount",
     "account_title": "Account",

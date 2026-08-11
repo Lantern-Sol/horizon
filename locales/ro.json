@@ -29,6 +29,7 @@
     "slider_label": "Cursor"
   },
   "accessibility": {
+    "breadcrumbs": "Breadcrumbs",
     "play_model": "Redă modelul 3D",
     "play_video": "Redă videoclipul",
     "unit_price": "Preț unitar",
@@ -130,6 +131,9 @@
     "zoom_media": "Fă zoom pe elementul media {{ index }}"
   },
   "content": {
+    "breadcrumbs_home": "Home",
+    "meta_tagged": "tagged \"{{ tags }}\"",
+    "meta_page": "Page {{ page }}",
     "reviews": "recenzii",
     "language": "Limba",
     "localization_region_and_language": "Regiunea și limba",

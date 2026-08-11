@@ -29,6 +29,7 @@
     "slider_label": "スライダー"
   },
   "accessibility": {
+    "breadcrumbs": "Breadcrumbs",
     "play_model": "3Dモデルを再生",
     "play_video": "ビデオを再生",
     "unit_price": "単価",
@@ -128,6 +129,9 @@
     "zoom_media": "ズームメディア {{ index }}"
   },
   "content": {
+    "breadcrumbs_home": "Home",
+    "meta_tagged": "tagged \"{{ tags }}\"",
+    "meta_page": "Page {{ page }}",
     "reviews": "レビュー",
     "language": "言語",
     "localization_region_and_language": "地域と言語",
