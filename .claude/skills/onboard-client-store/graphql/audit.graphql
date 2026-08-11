@@ -1,0 +1,83 @@
+query {
+  shop {
+    name
+    url
+    currencyCode
+    plan {
+      displayName
+    }
+    primaryDomain {
+      host
+      url
+    }
+  }
+  themes(first: 5, roles: [MAIN]) {
+    nodes {
+      id
+      name
+      updatedAt
+    }
+  }
+  questionAnswerDefinition: metaobjectDefinitionByType(type: "question_answer") {
+    id
+    name
+    access {
+      storefront
+    }
+    fieldDefinitions {
+      key
+      required
+      type {
+        name
+      }
+    }
+  }
+  collectionFaqs: metafieldDefinitions(first: 1, ownerType: COLLECTION, namespace: "custom", key: "faqs") {
+    nodes {
+      id
+      type {
+        name
+      }
+    }
+  }
+  productFaqs: metafieldDefinitions(first: 1, ownerType: PRODUCT, namespace: "custom", key: "faqs") {
+    nodes {
+      id
+      type {
+        name
+      }
+    }
+  }
+  productCanonical: metafieldDefinitions(first: 1, ownerType: PRODUCT, namespace: "custom", key: "seo_canonical_url") {
+    nodes {
+      id
+      type {
+        name
+      }
+    }
+  }
+  collectionCanonical: metafieldDefinitions(first: 1, ownerType: COLLECTION, namespace: "custom", key: "seo_canonical_url") {
+    nodes {
+      id
+      type {
+        name
+      }
+    }
+  }
+  pageCanonical: metafieldDefinitions(first: 1, ownerType: PAGE, namespace: "custom", key: "seo_canonical_url") {
+    nodes {
+      id
+      type {
+        name
+      }
+    }
+  }
+  articleCanonical: metafieldDefinitions(first: 1, ownerType: ARTICLE, namespace: "custom", key: "seo_canonical_url") {
+    nodes {
+      id
+      type {
+        name
+      }
+    }
+  }
+}
