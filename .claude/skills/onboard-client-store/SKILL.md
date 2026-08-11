@@ -46,9 +46,14 @@ them those two definitions fail with a generic namespace-access error.
 
 ## Step 3 — Audit the store (read-only)
 
+All `--query-file` paths below use `<skill-dir>`, meaning this skill's base
+directory (shown at the top of this skill when it loads) — the skill may be
+installed in the repo (`.claude/skills/onboard-client-store`) or at user level
+(`~/.claude/skills/onboard-client-store`); the bundled files travel with it.
+
 ```bash
-shopify store execute -s <handle>.myshopify.com --query-file .claude/skills/onboard-client-store/graphql/audit.graphql -j
-shopify store execute -s <handle>.myshopify.com --query-file .claude/skills/onboard-client-store/graphql/audit-theme.graphql -j
+shopify store execute -s <handle>.myshopify.com --query-file "<skill-dir>/graphql/audit.graphql" -j
+shopify store execute -s <handle>.myshopify.com --query-file "<skill-dir>/graphql/audit-theme.graphql" -j
 ```
 
 The theme check is a separate query on purpose: the CLI treats any GraphQL
@@ -79,14 +84,14 @@ List exactly what will be created and get a yes before running mutations.
 **Metaobject definition** (fixed shape, no variables):
 
 ```bash
-shopify store execute -s <handle>.myshopify.com --query-file .claude/skills/onboard-client-store/graphql/create-metaobject-definition.graphql --allow-mutations -j
+shopify store execute -s <handle>.myshopify.com --query-file "<skill-dir>/graphql/create-metaobject-definition.graphql" --allow-mutations -j
 ```
 
 Capture the returned `MetaobjectDefinition` gid — the FAQs metafield
 definitions validate against it.
 
 **Metafield definitions** all use the same generic mutation
-(`graphql/create-metafield-definition.graphql`) with a per-definition variable
+(`<skill-dir>/graphql/create-metafield-definition.graphql`) with a per-definition variable
 file you write at runtime. Collection FAQs example:
 
 ```json
@@ -117,7 +122,7 @@ Canonical override example (repeat for PRODUCT, COLLECTION, PAGE, ARTICLE):
 ```
 
 ```bash
-shopify store execute -s <handle>.myshopify.com --query-file .claude/skills/onboard-client-store/graphql/create-metafield-definition.graphql --variable-file <vars.json> --allow-mutations -j
+shopify store execute -s <handle>.myshopify.com --query-file "<skill-dir>/graphql/create-metafield-definition.graphql" --variable-file <vars.json> --allow-mutations -j
 ```
 
 Check `userErrors` on every response; "key is in use" means it already exists —
@@ -126,7 +131,7 @@ re-audit rather than assuming shape.
 Sample `question_answer` entries are useful on development/playground stores so
 the merchant sees working FAQs immediately — offer them, but never seed sample
 content on a live client store unless asked. Entry creation uses
-`graphql/create-metaobject-entry.graphql` with a variable file; rich-text answer
+`<skill-dir>/graphql/create-metaobject-entry.graphql` with a variable file; rich-text answer
 values are the JSON document format:
 `{"type":"root","children":[{"type":"paragraph","children":[{"type":"text","value":"..."}]}]}`.
 
@@ -159,7 +164,7 @@ Give the user these exact steps — you cannot do this part for them.
 
 ## Step 6 — Generate the personalized client guide
 
-Build the guide from `assets/client-guide-template.md`. Replace every
+Build the guide from `<skill-dir>/assets/client-guide-template.md`. Replace every
 `{{PLACEHOLDER}}` with real values from the audit (store name, domains, repo,
 what was created, date). Drop sections that don't apply (e.g. the FAQs section
 if the user chose not to create the FAQ definitions) — a guide that describes
